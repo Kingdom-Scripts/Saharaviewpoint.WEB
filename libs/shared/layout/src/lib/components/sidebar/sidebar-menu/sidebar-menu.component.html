@@ -15,7 +15,9 @@
           <div class="group relative text-gray-400 dark:text-night-400">
             <!-- Icon -->
             <div
-              [ngClass]="item.active && !menuService.showSideBar ? 'text-primary-500' : ''"
+              [ngClass]="{
+                'text-primary-500': item.active && !menuService.showSideBar
+                }"
               class="pointer-events-none absolute m-2">
               <svg-icon src="{{ item.icon }}" [svgClass]="'h-5 w-5'"> </svg-icon>
             </div>

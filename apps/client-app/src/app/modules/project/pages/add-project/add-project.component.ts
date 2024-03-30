@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SvpFormInputModule, SvpButtonModule, SvpTypographyModule, mapValidationErrors } from '@svp-components';
+import { SvpFormInputModule, SvpButtonModule, SvpTypographyModule, mapValidationErrors, MaxInputLengthComponent } from '@svp-components';
 import { CommonModule, NgFor } from '@angular/common';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -22,7 +22,8 @@ import { ProjectService } from '@svp-api-services';
     ReactiveFormsModule,
     SvpFormInputModule,
     NgFor,
-    NgSelectModule
+    NgSelectModule,
+    MaxInputLengthComponent
   ]
 })
 export class AddProjectComponent implements OnInit { 

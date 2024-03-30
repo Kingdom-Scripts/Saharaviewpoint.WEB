@@ -86,17 +86,7 @@
           <textarea cols="5" rows="8"
             type="text" placeholder="Please provide detailed information about your project"
             formControlName="description"> </textarea>
-          <span class="text-primary-500 -mt-1">
-            @if (descriptionCount == 0) {
-              <small>Max 500 characters</small>
-            }
-            @else if (descriptionCount < 5000) {
-              <small class="text-green-500">{{descriptionCount}}/5000</small>
-            }
-            @else if (descriptionCount > 5000) {
-              <small class="text-red-500">{{descriptionCount}}/5000</small>
-            }
-          </span>
+          <svp-max-input-length [count]="projectForm.get('description')?.value.length" [total]="5000" [minThreshold]="10" />
           <svp-validation-errors [svpControl]="projectForm.get('description')" />
         </div>
 

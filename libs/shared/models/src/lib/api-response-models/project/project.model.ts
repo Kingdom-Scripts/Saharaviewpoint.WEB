@@ -1,3 +1,5 @@
+import { ReferenceUserModel } from "../reference-user.model";
+
 export interface ProjectModel {
   id: number;
   title: string;
@@ -8,16 +10,6 @@ export interface ProjectModel {
   isPriority: boolean;
   order: number;
   assignedId?: number;
-  assignee?: ProjectUserModel;
-  createdBy?: ProjectUserModel;
-}
-
-export class ProjectUserModel {
-  id!: number;
-  firstName!: string;
-  lastName!: string;
-
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
+  assignee?: ReferenceUserModel;
+  createdBy?: ReferenceUserModel;
 }

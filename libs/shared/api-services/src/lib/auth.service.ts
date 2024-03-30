@@ -103,4 +103,35 @@ export class AuthService {
     // Check if any of the roles in the provided array is present in userRoles
     return roles.some(role => userRoles[role]);
   }
+
+  calculatePasswordStrength(password: string): number {
+    let passwordStrength = 0;
+
+    // Fluent validations logic
+    if (password.length >= 8) {
+      passwordStrength += 15; // At least 8 characters
+    }
+
+    if (password.length >= 8 && password.length <= 20) {
+      passwordStrength += 10; // Not exceeding 20 characters
+    }
+
+    if (/[A-Z]/.test(password)) {
+      passwordStrength += 15; // Contains at least one uppercase letter
+    }
+
+    if (/[a-z]/.test(password)) {
+      passwordStrength += 10; // Contains at least one lowercase letter
+    }
+
+    if (/[0-9]/.test(password)) {
+      passwordStrength += 25; // Contains at least one number
+    }
+
+    if (/[\!\?\*\.\#\$\(\)]/.test(password)) {
+      passwordStrength += 25; // Contains at least one special character (!?#$*.)
+    }
+
+    return passwordStrength;
+  }
 }

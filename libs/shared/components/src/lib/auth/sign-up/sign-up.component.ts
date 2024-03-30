@@ -93,31 +93,6 @@ export class SignUpComponent implements OnInit {
   }
 
   calculatePasswordStrength(password: string): void {
-    this.passwordStrength = 0;
-
-    // Fluent validations logic
-    if (password.length >= 8) {
-      this.passwordStrength += 15; // At least 8 characters
-    }
-
-    if (password.length >= 8 && password.length <= 20) {
-      this.passwordStrength += 10; // Not exceeding 20 characters
-    }
-
-    if (/[A-Z]/.test(password)) {
-      this.passwordStrength += 15; // Contains at least one uppercase letter
-    }
-
-    if (/[a-z]/.test(password)) {
-      this.passwordStrength += 10; // Contains at least one lowercase letter
-    }
-
-    if (/[0-9]/.test(password)) {
-      this.passwordStrength += 25; // Contains at least one number
-    }
-
-    if (/[\!\?\*\.\#\$\(\)]/.test(password)) {
-      this.passwordStrength += 25; // Contains at least one special character (!?#$*.)
-    }
+    this.passwordStrength = this.authService.calculatePasswordStrength(password);
   }
 }
