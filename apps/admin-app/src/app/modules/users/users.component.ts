@@ -2,9 +2,9 @@ import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 
 @Component({
-  selector: 'app-project-managers',
+  selector: 'app-users',
   template: `<router-outlet></router-outlet>`,
   standalone: true,
   imports: [RouterOutlet],
 })
-export class ProjectManagersComponent {}
+export class UsersComponent {}

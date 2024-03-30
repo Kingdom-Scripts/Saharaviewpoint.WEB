@@ -28,49 +28,49 @@ export class AllProjectsComponent implements OnInit {
   sideViewService = inject(SideViewService);
 
     // TODO: initialize allProjects as an empty array
-  allProjects: ProjectModel[] | null = // [];
-  [
-    {
-      id: 7,
-      title: 'First Project',
-      description: 'Just another sample description',
-      status: 'In Progress',
-      dueDate: new Date(),
-      startDate: new Date(),
-      isPriority: true,
-      order: 1,
-    },
-    {
-      id: 8,
-      title: 'Second Project',
-      description: 'Just another sample description',
-      status: 'Completed',
-      startDate: new Date(),
-      dueDate: new Date(),
-      isPriority: false,
-      order: 2,
-    },
-    {
-      id: 9,
-      title: 'Second Project',
-      description: 'Just another sample description',
-      status: 'Completed',
-      startDate: new Date(),
-      dueDate: new Date(),
-      isPriority: false,
-      order: 2,
-    },
-    {
-      id: 10,
-      title: 'Second Project',
-      description: 'Just another sample description',
-      status: 'In Progress',
-      startDate: new Date(),
-      dueDate: new Date(),
-      isPriority: false,
-      order: 2,
-    }
-  ];
+  allProjects: ProjectModel[] | null = [];
+  // [
+  //   {
+  //     id: 7,
+  //     title: 'First Project',
+  //     description: 'Just another sample description',
+  //     status: 'In Progress',
+  //     dueDate: new Date(),
+  //     startDate: new Date(),
+  //     isPriority: true,
+  //     order: 1,
+  //   },
+  //   {
+  //     id: 8,
+  //     title: 'Second Project',
+  //     description: 'Just another sample description',
+  //     status: 'Completed',
+  //     startDate: new Date(),
+  //     dueDate: new Date(),
+  //     isPriority: false,
+  //     order: 2,
+  //   },
+  //   {
+  //     id: 9,
+  //     title: 'Second Project',
+  //     description: 'Just another sample description',
+  //     status: 'Completed',
+  //     startDate: new Date(),
+  //     dueDate: new Date(),
+  //     isPriority: false,
+  //     order: 2,
+  //   },
+  //   {
+  //     id: 10,
+  //     title: 'Second Project',
+  //     description: 'Just another sample description',
+  //     status: 'In Progress',
+  //     startDate: new Date(),
+  //     dueDate: new Date(),
+  //     isPriority: false,
+  //     order: 2,
+  //   }
+  // ];
   
   constructor(
     public projectService: ProjectService,

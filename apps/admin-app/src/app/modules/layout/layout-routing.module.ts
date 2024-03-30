@@ -18,8 +18,10 @@ const routes: Routes = [
     // canActivate: [AuthGuard] TODO: uncomment this line
   },
   {
-    path: 'project-managers',
+    path: 'users',
     component: LayoutComponent,
+    loadChildren: () => import('../users/users.module').then((m) => m.UsersModule),
+    canActivate: [AuthGuard]
     loadChildren: () => import('../project-managers/project-managers.module').then((m) => m.ProjectManagersModule),
     // canActivate: [AuthGuard] TODO: uncomment this line
   },

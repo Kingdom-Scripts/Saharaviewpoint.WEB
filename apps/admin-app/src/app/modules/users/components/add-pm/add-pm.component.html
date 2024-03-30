@@ -1,5 +1,5 @@
 <div class="w-full h-full bg-gray-100 dark:bg-night-700">
-  <div class="px-4 py-6 bg-white flex">
+  <div class="px-4 py-6 bg-white flex dark:bg-night-900 dark:text-night-100">
     <h1 svp-subHeader>Add New Project Manager</h1>
 
     <div class="self-start grow flex justify-end mr-4 cursor-pointer text-gray-800 dark:text-night-200 hover:text-gray-500 dark:hover:text-night-400">
@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-6 px-10 mt-12">
+  <div class="grid grid-cols-2 gap-6 px-10 mt-12" [formGroup]="newPmForm">
     <div class="space-y-2">
       <label svp-label for="firstName">First Name</label>
       <input type="text" class="svp-input" formControlName="firstName" />

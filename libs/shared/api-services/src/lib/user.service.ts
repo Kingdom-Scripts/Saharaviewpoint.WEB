@@ -14,8 +14,8 @@ export class UserService {
     return this.http.get<Result<ProjectManagerModel[]>>(`users/project-managers`);
   }
 
-  inviteProjectManager(param: any): Observable<string> {
-    return this.http.post<string>(`users/project-managers/invite`, param);
+  inviteProjectManager(param: any): Observable<Result<string>> {
+    return this.http.post<Result<string>>(`users/project-managers/invite`, param);
   }
 
   acceptInvitation(param: any): Observable<Result<AuthDataModel>> {

@@ -1,15 +1,15 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { ProjectManagersComponent } from "./project-managers.component";
 import { AllProjectManagersComponent } from "./pages/all-project-managers/all-project-managers.components";
+import { UsersComponent } from "./users.component";
 
 const routes: Routes = [
   {
     path: '',
-    component: ProjectManagersComponent,
+    component: UsersComponent,
     children: [
-      { path: '', redirectTo: 'all', pathMatch: 'full' },
-      { path: 'all', component: AllProjectManagersComponent },
+      { path: '', redirectTo: 'project-managers', pathMatch: 'full' },
+      { path: 'project-managers', component: AllProjectManagersComponent },
       { path: '**', redirectTo: 'error/404' },
     ],
   }
@@ -19,4 +19,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ProjectManagersRoutingModule { }
+export class UsersRoutingModule { }

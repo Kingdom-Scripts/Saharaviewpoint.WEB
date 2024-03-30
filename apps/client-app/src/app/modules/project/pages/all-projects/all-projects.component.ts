@@ -23,30 +23,7 @@ import { ProjectService } from '@svp-api-services';
 export class AllProjectsComponent implements OnInit {
   projectStatusEnum = new ProjectStatusEnum();
 
-    // TODO: initialize allProjects as an empty array
   allProjects: ProjectModel[] | null = [];
-  // [
-  //   {
-  //     id: 1,
-  //     title: 'First Project',
-  //     description: 'Just another sample description',
-  //     status: 'InProgress',
-  //     dueDate: new Date(),
-  //     startDate: new Date(),
-  //     isPriority: true,
-  //     order: 1,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Second Project',
-  //     description: 'Just another sample description',
-  //     status: 'Completed',
-  //     startDate: new Date(),
-  //     dueDate: new Date(),
-  //     isPriority: false,
-  //     order: 2,
-  //   }
-  // ];
   
   constructor(
     public projectService: ProjectService,
@@ -58,7 +35,7 @@ export class AllProjectsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProjects(); // TODO: uncomment this line
+    this.loadProjects();
   }
 
   loadProjects(): void {

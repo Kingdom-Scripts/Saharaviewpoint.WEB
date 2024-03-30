@@ -15,10 +15,10 @@ export class Menu {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
           label: 'Projects',
           route: '/project',
-          // children: [
-          //   { label: 'All Projects', route: '/project/all' },
-          //   { label: 'Create New Project', route: '/project/new' }
-          // ]
+          children: [
+            { label: 'All Projects', route: '/project/all' },
+            { label: 'Create New Project', route: '/project/new' }
+          ]
         },
       ],
     },

@@ -43,7 +43,7 @@
 
             <!-- Workaround:: Disable routerLink -->
             <ng-template #childMenu let-item="item">
-              <div
+              <div (click)="toggleMenu(item)"
                 class="flex h-9 cursor-pointer items-center justify-start rounded hover:bg-gray-100 dark:hover:bg-night-600">
                 <a
                   class="ml-10 truncate text-xs font-semibold tracking-wide text-gray-600 focus:outline-none dark:text-night-100">

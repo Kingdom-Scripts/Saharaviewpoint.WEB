@@ -45,14 +45,17 @@ export class Menu {
       items: [
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'All Users',
-          route: '/all-users'
+          label: 'Users',
+          route: '/users',
+          children: [
+            { label: 'Project Managers', route: '/users/project-managers' }
+          ]
         },
-        {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'Project Managers',
-          route: '/project-managers',
-        },
+        // {
+        //   icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+        //   label: 'Project Managers',
+        //   route: '/project-managers',
+        // },
       ],
     },
     {
