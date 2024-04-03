@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService } from '@svp-components';
+import {SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService, SvpTaskStatusCardComponent} from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
@@ -13,9 +13,8 @@ import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { projectMockData } from 'apps/admin-app/src/app/shared/mock-data/projects.mock';
 import { tasksMock as tasksMockData } from 'apps/admin-app/src/app/shared/mock-data/tasks.mock';
-import { SvpStatusCardComponent } from 'libs/shared/components/src/lib/utilities/status-card.component';
 
-@Component({ 
+@Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   standalone: true,
@@ -28,7 +27,7 @@ import { SvpStatusCardComponent } from 'libs/shared/components/src/lib/utilities
     SideViewComponent,
     RouterLink,
     NgSelectModule,
-    SvpStatusCardComponent
+    SvpTaskStatusCardComponent
   ],
 })
 export class TasksComponent implements OnInit {
@@ -37,8 +36,7 @@ export class TasksComponent implements OnInit {
   notify = inject(NotificationService);
   sideViewService = inject(SideViewService);
   router = inject(Router);
-  
-  taskStatusEnum = new TaskStatusEnum();
+
   projectUid: string |  null;
   showSideView = false;
 
@@ -48,12 +46,13 @@ export class TasksComponent implements OnInit {
   taskTypes: string[] = ['Epic', 'Task', 'Subtask'];
   selectedTaskType = 'Epic';
 
+  taskStatusEnum = new TaskStatusEnum();
   statuses: string[] = this.taskStatusEnum.asArray;
   selectedStatus = '';
 
   projects: ProjectModel[] = projectMockData;
   selectedProjects: number[] = [1];
-  
+
   constructor() {
     // set up task search
     this.taskService.allTasks.subscribe((tasks: TaskModel[]) => {
@@ -70,7 +69,7 @@ export class TasksComponent implements OnInit {
   projectIndex(title: string): number {
     return this.projects.findIndex((project: ProjectModel) => project.title === title);
   }
-  
+
   async handleError(): Promise<void> {
     const finish = await this.notify.errorMessage('Error', 'Project not found');
     if (finish) {

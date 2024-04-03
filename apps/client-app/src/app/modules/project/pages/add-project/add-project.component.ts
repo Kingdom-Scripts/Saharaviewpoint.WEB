@@ -133,6 +133,7 @@ export class AddProjectComponent implements OnInit {
     formParam.append('type', param.type);
     formParam.append('budget', param.budget);
     formParam.append('description', param.description);
+    formParam.append('startDate', param.startDate);
     formParam.append('dueDate', param.dueDate);
     formParam.append('location', param.location);
     formParam.append('sizeOfSite', param.sizeOfSite);

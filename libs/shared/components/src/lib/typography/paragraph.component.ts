@@ -6,10 +6,11 @@ import { Component, Input, booleanAttribute } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <p class="text-base text-gray-600 dark:text-night-100"
+    <p class="text-base {{color}} dark:{{darkColor}}"
       [ngClass]="{
           'font-bold': bold,
-          'font-medium': medium
+          'font-medium': medium,
+          'italic': italic
         }"
     ><ng-content></ng-content></p>
   `
@@ -17,4 +18,7 @@ import { Component, Input, booleanAttribute } from '@angular/core';
 export class SvpParagraphComponent {
   @Input({transform: booleanAttribute}) bold = false;
   @Input({transform: booleanAttribute}) medium = false;
+  @Input({transform: booleanAttribute}) italic = false;
+  @Input() color = 'text-gray-600';
+  @Input() darkColor = 'text-night-100';
 }

@@ -3,6 +3,7 @@ export * from './lib/core/menu.model';
 export * from './lib/api-input-models/auth/login.model';
 export * from './lib/api-input-models/project/project-search.model';
 export * from './lib/api-input-models/task/task-search.model';
+export * from './lib/api-input-models/user/project-manager-search.model';
 
 export * from './lib/api-response-models/auth/auth-data.model';
 export * from './lib/api-response-models/Paging';
@@ -13,6 +14,7 @@ export * from './lib/api-response-models/project/project-type.model';
 export * from './lib/api-response-models/user/project-manager.model';
 export * from './lib/api-response-models/reference-user.model';
 export * from './lib/api-response-models/task/task.model';
+export * from './lib/api-response-models/document.model';
 
 export * from './lib/utils/AlertModel';
 export * from './lib/utils/AuthRoleData';

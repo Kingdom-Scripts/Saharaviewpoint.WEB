@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuService } from '@svp-services';
 import { SidebarSubmenuComponent } from '../sidebar-submenu/sidebar-submenu.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -22,14 +22,10 @@ import { SubMenuItem } from '@svp-models';
         SidebarSubmenuComponent
     ],
 })
-export class SidebarMenuComponent implements OnInit {
+export class SidebarMenuComponent {
   constructor(public menuService: MenuService) {}
 
   public toggleMenu(subMenu: SubMenuItem) {
     this.menuService.toggleMenu(subMenu);
-  }
-
-  ngOnInit(): void {
-    console.log('menu: ', this.menuService.pagesMenu)
   }
 }

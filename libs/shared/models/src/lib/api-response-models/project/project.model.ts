@@ -1,3 +1,4 @@
+import { DocumentModel } from "../document.model";
 import { ReferenceUserModel } from "../reference-user.model";
 
 export interface ProjectModel {
@@ -10,6 +11,8 @@ export interface ProjectModel {
   isPriority: boolean;
   order: number;
   assignedId?: number;
+  designId?: number;
+  design?: DocumentModel;
   assignee?: ReferenceUserModel;
   createdBy?: ReferenceUserModel;
 }

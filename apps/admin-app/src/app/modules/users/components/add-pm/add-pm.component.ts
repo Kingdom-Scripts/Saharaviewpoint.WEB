@@ -37,7 +37,7 @@ export class AddPmComponent implements OnInit {
     this.newPmForm = this.formBuilder.group({
       firstName: ['Mordecai', Validators.compose([Validators.required])],
       lastName: ['Project Manager', Validators.compose([Validators.required])],
-      email: ['svp-pm@kingdomscripts.com', Validators.compose([Validators.required, Validators.email])],
+      email: ['davidire71@gmail.com', Validators.compose([Validators.required, Validators.email])],
       phone: ['09012837845', Validators.compose([Validators.required])],
     });
   }

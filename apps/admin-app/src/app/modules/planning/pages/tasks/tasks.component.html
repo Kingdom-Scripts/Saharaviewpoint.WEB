@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="flex space-x-3 my-4">      
+    <div class="flex space-x-3 my-4">
       <div svp-card-selector>
         <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'"/>
         <span>LIST VIEW</span>
@@ -23,14 +23,14 @@
       <div svp-card-selector>
         <svg-icon src="assets/icons/appicons/grid-view-outline.svg" [svgClass]="'h-4 h-4'"/>
         <span>DETAIL VIEW</span>
-      </div>    
+      </div>
     </div>
   </div>
-  
-  
+
+
   <div class="flex space-x-3">
     <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
-      
+
     <ng-select [items]="projects"
           [addTag]="true"
           [multiple]="true"
@@ -58,7 +58,7 @@
       <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
         <div class="flex space-x-1.5">
           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
-          
+
           <div>
             <strong>{{item.title}}</strong> <br />
             <small>Owner: {{item.createdBy.fullName}}</small>
@@ -109,7 +109,7 @@
       <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
         <div class="flex space-x-1.5">
           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
-          
+
           <div>
             <strong>{{item}}</strong> <br />
           </div>
@@ -147,11 +147,11 @@
               <td><span>{{ task.reporter.fullName }}</span></td>
               <td>
                 <span>
-                  <svp-status-card [status]="task.status" />
+                  <svp-task-status-card [status]="task.status" />
                 </span>
               </td>
               <td><span>{{ task.createdAt | date:'MMM dd, yyyy' }}</span></td>
-              <td><span>{{ task.updatedAt | date:'MMM dd, yyyy' }}</span></td>
+              <td><span>{{ task.updatedAt === undefined ? 'None' : task.updatedAt! | date:'MMM dd, yyyy' }}</span></td>
               <td><span>{{ task.dueDate | date:'MMM dd, yyyy' }}</span></td>
               <td>
                 <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
