@@ -17,7 +17,7 @@
       
         <div class="flex flex-col space-y-1">
           <p svp-text>Project Manager</p>
-          <h1 svp-subHeader>{{ project.assignee ? project.assignee.fullName : 'N/A' }}</h1>
+          <h1 svp-subHeader>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</h1>
         </div>
       }
 

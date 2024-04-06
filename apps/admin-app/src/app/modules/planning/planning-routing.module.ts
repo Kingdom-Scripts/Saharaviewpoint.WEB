@@ -8,8 +8,8 @@ const routes: Routes = [
     path: '',
     component: PlanningComponent,
     children: [
-      {path: '', redirectTo: 'tasks', pathMatch: 'full'},
-      {path: 'tasks', component: TasksComponent},     
+      {path: '', redirectTo: 'all', pathMatch: 'full'},
+      {path: 'all', component: TasksComponent},     
     ]
   }
 ];

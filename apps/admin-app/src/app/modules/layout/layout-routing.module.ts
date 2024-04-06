@@ -24,7 +24,7 @@ const routes: Routes = [
     // canActivate: [AuthGuard] TODO: uncomment this line
   },
   {
-    path: 'projects/:uid',
+    path: 'tasks',
     component: LayoutComponent,
     loadChildren: () => import('../planning/planning.module').then((m) => m.PlanningModule),
     // canActivate: [AuthGuard] TODO: uncomment this line

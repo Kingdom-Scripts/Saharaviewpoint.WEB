@@ -16,28 +16,12 @@ export class Menu {
           label: 'Projects',
           route: '/project',
         },
-      ],
-    },
-    {
-      group: 'Planning and Execution',
-      separator: true,
-      items: [
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
           label: 'Tasks',
-          route: 'projects/:uid/task'
+          route: '/tasks'
         },
-        {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'Board',
-          route: '/sprint',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'Timeline',
-          route: '/release',
-        },
-      ]
+      ],
     },
     {
       group: 'Management',

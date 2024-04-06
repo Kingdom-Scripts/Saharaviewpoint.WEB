@@ -95,7 +95,7 @@
             <thead>
               <tr>
                 <th width="5%"><span>#</span></th>
-                <th width="30%"><span>PROJECT NAME</span></th>
+                <th style="max-width: 30%;"><span>PROJECT NAME</span></th>
                 <th><span>PROJECT MANAGER</span></th>
                 <th><span>Status</span></th>
                 <th><span>Start Date</span></th>
@@ -107,14 +107,14 @@
               <tr *ngFor="let project of allProjects; let index = index">
                 <td><span>{{ index + 1 }}</span></td>
                 <td class="cursor-pointer clickable" (click)="viewProjectDetails(project.id)"><span>{{ project.title }}</span></td>
-                <td><span>{{ project.assignee ? project.assignee.fullName : 'N/A' }}</span></td>
+                <td><span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span></td>
                 <td>
                   <span>
                     <svp-status-card [status]="project.status" />
                   </span>
                 </td>
-                <td><span>{{ project.startDate | date:'dd/MM/yyyy' }}</span></td>
-                <td><span>{{ project.dueDate | date:'dd/MM/yyyy' }}</span></td>
+                <td><span>{{ project.startDate | date:'MMM dd, yyyy' }}</span></td>
+                <td><span>{{ project.dueDate | date:'MMM dd, yyyy' }}</span></td>
                 <td>
                   <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
                     <a (click)="(false)" class="btn btn-action">

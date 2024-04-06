@@ -15,4 +15,12 @@ export class SessionStorageUtility {
   remove(key: string) {
     sessionStorage.removeItem(key);
   }
+
+  setProjectId(projectId: number) {
+    this.set('projectId', projectId.toString());
+  }
+
+  getProjectId(): number | null {
+    return parseInt(this.get('projectId') ?? '');
+  }
 }

@@ -10,10 +10,5 @@ import { SessionStorageUtility } from "@svp-utilities";
 })
 export class PlanningComponent {
   sessionStorage = inject(SessionStorageUtility);
-  route =inject(ActivatedRoute);
-
-  constructor() {
-    const projectUid = this.route.snapshot.params['uid'];  
-    this.sessionStorage.set('projectUid', projectUid);
-  }
+  route = inject(ActivatedRoute);
 }

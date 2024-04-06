@@ -13,7 +13,6 @@ export const tasksMock: TaskModel[] = [
       id: 1,
       firstName: "John",
       lastName: "Doe",
-      fullName: "John Doe"
     }
   },
   {
@@ -28,7 +27,6 @@ export const tasksMock: TaskModel[] = [
       id: 2,
       firstName: "Jane",
       lastName: "Doe",
-      fullName: "Jane Doe"
     }
   },
   {
@@ -43,7 +41,6 @@ export const tasksMock: TaskModel[] = [
       id: 3,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -58,7 +55,6 @@ export const tasksMock: TaskModel[] = [
       id: 4,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -73,7 +69,6 @@ export const tasksMock: TaskModel[] = [
       id: 5,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -88,7 +83,6 @@ export const tasksMock: TaskModel[] = [
       id: 6,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -103,7 +97,6 @@ export const tasksMock: TaskModel[] = [
       id: 7,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -118,7 +111,6 @@ export const tasksMock: TaskModel[] = [
       id: 8,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -133,7 +125,6 @@ export const tasksMock: TaskModel[] = [
       id: 9,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   },
   {
@@ -148,7 +139,6 @@ export const tasksMock: TaskModel[] = [
       id: 10,
       firstName: "Bukky",
       lastName: "Omoge",
-      fullName: "Bukky Omoge"
     }
   }
 ]

@@ -42,7 +42,7 @@ export class AllProjectsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
-    this.sideViewService.showComponent(ApproveProjectComponent, {id: 12}); // TODO: remove this line
+    // this.sideViewService.showComponent(ApproveProjectComponent, {id: 12}); // TODO: remove this line
   }
 
   loadProjects(): void {
