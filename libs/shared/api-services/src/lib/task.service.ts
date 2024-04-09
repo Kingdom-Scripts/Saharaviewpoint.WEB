@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, Subject, switchMap } from 'rxjs';
 import { TaskModel, TaskSearchModel, TaskStatusEnum, Result } from '@svp-models';
 import { NotificationService } from '../../../services/src/lib/notification.service';
+import { UrlSerializer } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TaskService {
+export class TaskService {  
   projectStatusEnum = new TaskStatusEnum();
 
   searchParam = new TaskSearchModel();
@@ -39,7 +40,6 @@ export class TaskService {
       )
   }
 
-  // #region PROJECTS
   searchTasks(searchTerm: string): void {
     this.searchParam.searchQuery = searchTerm;
     this.triggerFilterChange();
@@ -54,18 +54,20 @@ export class TaskService {
     this._searchParams$.next(this.searchParam);
   }
   
-  listTasks(param?: TaskSearchModel): Observable<Result<TaskModel[]>> {
-    if (param == null) {
-      param = new TaskSearchModel();
-    }
+  listTasks(param: TaskSearchModel): Observable<Result<TaskModel[]>> {
+    let query = `projectId=${param.projectId}
+      ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}
+      ${param.status ? `&status=${param.status}` : ''}`;
+
     
-    let query = `searchQuery=${param.searchQuery || ''}
-      &status=${param.status || ''}
-      &startDueDate=${param.startDueDate || ''}
-      &endDueDate=${param.endDueDate || ''}
-      &priorityOnly=${param.priorityOnly}`;
-    
-    return this.http.get<Result<TaskModel[]>>(`projects?${query}`);
+    return this.http.get<Result<TaskModel[]>>(`tasks?${query}`, );
   }  
-  // #endregion
+  
+  createTask(param: any): Observable<Result<TaskModel>> {
+    return this.http.post<Result<TaskModel>>('tasks', param);
+  }
+
+  getTask(taskId: number): Observable<Result<TaskModel>> {
+    return this.http.get<Result<TaskModel>>(`tasks/${taskId}`);
+  }
 }

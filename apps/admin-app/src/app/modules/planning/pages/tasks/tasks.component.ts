@@ -4,7 +4,7 @@ import {SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponen
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
-import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel } from '@svp-models';
+import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, TaskSearchModel } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
@@ -12,6 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
+import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 
 @Component({
   selector: 'app-tasks',
@@ -46,7 +47,7 @@ export class TasksComponent implements OnInit {
   selectedTaskType = 'Epic';
 
   taskStatusEnum = new TaskStatusEnum();
-  statuses: string[] = this.taskStatusEnum.asArray;
+  statuses: string[] = ['Epic', 'Task']
   selectedStatus = '';
 
   projects$ = new Observable<ProjectModel[]>();
@@ -61,18 +62,21 @@ export class TasksComponent implements OnInit {
     });
 
     // get the globalProjectId from session storage
-    const projectId = this.sessionStorage.getProjectId();
-    if (!projectId) {
+    const project = this.sessionStorage.getProject();
+    if (!project) {
       this.notify.timedInfoMessage('Select a project', 'Please select a project to view tasks');
     } else {
-      this.selectedProjectId = projectId;
+      this.selectedProjectId = project.id;
+      this.projects$ = of([project]);
     }
   }
 
   ngOnInit(): void {
     // this.loadTasks(); // TODO: uncomment this line
+    // this.loadProjects(); // TODO: uncomment this line
+
     // this.addNewTask(); // TODO: remove this line
-    this.loadProjects();
+    this.viewTaskDetails(5); // TODO: remove this line
   }
 
   private loadProjects(): void {
@@ -102,22 +106,32 @@ export class TasksComponent implements OnInit {
   }
 
   setProjectId($event: any) {
-    this.sessionStorage.setProjectId($event.id);
+    this.sessionStorage.setProject($event);
     this.loadTasks();
   }
 
   loadTasks(): void {
-    console.log('--> Project ID: ', this.selectedProjectId);
+    this.notify.showLoader();
+    this.taskService.listTasks({projectId: this.selectedProjectId} as TaskSearchModel)
+      .subscribe((res: Result<TaskModel[]>) => {
+        this.notify.hideLoader();
+        if (res.success) {
+          this.allTasks = res.content ?? [];
+        } else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      }
+    );
   }
 
   addNewTask(): void {
     this.sideViewService.showComponent(AddTaskComponent);
   }
 
-  // viewTaskDetails(id: number): void {
-  //   const inputs = {id: id};
-  //   this.sideViewService.showComponent(ApproveTaskComponent, inputs);
-  // }
+  viewTaskDetails(taskId: number): void {
+    const inputs = {taskId: taskId};
+    this.sideViewService.showComponent(TaskDetailsComponent, inputs);
+  }
 
 
 }

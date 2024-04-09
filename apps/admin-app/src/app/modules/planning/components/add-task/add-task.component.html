@@ -32,22 +32,20 @@
       <div class="space-y-2">
         <label svp-label for="type">Task Type <span class="text-red-700">*</span></label>
         <ng-select [items]="taskTypes"
-          bindLabel="name"
-          bindValue="id"
           [minTermLength]="2"
-          placeholder="Select a project"
+          placeholder="Select a project type"
           typeToSearchText="Please enter 2 or more characters"
           formControlName="type"
           class="w-[50%]">
         </ng-select>
-        <svp-validation-errors [svpControl]="formGroup.get('projectId')" />
+        <svp-validation-errors [svpControl]="formGroup.get('type')" />
       </div>
 
       <hr class="border border-gray-300 dark:border-gray-700"/>
 
       <div class="space-y-2">
         <label svp-label for="summary">Summary <span class="text-red-700">*</span></label>
-        <input type="text" formControlName="summary"/>
+        <input type="text" formControlName="summary" placeholder="What would you title this task?"/>
         <svp-max-input-length [count]="formGroup.get('summary')?.value.length" [total]="250" [minThreshold]="100" />
         <svp-validation-errors [svpControl]="formGroup.get('summary')" />
       </div>
@@ -63,18 +61,11 @@
 
       <div class="grid grid-cols-2 gap-6">
         <div class="space-y-2">
-          <label svp-label for="reporterId">Reporter <span class="text-red-700">*</span></label>
-          <ng-select [items]="reporters$ | async"
-            bindLabel="title"
-            bindValue="id"
-            [minTermLength]="2"
-            [loading]="reporterLoading"
-            placeholder="Select a reporter"
-            typeToSearchText="Please enter 2 or more characters"
-            [typeahead]="reporterInput$"
-            formControlName="reporterId">
-          </ng-select>
-          <svp-validation-errors [svpControl]="formGroup.get('reporterId')" />
+          <label svp-label for="expectedStartDate">Expected Start Date</label>
+          <input
+            type="date" min="{{today | date: 'yyyy-MM-dd'}}"
+            formControlName="expectedStartDate"/>
+          <svp-validation-errors [svpControl]="formGroup.get('expectedStartDate')" />
         </div>
 
         <div class="space-y-2">
@@ -96,7 +87,7 @@
 
     <div class="flex justify-end mt-6 py-3 px-8 -mx-8 space-x-6 bg-gray-100 border border-t-gray-300 dark:bg-night-700 sticky bottom-0">
       <button class="hover:underline dark:text-night-100" (click)="close()">Cancel</button>
-      <button svp-primary [disabled]="formGroup.invalid || formGroup.pristine">Create</button>
+      <button svp-primary (click)="createTask()">Create</button>
     </div>
   </div>
 </div>

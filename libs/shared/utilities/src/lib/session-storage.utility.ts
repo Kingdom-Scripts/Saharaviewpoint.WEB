@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ProjectModel } from '@svp-models';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,13 @@ export class SessionStorageUtility {
     sessionStorage.removeItem(key);
   }
 
-  setProjectId(projectId: number) {
-    this.set('projectId', projectId.toString());
+  setProject(project: ProjectModel) {
+    this.set('project', JSON.stringify(project));
   }
 
-  getProjectId(): number | null {
-    return parseInt(this.get('projectId') ?? '');
+  getProject(): ProjectModel | null {
+    const project = this.get('project');
+    if (!project) return null;
+    return JSON.parse(project);
   }
 }

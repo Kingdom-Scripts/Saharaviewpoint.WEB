@@ -26,3 +26,4 @@ export * from './lib/view-models/chart-options';
 export * from './lib/enums/ProjectStatusEnum';
 export * from './lib/enums/RoleEnum';
 export * from './lib/enums/TaskStatusEnum';
+export * from './lib/enums/TaskTypeEnum';

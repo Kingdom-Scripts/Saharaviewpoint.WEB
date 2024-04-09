@@ -119,7 +119,7 @@
     </ng-select>
   </div>
 
-  <div class="mt-6 min-h-80 py-8 px-10 rounded-xl bg-white dark:bg-night-700">
+  <div class="mt-6 min-h-80 py-8 px10 rounded-xl bgwhite dark:bg-night-700">
     <div class="text-end mb-8">
       <button svp-neutral type="button" (click)="addNewTask()">Create task</button>
     </div>
@@ -129,30 +129,26 @@
         <table class="fixed-header header-1 bordered">
           <thead>
             <tr>
-              <th width="5%"><span>#</span></th>
-              <th><span>Type</span></th>
+              <th width="8%"><span>Type</span></th>
               <th style="max-width: 30%;"><span>Summary</span></th>
-              <th><span>Reporter</span></th>
               <th><span>Status</span></th>
               <th><span>Created</span></th>
-              <th><span>Updated</span></th>
+              <!-- <th><span>Updated</span></th> -->
               <th><span>Due Date</span></th>
               <th><span></span></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let task of allTasks; let index = index">
-              <td><span>{{ index + 1 }}</span></td>
-              <td class="cursor-pointer clickable" ><span>{{ task.type }}</span></td>
-              <td><span>{{ task.summary }}</span></td>
-              <td><span>{{ task.reporter.firstName }} {{ task.reporter.lastName }}</span></td>
+              <td><span>{{ task.type }}</span></td>
+              <td class="cursor-pointer clickable"><span>{{ task.summary }}</span></td>
               <td>
                 <span>
                   <svp-task-status-card [status]="task.status" />
                 </span>
               </td>
               <td><span>{{ task.createdAt | date:'MMM dd, yyyy' }}</span></td>
-              <td><span>{{ task.updatedAt === undefined ? 'None' : task.updatedAt! | date:'MMM dd, yyyy' }}</span></td>
+              <!-- <td><span>{{ task.updatedAt === null ? 'None' : task.updatedAt! | date:'MMM dd, yyyy' }}</span></td> -->
               <td><span>{{ task.dueDate | date:'MMM dd, yyyy' }}</span></td>
               <td>
                 <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
@@ -161,14 +157,9 @@
                   </a>
                   <div class="nx-dropdown-content">
                     <ul>
-                      <li>
+                      <li (click)="viewTaskDetails(task.id)">
                         <a class="dropdown-item custom">
-                          View Task
-                        </a>
-                      </li>
-                      <li>
-                        <a [classList]="'dropdown-item custom'">
-                          Comment
+                          View Details
                         </a>
                       </li>
                       <li>

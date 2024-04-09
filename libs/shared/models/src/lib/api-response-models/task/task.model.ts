@@ -1,3 +1,5 @@
+import { DocumentModel } from "../document.model";
+import { ProjectModel } from "../project/project.model";
 import { ReferenceUserModel } from "../reference-user.model";
 
 export interface TaskModel {
@@ -7,7 +9,12 @@ export interface TaskModel {
   description: string;
   status: string;
   createdAt: Date;
-  updatedAt?: Date;
+  expectedStartDate: Date;
   dueDate: Date;
-  reporter: ReferenceUserModel;
+  projectId: number,
+  project: ProjectModel;
+  createdById: number,
+  createdBy: ReferenceUserModel;
+  attachments: DocumentModel[];
+  order: 0
 }

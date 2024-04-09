@@ -7,7 +7,7 @@ import {ProjectStatusEnum, TaskStatusEnum} from '@svp-models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="flex items-center text-sm space-x-2 px-3 py-2 rounded-md bg-gray-300 dark:bg-night-500">
+    <div class="flex items-center text-sm space-x-2 px-3 py-1 rounded-md bg-gray-300 dark:bg-night-500">
       <div class="rounded-full p-2"
         [ngClass]="{
           'bg-[#800080]': status === statusEnum.TODO,
