@@ -23,7 +23,7 @@ export class SessionStorageUtility {
 
   getProject(): ProjectModel | null {
     const project = this.get('project');
-    if (!project) return null;
-    return JSON.parse(project);
+
+    return project != 'undefined' ? JSON.parse(project as string) : null;
   }
 }

@@ -7,6 +7,8 @@ import { Result, TaskModel, TaskStatusEnum, TaskTypeEnum } from "@svp-models";
 import { NotificationService } from "@svp-services";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { UtcToLocalDatePipe } from "@svp-pipes";
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { environment } from "libs/shared/environments/environment";
 
 @Component({
   selector: 'app-task-details',
@@ -27,6 +29,8 @@ export class TaskDetailsComponent implements OnInit {
 
   @Input({required: true}) taskId!: number;
   @Output() exit = new EventEmitter();
+
+  assetBaseUrl = environment.assetBaseUrl;
   
   taskTypeEnum = new TaskTypeEnum();
   taskStatusEnum = new TaskStatusEnum();
@@ -91,10 +95,42 @@ export class TaskDetailsComponent implements OnInit {
     "dueDate": new Date(),
     "order": 0
   };
+  taskHistory = [
+    {
+      description: 'Godwin Mordecai added an Attachment',
+      createdAt: new Date(),
+      previousState: 'None',
+      currentState: 'File name free for all.png'
+    },
+    {
+      description: 'Godwin Mordecai removed an attachment',
+      createdAt: new Date(),
+      previousState: 'File name free for all.png',
+      currentState: 'None'
+    },
+    {
+      description: 'Godwin Mordecai updated the task',
+      createdAt: new Date(),
+      previousState: 'None',
+      currentState: 'Description: This is a description and you\'ll write a lot here naturally.'
+    },
+    {
+      description: 'Godwin Mordecai changed the Status',
+      createdAt: new Date(),
+      previousState: 'TO DO',
+      currentState: 'IN PROGRESS'
+    },
+    {
+      description: 'Task created by Mordecai Godwin - Admin',
+      createdAt: new Date(),
+      previousState: '',
+      currentState: ''
+    }
+  ]
 
   ngOnInit(): void {
     console.clear();
-    // this.getTask(); // TODO: uncomment this line
+    this.getTask(); // TODO: uncomment this line
   }
 
   getTask(): void {
