@@ -13,7 +13,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
             [ngClass]="{
               'rounded-es-none rounded-ee-none': selectedFiles.length > 0,
               'flex flex-col items-center justify-center hover:bg-gray-100 dark:hover:bg-night-600' : selectedFiles.length == 0,
-            }" 
+            }"
             [style.height.rem]="selectedFiles.length == 0 ? height : null">
             <div class="flex "
               [ngClass]="{

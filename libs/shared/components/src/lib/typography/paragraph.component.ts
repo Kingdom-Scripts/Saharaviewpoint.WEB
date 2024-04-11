@@ -9,7 +9,7 @@ import { Component, Input, booleanAttribute } from '@angular/core';
     <p class="text-base {{color}} dark:{{darkColor}}"
       [ngClass]="{
           'font-bold': bold,
-          'font-medium': medium,
+          'font-semibold': medium,
           'italic': italic
         }"
     ><ng-content></ng-content></p>
