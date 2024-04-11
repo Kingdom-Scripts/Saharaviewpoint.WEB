@@ -147,5 +147,8 @@ export class TaskDetailsComponent implements OnInit {
       }
     );
   }
-  
+
+  deleteAsset(id: number, assets: Document[]): void {
+    
+  }
 }
