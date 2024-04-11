@@ -2,13 +2,14 @@ import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { TaskService } from "@svp-api-services";
-import { SvpButtonModule, SvpTypographyModule } from "@svp-components";
-import { Result, TaskModel, TaskStatusEnum, TaskTypeEnum } from "@svp-models";
+import { SvpButtonModule, SvpFormInputModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from "@svp-components";
+import { DocumentModel, Result, TaskModel, TaskStatusEnum, TaskTypeEnum } from "@svp-models";
 import { NotificationService } from "@svp-services";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { UtcToLocalDatePipe } from "@svp-pipes";
+import { UtcToLocalDatePipe, UtcToTimelinePipe } from "@svp-pipes";
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { environment } from "libs/shared/environments/environment";
+import { FormBuilder, FormGroup, FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-task-details',
@@ -16,21 +17,27 @@ import { environment } from "libs/shared/environments/environment";
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     AngularSvgIconModule,
     NgSelectModule,
     SvpButtonModule,
     SvpTypographyModule,
-    UtcToLocalDatePipe
+    UtcToLocalDatePipe,
+    UtcToTimelinePipe,
+    SvpUtilityModule,
+    SvpFormInputModule,
+    SvpTaskStatusCardComponent
   ]
 })
 export class TaskDetailsComponent implements OnInit {
   taskService = inject(TaskService); 
   notify = inject(NotificationService);
+  fb = inject(FormBuilder);
 
   @Input({required: true}) taskId!: number;
   @Output() exit = new EventEmitter();
 
-  assetBaseUrl = environment.assetBaseUrl;
+  assetBaseUrl = '' ; // environment.assetBaseUrl; // TODO: fix this
   
   taskTypeEnum = new TaskTypeEnum();
   taskStatusEnum = new TaskStatusEnum();
@@ -88,29 +95,31 @@ export class TaskDetailsComponent implements OnInit {
     "projectId": 12,
     "type": "Task",
     "status": "TO DO",
-    "summary": "First of the first",
+    "summary": "Set up a background job to delete every transaction that is done in the TransactionQueue table every 1st of the month.",
     "description": "This is a description and you'll write a lot here naturally.",
     "createdAt": new Date(),
     "expectedStartDate": new Date(),
     "dueDate": new Date(),
     "order": 0
   };
+
+  displayHistory = true;
   taskHistory = [
     {
       description: 'Godwin Mordecai added an Attachment',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 3, 11),
       previousState: 'None',
       currentState: 'File name free for all.png'
     },
     {
       description: 'Godwin Mordecai removed an attachment',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 3, 10, 8, 30, 0),
       previousState: 'File name free for all.png',
       currentState: 'None'
     },
     {
       description: 'Godwin Mordecai updated the task',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 3, 9, 8, 30, 0),
       previousState: 'None',
       currentState: 'Description: This is a description and you\'ll write a lot here naturally.'
     },
@@ -128,9 +137,50 @@ export class TaskDetailsComponent implements OnInit {
     }
   ]
 
+  taskComments = [
+    {
+      id: 1,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new  Date(2024, 3, 11),
+    },
+    {
+      id: 2,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new Date(2024, 3, 10, 8, 30, 0),
+    },
+    {
+      id: 3,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new Date(2024, 3, 9, 8, 30, 0),
+    },
+    {
+      id: 4,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new Date(),
+    },
+    {
+      id: 5,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new Date(),
+    },
+    {
+      id: 6,
+      fullName: 'Mordecai Godwin',
+      message: 'This is a comment and you\'ll write a lot here naturally.',
+      createdAt: new Date(),
+    },
+  ]
+
+  commentMessage = '';
+  
   ngOnInit(): void {
     console.clear();
-    this.getTask(); // TODO: uncomment this line
+    // this.getTask(); // TODO: uncomment this line
   }
 
   getTask(): void {
@@ -147,5 +197,88 @@ export class TaskDetailsComponent implements OnInit {
       }
     );
   }
+
+  toggleHistoryOrComments(): void {
+    this.displayHistory = !this.displayHistory;
+  }
   
+  addComment(): void {
+    if (!this.commentMessage) {
+      this.notify.timedErrorMessage('Error', 'Comment cannot be empty');
+      return;
+    }
+
+    // TODO: implement API call
+
+    // add new comment to the first of taskComments
+    this.taskComments.unshift({
+      id: this.taskComments.length + 1,
+      fullName: 'Mordecai Godwin',
+      message: this.commentMessage,
+      createdAt: new Date()
+    });
+    this.commentMessage = '';
+  }
+
+  async deleteComment(commentId: number): Promise<void> {
+    // confirm action
+    const confirmed = await this.notify.confirmDelete();
+    if (!confirmed) return;
+
+    // TODO: implement API call
+    
+    this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
+  }
+
+  trimFileName(fileName: string): string {    
+    // get the last substring of the file name as extension
+    const extension = fileName.split('.').pop();
+    return fileName.length > 20 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
+  }
+
+  downloadAttachment(attachmentUrl: string): void {
+    window.open(`${this.assetBaseUrl}/${attachmentUrl}`, '_blank');
+  }
+
+  async deleteAttachment(id: number): Promise<void> {
+    // confirm action
+    const confirmed = await this.notify.confirmDelete();
+    if (!confirmed) return;
+      
+    // TODO: Implement API call
+
+    // remove attachment from the task
+    this.task.attachments = this.task.attachments.filter(attachment => attachment.id !== id);
+  }
+
+  uploadAttachments(e: any): void {
+    const files = e.target.files as File[];
+    if (files == null) {
+      console.log('--> Files is null');
+      return;
+    }
+
+    // loop through the files
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      // get file name with extension
+      const fileName = file.name;
+      const fileType = file.type;
+
+      console.log('==========================')
+      console.log('File Data: ', fileName, fileType);
+
+      const newDocument: DocumentModel = {
+        id: this.task.attachments.length + 1,
+        name: fileName,
+        type: fileType,
+        url: '',
+        thumbnailUrl: '',
+        createdAt: new Date()
+      }
+
+      // add the new document to the task attachments
+      this.task.attachments.push(newDocument);
+    }    
+  }
 }
