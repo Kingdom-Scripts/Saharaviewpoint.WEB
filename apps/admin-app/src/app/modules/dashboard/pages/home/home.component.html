@@ -1,7 +1,7 @@
 <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
   <div class="flex space-x-6 mt-8">
     <!-- Card 1 -->
-    <div class="flex-1" (click)="navigateTo('project/new')">
+    <div class="flex-1" (click)="navigateTo('project/all')">
       <svp-dashboard-card icon="assets/icons/appicons/project.svg" [title]="'Projects'" [description]="'There are ' + projectCount + ' total projects'" />
     </div>
 
@@ -41,7 +41,7 @@
   @else {
     <div class="mt-6 min-h-80 py-8 px-14 rounded-xl bg-white dark:bg-night-700">      
       <div class="flex flex-row justify-between mb-8">
-        <div class="flex space-x-3 my-4 mt-4">
+        <div class="flex space-x-3">
           <div svp-card-selector [isActive]="projectService.searchParam.status === null" (click)="projectService.filterByStatus(null)">
             <svg-icon src="assets/icons/appicons/hamburger-menu.svg" [svgClass]="'h-4 w-4 dark:text-white'" />
             <span>All Projects</span>
