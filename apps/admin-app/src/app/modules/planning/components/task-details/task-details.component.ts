@@ -9,7 +9,7 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 import { UtcToLocalDatePipe, UtcToTimelinePipe } from "@svp-pipes";
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { environment } from "libs/shared/environments/environment";
-import { FormBuilder, FormGroup, FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-task-details',
@@ -37,72 +37,57 @@ export class TaskDetailsComponent implements OnInit {
   @Input({required: true}) taskId!: number;
   @Output() exit = new EventEmitter();
 
-  assetBaseUrl = '' ; // environment.assetBaseUrl; // TODO: fix this
+  assetBaseUrl = environment.assetBaseUrl;
   
   taskTypeEnum = new TaskTypeEnum();
   taskStatusEnum = new TaskStatusEnum();
 
   taskTypes = this.taskTypeEnum.asArray;
   taskStatuses = this.taskStatusEnum.asArray;
-  // task!: TaskModel;
+  task!: TaskModel;
   
-  task: TaskModel = {
-    "createdById": 6,
-    "project": {
-        "id": 12,
-        "title": "5 Block of Flats",
-        'description': '',
-        "status": "In Progress",
-        "startDate": new Date(),
-        "dueDate": new Date(),
-        "isPriority": false,
-        "order": 0,
-        "assignee": {
-            "id": 9,
-            "firstName": "Mordecai",
-            "lastName": "Project Manager"
-        },
-        "createdBy": {
-            "id": 3,
-            "firstName": "John",
-            "lastName": "Doe"
-        }
-    },
-    "createdBy": {
-        "id": 6,
-        "firstName": "Mordecai",
-        "lastName": "Godwin - Admin"
-    },
-    "attachments": [
-        {
-            "id": 17,
-            "name": "free-file-icon-1453-thumb.png",
-            "type": "Image",
-            "url": "f07aa6d8-31f3-4253-909d-956db5dc94b2/5-block-of-flats/bac6751d-97e3-47a7-9f6e-456799eb9d77.png",
-            "thumbnailUrl": "f07aa6d8-31f3-4253-909d-956db5dc94b2/5-block-of-flats/_thumbnail/bac6751d-97e3-47a7-9f6e-456799eb9d77.png",
-            createdAt: new Date()
-        },
-        {
-            "id": 18,
-            "name": "red minimalist Valentine's Day Dinner Menu (Instagram Post)(1).png",
-            "type": "Image",
-            "url": "f07aa6d8-31f3-4253-909d-956db5dc94b2/5-block-of-flats/03a55e0f-0f5e-4288-8ced-da604ec100ed.png",
-            "thumbnailUrl": "f07aa6d8-31f3-4253-909d-956db5dc94b2/5-block-of-flats/_thumbnail/03a55e0f-0f5e-4288-8ced-da604ec100ed.png",
-            createdAt: new Date()
-        }
-    ],
-    "id": 5,
-    "projectId": 12,
-    "type": "Task",
-    "status": "TO DO",
-    "summary": "Set up a background job to delete every transaction that is done in the TransactionQueue table every 1st of the month.",
-    "description": "This is a description and you'll write a lot here naturally.",
-    "createdAt": new Date(),
-    "expectedStartDate": new Date(),
-    "dueDate": new Date(),
-    "order": 0
-  };
+  // task: TaskModel = {
+  //   "createdById": 6,
+  //   "project": {
+  //       "id": 12,
+  //       "title": "5 Block of Flats",
+  //       'description': '',
+  //       "status": "In Progress",
+  //       "startDate": new Date(),
+  //       "dueDate": new Date(),
+  //       "isPriority": false,
+  //       "order": 0,
+  //       "assignee": {
+  //           "id": 9,
+  //           "firstName": "Mordecai",
+  //           "lastName": "Project Manager"
+  //       },
+  //       "createdBy": {
+  //           "id": 3,
+  //           "firstName": "John",
+  //           "lastName": "Doe"
+  //       }
+  //   },
+  //   "createdBy": {
+  //       "id": 6,
+  //       "firstName": "Mordecai",
+  //       "lastName": "Godwin - Admin"
+  //   },
+  //   "attachments": [],
+  //   "id": 5,
+  //   "projectId": 12,
+  //   "type": "Task",
+  //   "status": "TO DO",
+  //   "summary": "Set up a background job to delete every transaction that is done in the TransactionQueue table every 1st of the month.",
+  //   "description": "This is a description and you'll write a lot here naturally.",
+  //   "createdAt": new Date(),
+  //   "expectedStartDate": new Date(),
+  //   "dueDate": new Date(),
+  //   "order": 0
+  // };
 
+  attachments: DocumentModel[] = [];
+  
   displayHistory = true;
   taskHistory = [
     {
@@ -180,7 +165,7 @@ export class TaskDetailsComponent implements OnInit {
   
   ngOnInit(): void {
     console.clear();
-    // this.getTask(); // TODO: uncomment this line
+    this.getTask(); // TODO: uncomment this line
   }
 
   getTask(): void {
@@ -190,6 +175,7 @@ export class TaskDetailsComponent implements OnInit {
         this.notify.hideLoader();
         if (res.success) {
           this.task = res.content ?? {} as TaskModel;
+          this.loadAttachments();
         }
         else {
           this.notify.timedErrorMessage(res.title, res.message);
@@ -230,14 +216,20 @@ export class TaskDetailsComponent implements OnInit {
     this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
   }
 
-  trimFileName(fileName: string): string {    
-    // get the last substring of the file name as extension
-    const extension = fileName.split('.').pop();
-    return fileName.length > 20 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
+  loadAttachments(): void {
+    this.taskService.listAttachments(this.task.id)
+      .subscribe((res: Result<DocumentModel[]>) => {
+        if (res.success) {
+          this.attachments = res.content ?? [];
+        }
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
   }
 
   downloadAttachment(attachmentUrl: string): void {
-    window.open(`${this.assetBaseUrl}/${attachmentUrl}`, '_blank');
+    window.open(`${this.assetBaseUrl + attachmentUrl}`, '_blank');
   }
 
   async deleteAttachment(id: number): Promise<void> {
@@ -248,7 +240,7 @@ export class TaskDetailsComponent implements OnInit {
     // TODO: Implement API call
 
     // remove attachment from the task
-    this.task.attachments = this.task.attachments.filter(attachment => attachment.id !== id);
+    this.attachments = this.attachments.filter(attachment => attachment.id !== id);
   }
 
   uploadAttachments(e: any): void {
@@ -269,7 +261,7 @@ export class TaskDetailsComponent implements OnInit {
       console.log('File Data: ', fileName, fileType);
 
       const newDocument: DocumentModel = {
-        id: this.task.attachments.length + 1,
+        id: this.attachments.length + 1,
         name: fileName,
         type: fileType,
         url: '',
@@ -278,7 +270,18 @@ export class TaskDetailsComponent implements OnInit {
       }
 
       // add the new document to the task attachments
-      this.task.attachments.push(newDocument);
+      this.attachments.push(newDocument);
+
+      this.taskService.uploadFile(this.task.id, file)
+        .subscribe((progress: number | undefined) => {
+          console.log('Progress: ', progress);
+        });
     }    
+  }
+
+  trimFileName(fileName: string): string {    
+    // get the last substring of the file name as extension
+    const extension = fileName.split('.').pop();
+    return fileName.length > 20 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
   }
 }

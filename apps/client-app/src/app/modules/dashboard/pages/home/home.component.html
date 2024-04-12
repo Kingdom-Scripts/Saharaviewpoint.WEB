@@ -77,7 +77,7 @@
               <tr *ngFor="let project of allProjects; let index = index">
                 <td><span>{{ index + 1 }}</span></td>
                 <td><span>{{ project.title }}</span></td>
-                <td><span>{{ project.assignee ? project.assignee.fullName : 'N/A' }}</span></td>
+                <td><span>{{ project.assignee ? project.assignee.firstName : 'N/A' }}</span></td>
                 <td>
                   <span>
                     <svp-status-card [status]="project.status" />
