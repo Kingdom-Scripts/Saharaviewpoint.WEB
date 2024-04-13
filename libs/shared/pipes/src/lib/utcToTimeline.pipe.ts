@@ -24,7 +24,7 @@ export class UtcToTimelinePipe implements PipeTransform {
     if (hours == 1) return 'An hour ago';
     if (hours > 1 && days == 0) return `${hours} hours ago`;
     if (days == 1) return 'Yesterday';
-    if (days > 1) return `${days} days ago`;
+    if (days > 1 && days < 8) return `${days} days ago`;
 
     // default return
     return new Date(localDate).toLocaleString();

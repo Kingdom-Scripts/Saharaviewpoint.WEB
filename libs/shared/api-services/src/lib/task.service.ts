@@ -122,4 +122,8 @@ export class TaskService {
     //     })
     // );
   }
+
+  deleteAttachment(taskId: number, documentId: number): Observable<Result<any>> {
+    return this.http.delete<Result<any>>(`tasks/${taskId}/attachments/${documentId}`);
+  }
 }

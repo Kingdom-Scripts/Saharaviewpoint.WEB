@@ -123,11 +123,11 @@
                             View Details
                           </a>
                         </li>
-                        <!-- <li >
-                          <a [classList]="'dropdown-item custom'">
-                            Second button
+                        <li *ngIf="project.status !== projectStatusEnum.REQUESTED">
+                          <a [classList]="'dropdown-item custom'" svp-anchor svpRoute="/tasks/all">
+                            View Tasks
                           </a>
-                        </li> -->
+                        </li>
                       </ul>
                     </div>
                   </div>

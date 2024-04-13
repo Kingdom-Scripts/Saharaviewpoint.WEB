@@ -35,10 +35,10 @@ export class AddPmComponent implements OnInit {
   
   initForm(): void {
     this.newPmForm = this.formBuilder.group({
-      firstName: ['Mordecai', Validators.compose([Validators.required])],
-      lastName: ['Project Manager', Validators.compose([Validators.required])],
-      email: ['davidire71@gmail.com', Validators.compose([Validators.required, Validators.email])],
-      phone: ['09012837845', Validators.compose([Validators.required])],
+      firstName: ['', Validators.compose([Validators.required])],
+      lastName: ['', Validators.compose([Validators.required])],
+      email: ['', Validators.compose([Validators.required, Validators.email])],
+      phone: ['', Validators.compose([Validators.required])],
     });
   }
   

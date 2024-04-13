@@ -141,7 +141,9 @@
           <tbody>
             <tr *ngFor="let task of allTasks; let index = index">
               <td><span>{{ task.type }}</span></td>
-              <td class="cursor-pointer clickable"><span>{{ task.summary }}</span></td>
+              <td class="cursor-pointer clickable" (click)="viewTaskDetails(task.id)">
+                <span>{{ task.summary }}</span>
+              </td>
               <td>
                 <span>
                   <svp-task-status-card [status]="task.status" />

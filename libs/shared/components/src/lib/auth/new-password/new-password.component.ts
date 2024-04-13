@@ -59,10 +59,9 @@ export class NewPasswordComponent implements OnInit {
   }
 
   initForm(): void {
-    // TODO: remove the default values for the passwords
     this.formGroup = this.fb.group({
-      password: ['Password0)(', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])],
-      confirmPassword: ['Password0)(', Validators.compose([Validators.required])]
+      password: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])],
+      confirmPassword: ['', Validators.compose([Validators.required])]
     }, {
       validators: passwordMatchValidator('password', 'confirmPassword')
     });

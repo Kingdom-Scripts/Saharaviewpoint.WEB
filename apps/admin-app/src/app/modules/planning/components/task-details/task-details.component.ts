@@ -86,7 +86,7 @@ export class TaskDetailsComponent implements OnInit {
   //   "order": 0
   // };
 
-  attachments: DocumentModel[] = [];
+  attachments!: DocumentModel[];
   
   displayHistory = true;
   taskHistory = [
@@ -145,19 +145,19 @@ export class TaskDetailsComponent implements OnInit {
       id: 4,
       fullName: 'Mordecai Godwin',
       message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 2, 9, 8, 30, 0),
     },
     {
       id: 5,
       fullName: 'Mordecai Godwin',
       message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 2, 8, 8, 30, 0),
     },
     {
       id: 6,
       fullName: 'Mordecai Godwin',
       message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(),
+      createdAt: new Date(2024, 1, 9, 8, 30, 0),
     },
   ]
 
@@ -237,10 +237,19 @@ export class TaskDetailsComponent implements OnInit {
     const confirmed = await this.notify.confirmDelete();
     if (!confirmed) return;
       
-    // TODO: Implement API call
-
-    // remove attachment from the task
-    this.attachments = this.attachments.filter(attachment => attachment.id !== id);
+    this.notify.showLoader();
+    this.taskService.deleteAttachment(this.task.id, id)
+      .subscribe((res: Result<any>) => {
+        this.notify.hideLoader();
+        if (res.success) {
+          // remove attachment from the task
+          this.attachments = this.attachments.filter(attachment => attachment.id !== id);
+        }
+        else {
+          this.notify.errorMessage('Unable to remove file', res.message);
+        }
+      }
+    );
   }
 
   uploadAttachments(e: any): void {
@@ -282,6 +291,6 @@ export class TaskDetailsComponent implements OnInit {
   trimFileName(fileName: string): string {    
     // get the last substring of the file name as extension
     const extension = fileName.split('.').pop();
-    return fileName.length > 20 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
+    return fileName.length > 17 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
   }
 }

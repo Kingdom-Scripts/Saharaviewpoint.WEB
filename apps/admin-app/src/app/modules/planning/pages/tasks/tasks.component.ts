@@ -40,7 +40,6 @@ export class TasksComponent implements OnInit {
 
   showSideView = false;
 
-    // TODO: initialize allTasks as an empty array
   allTasks: TaskModel[] = [];
 
   taskTypes: string[] = ['Epic', 'Task', 'Subtask'];
@@ -72,11 +71,11 @@ export class TasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.loadTasks(); // TODO: uncomment this line
-    // this.loadProjects(); // TODO: uncomment this line
+    this.loadTasks(); // TODO: uncomment this line
+    this.loadProjects(); // TODO: uncomment this line
 
     // this.addNewTask(); // TODO: remove this line
-    this.viewTaskDetails(5); // TODO: remove this line
+    // this.viewTaskDetails(5); // TODO: remove this line
   }
 
   private loadProjects(): void {
@@ -126,6 +125,15 @@ export class TasksComponent implements OnInit {
 
   addNewTask(): void {
     this.sideViewService.showComponent(AddTaskComponent);
+    
+    this.sideViewService.outputs.addedTask.subscribe((task: TaskModel) => {
+      this.allTasks.unshift(task);
+    });
+  }
+  
+  addedTask(task: TaskModel): void {
+    console.log('-> Task added: ', task);
+    this.allTasks.unshift(task);
   }
 
   viewTaskDetails(taskId: number): void {

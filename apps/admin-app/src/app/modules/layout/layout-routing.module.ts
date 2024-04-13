@@ -9,25 +9,25 @@ const routes: Routes = [
     path: 'dashboard',
     component: LayoutComponent,
     loadChildren: () => import('../dashboard/dashboard.module').then((m) => m.DashboardModule),
-    // canActivate: [AuthGuard] TODO: uncomment this line
+    canActivate: [AuthGuard]
   },
   {
     path: 'project',
     component: LayoutComponent,
     loadChildren: () => import('../project/project.module').then((m) => m.ProjectModule),
-    // canActivate: [AuthGuard] TODO: uncomment this line
+    canActivate: [AuthGuard]
   },
   {
     path: 'users',
     component: LayoutComponent,
     loadChildren: () => import('../users/users.module').then((m) => m.UsersModule),
-    // canActivate: [AuthGuard] TODO: uncomment this line
+    canActivate: [AuthGuard]
   },
   {
     path: 'tasks',
     component: LayoutComponent,
     loadChildren: () => import('../planning/planning.module').then((m) => m.PlanningModule),
-    // canActivate: [AuthGuard] TODO: uncomment this line
+    canActivate: [AuthGuard]
   },
   { path: '**', redirectTo: 'error/404' },
 ];
