@@ -84,7 +84,7 @@
               
               <div class="flex items-center justify-between">
                 <p>
-                  <span class="text-sm text-slate-900">{{attachment.createdAt | date:'MMM dd, yyyy' }}</span>
+                  <span class="text-sm text-slate-900">{{attachment.createdAt | utcToLocalDate }}</span>
                 </p>
               </div>
             </div>
@@ -97,19 +97,19 @@
 
         <div class="flex space-x-2 pb-2">
           <p svp-text>Show:</p>
-          <button svp-action [isActive]="displayHistory" (click)="toggleHistoryOrComments()">History</button>
-          <button svp-action [isActive]="!displayHistory" (click)="toggleHistoryOrComments()">Comments</button>
+          <button svp-action [isActive]="displayLogs" (click)="toggleHistoryOrComments()">History</button>
+          <button svp-action [isActive]="!displayLogs" (click)="toggleHistoryOrComments()">Comments</button>
         </div>
 
-        <ng-container *ngIf="displayHistory">
-          <div *ngFor="let item of taskHistory; let i = index"
+        <ng-container *ngIf="displayLogs">
+          <div *ngFor="let item of taskLogs; let i = index"
             class="border-gray-300 py-1" [ngClass]="{'border-b-2': i !== taskComments.length - 1}">
             <div class="flex space-x-2">
               <p svp-text>{{item.description}}</p>
               <p svp-text color="text-gray-500">{{item.createdAt | utcToTimeline}}</p>
             </div>
 
-            <div class="flex space-x-2">
+            <div class="flex space-x-2" *ngIf="item.previousState || item.currentState">
               <p svp-text>{{item.previousState}}</p>
               <div class="before:content-['→'] before:text-gray-600"></div>
               <p svp-text>{{item.currentState}}</p>
@@ -117,7 +117,7 @@
           </div>
         </ng-container>
 
-        <ng-container *ngIf="!displayHistory">
+        <ng-container *ngIf="!displayLogs">
           <div class="my-2">
             <textarea class="w-full h-24 p-2 border border-gray-200 rounded-lg"
               placeholder="Add a comment..." [(ngModel)]="commentMessage"></textarea>

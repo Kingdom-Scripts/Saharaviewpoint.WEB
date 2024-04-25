@@ -3,12 +3,11 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular
 import { NgSelectModule } from "@ng-select/ng-select";
 import { TaskService } from "@svp-api-services";
 import { SvpButtonModule, SvpFormInputModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from "@svp-components";
-import { DocumentModel, Result, TaskModel, TaskStatusEnum, TaskTypeEnum } from "@svp-models";
+import { DocumentModel, PagingRequestModel, Result, TaskCommentModel, TaskLogModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from "@svp-models";
 import { NotificationService } from "@svp-services";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { UtcToLocalDatePipe, UtcToTimelinePipe } from "@svp-pipes";
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { environment } from "libs/shared/environments/environment";
+import { environment } from "@svp-environments";
 import { FormBuilder, FormsModule } from "@angular/forms";
 
 @Component({
@@ -37,7 +36,7 @@ export class TaskDetailsComponent implements OnInit {
   @Input({required: true}) taskId!: number;
   @Output() exit = new EventEmitter();
 
-  assetBaseUrl = environment.assetBaseUrl;
+  assetBaseUrl = ''; // TODO: environment.assetBaseUrl;
   
   taskTypeEnum = new TaskTypeEnum();
   taskStatusEnum = new TaskStatusEnum();
@@ -46,120 +45,52 @@ export class TaskDetailsComponent implements OnInit {
   taskStatuses = this.taskStatusEnum.asArray;
   task!: TaskModel;
   
-  // task: TaskModel = {
-  //   "createdById": 6,
-  //   "project": {
-  //       "id": 12,
-  //       "title": "5 Block of Flats",
-  //       'description': '',
-  //       "status": "In Progress",
-  //       "startDate": new Date(),
-  //       "dueDate": new Date(),
-  //       "isPriority": false,
-  //       "order": 0,
-  //       "assignee": {
-  //           "id": 9,
-  //           "firstName": "Mordecai",
-  //           "lastName": "Project Manager"
-  //       },
-  //       "createdBy": {
-  //           "id": 3,
-  //           "firstName": "John",
-  //           "lastName": "Doe"
-  //       }
-  //   },
-  //   "createdBy": {
-  //       "id": 6,
-  //       "firstName": "Mordecai",
-  //       "lastName": "Godwin - Admin"
-  //   },
-  //   "attachments": [],
-  //   "id": 5,
-  //   "projectId": 12,
-  //   "type": "Task",
-  //   "status": "TO DO",
-  //   "summary": "Set up a background job to delete every transaction that is done in the TransactionQueue table every 1st of the month.",
-  //   "description": "This is a description and you'll write a lot here naturally.",
-  //   "createdAt": new Date(),
-  //   "expectedStartDate": new Date(),
-  //   "dueDate": new Date(),
-  //   "order": 0
-  // };
-
   attachments!: DocumentModel[];
-  
-  displayHistory = true;
-  taskHistory = [
-    {
-      description: 'Godwin Mordecai added an Attachment',
-      createdAt: new Date(2024, 3, 11),
-      previousState: 'None',
-      currentState: 'File name free for all.png'
-    },
-    {
-      description: 'Godwin Mordecai removed an attachment',
-      createdAt: new Date(2024, 3, 10, 8, 30, 0),
-      previousState: 'File name free for all.png',
-      currentState: 'None'
-    },
-    {
-      description: 'Godwin Mordecai updated the task',
-      createdAt: new Date(2024, 3, 9, 8, 30, 0),
-      previousState: 'None',
-      currentState: 'Description: This is a description and you\'ll write a lot here naturally.'
-    },
-    {
-      description: 'Godwin Mordecai changed the Status',
-      createdAt: new Date(),
-      previousState: 'TO DO',
-      currentState: 'IN PROGRESS'
-    },
-    {
-      description: 'Task created by Mordecai Godwin - Admin',
-      createdAt: new Date(),
-      previousState: '',
-      currentState: ''
-    }
-  ]
+  displayLogs = true;
+  logPaging: PagingRequestModel = new PagingRequestModel();
+  taskLogs: TaskLogModel[] = [];
 
-  taskComments = [
-    {
-      id: 1,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new  Date(2024, 3, 11),
-    },
-    {
-      id: 2,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(2024, 3, 10, 8, 30, 0),
-    },
-    {
-      id: 3,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(2024, 3, 9, 8, 30, 0),
-    },
-    {
-      id: 4,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(2024, 2, 9, 8, 30, 0),
-    },
-    {
-      id: 5,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(2024, 2, 8, 8, 30, 0),
-    },
-    {
-      id: 6,
-      fullName: 'Mordecai Godwin',
-      message: 'This is a comment and you\'ll write a lot here naturally.',
-      createdAt: new Date(2024, 1, 9, 8, 30, 0),
-    },
-  ]
+  taskComments: TaskCommentModel[] = [];
+  commentPaging: PagingRequestModel = new PagingRequestModel();
+  
+  // taskComments = [
+  //   {
+  //     id: 1,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new  Date(2024, 3, 11),
+  //   },
+  //   {
+  //     id: 2,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new Date(2024, 3, 10, 8, 30, 0),
+  //   },
+  //   {
+  //     id: 3,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new Date(2024, 3, 9, 8, 30, 0),
+  //   },
+  //   {
+  //     id: 4,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new Date(2024, 2, 9, 8, 30, 0),
+  //   },
+  //   {
+  //     id: 5,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new Date(2024, 2, 8, 8, 30, 0),
+  //   },
+  //   {
+  //     id: 6,
+  //     fullName: 'Mordecai Godwin',
+  //     message: 'This is a comment and you\'ll write a lot here naturally.',
+  //     createdAt: new Date(2024, 1, 9, 8, 30, 0),
+  //   },
+  // ]
 
   commentMessage = '';
   
@@ -176,6 +107,7 @@ export class TaskDetailsComponent implements OnInit {
         if (res.success) {
           this.task = res.content ?? {} as TaskModel;
           this.loadAttachments();
+          this.loadTaskLogs();
         }
         else {
           this.notify.timedErrorMessage(res.title, res.message);
@@ -184,8 +116,33 @@ export class TaskDetailsComponent implements OnInit {
     );
   }
 
+  loadAttachments(): void {
+    this.taskService.listAttachments(this.task.id)
+      .subscribe((res: Result<DocumentModel[]>) => {
+        if (res.success) {
+          this.attachments = res.content ?? [];
+        }
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
+  }
+
+  loadTaskLogs(): void {
+    this.taskService.listLogs(this.task.id, this.logPaging)
+      .subscribe((res: Result<TaskLogModel[]>) => {
+        if (res.success) {
+          this.taskLogs = res.content ?? [];
+          console.table(this.taskLogs);
+        }
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
+  }
+
   toggleHistoryOrComments(): void {
-    this.displayHistory = !this.displayHistory;
+    this.displayLogs = !this.displayLogs;
   }
   
   addComment(): void {
@@ -201,7 +158,7 @@ export class TaskDetailsComponent implements OnInit {
       id: this.taskComments.length + 1,
       fullName: 'Mordecai Godwin',
       message: this.commentMessage,
-      createdAt: new Date()
+      createdAt: ''
     });
     this.commentMessage = '';
   }
@@ -214,18 +171,6 @@ export class TaskDetailsComponent implements OnInit {
     // TODO: implement API call
     
     this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
-  }
-
-  loadAttachments(): void {
-    this.taskService.listAttachments(this.task.id)
-      .subscribe((res: Result<DocumentModel[]>) => {
-        if (res.success) {
-          this.attachments = res.content ?? [];
-        }
-        else {
-          this.notify.timedErrorMessage(res.title, res.message);
-        }
-      });
   }
 
   downloadAttachment(attachmentUrl: string): void {
@@ -275,7 +220,7 @@ export class TaskDetailsComponent implements OnInit {
         type: fileType,
         url: '',
         thumbnailUrl: '',
-        createdAt: new Date()
+        createdAt: ''
       }
 
       // add the new document to the task attachments

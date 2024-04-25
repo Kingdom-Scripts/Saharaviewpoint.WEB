@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
-import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel } from '@svp-models';
+import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel } from '@svp-models';
 import { NotificationService } from '../../../services/src/lib/notification.service';
 import { UrlSerializer } from '@angular/router';
 
@@ -125,5 +125,11 @@ export class TaskService {
 
   deleteAttachment(taskId: number, documentId: number): Observable<Result<any>> {
     return this.http.delete<Result<any>>(`tasks/${taskId}/attachments/${documentId}`);
+  }
+
+  listLogs(taskId: number, param: PagingRequestModel): Observable<Result<TaskLogModel[]>> {
+    let query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
+    
+    return this.http.get<Result<TaskLogModel[]>>(`tasks/${taskId}/logs?${query}`);
   }
 }

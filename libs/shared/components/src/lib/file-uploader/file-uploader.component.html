@@ -25,7 +25,7 @@
       
       <div class="flex items-center justify-between">
         <p>
-          <span class="text-sm text-slate-900">{{attachment.createdAt | date:'MMM dd, yyyy' }}</span>
+          <span class="text-sm text-slate-900">{{attachment.createdAt | utcToLocalDate }}</span>
         </p>
       </div>
     </div>

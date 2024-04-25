@@ -8,9 +8,9 @@ export interface TaskModel {
   summary: string;
   description: string;
   status: string;
-  createdAt: Date;
-  expectedStartDate: Date;
-  dueDate: Date;
+  createdAt: string;
+  expectedStartDate: string;
+  dueDate: string;
   projectId: number,
   project: ProjectModel;
   createdById: number,

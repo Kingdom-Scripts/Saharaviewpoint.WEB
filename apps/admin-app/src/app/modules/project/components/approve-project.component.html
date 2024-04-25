@@ -6,13 +6,13 @@
       
         <div class="flex flex-col space-y-1">
           <p svp-text>Project created</p>
-          <h1 svp-subHeader>{{ project.startDate | date:'MMM dd, yyyy' }}</h1>
+          <h1 svp-subHeader>{{ project.startDate | utcToLocalDate }}</h1>
         </div>
         
         <div class="flex flex-col space-y-1">
           <p svp-text>Project created</p>
           <!-- Add created date to API response -->
-          <h1 svp-subHeader>{{ project.startDate | date:'MMM dd, yyyy'}}</h1>
+          <h1 svp-subHeader>{{ project.startDate | utcToLocalDate}}</h1>
         </div>
       
         <div class="flex flex-col space-y-1">

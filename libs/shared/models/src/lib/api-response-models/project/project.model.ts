@@ -6,8 +6,8 @@ export interface ProjectModel {
   title: string;
   description: string;
   status: string;
-  startDate: Date;
-  dueDate: Date;
+  startDate: string;
+  dueDate: string;
   isPriority: boolean;
   order: number;
   assignedId?: number;

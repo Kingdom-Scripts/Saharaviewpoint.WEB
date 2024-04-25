@@ -113,8 +113,8 @@
                     <svp-status-card [status]="project.status" />
                   </span>
                 </td>
-                <td><span>{{ project.startDate | date:'MMM dd, yyyy' }}</span></td>
-                <td><span>{{ project.dueDate | date:'MMM dd, yyyy' }}</span></td>
+                <td><span>{{ project.startDate | utcToLocalDate }}</span></td>
+                <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>
                 <!-- <td>
                   <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
                     <a (click)="(false)" class="btn btn-action">

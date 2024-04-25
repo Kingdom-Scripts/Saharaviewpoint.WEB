@@ -8,6 +8,7 @@ import { ProjectService, UserService } from "@svp-api-services";
 import { NotificationService } from "@svp-services";
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from "rxjs";
 import { FormsModule } from "@angular/forms";
+import { UtcToLocalDatePipe } from "@svp-pipes";
 
 @Component({
   selector: 'svp-approve-project',
@@ -18,7 +19,7 @@ import { FormsModule } from "@angular/forms";
     SvpUtilityModule,
     SvpTypographyModule,
     AngularSvgIconModule, SvpFormInputModule,
-    NgSelectModule, FormsModule
+    NgSelectModule, FormsModule, UtcToLocalDatePipe
   ],
   templateUrl: './approve-project.component.html'
 })

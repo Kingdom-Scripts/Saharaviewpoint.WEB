@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SideViewService {
@@ -7,6 +8,7 @@ export class SideViewService {
   private _inputs?: any;
   private _outputs?: any;
 
+  triggerOutputs$: Subject<{ [key: string]: any}> = new Subject();
   showComponent(component: any, inputs?: any, outputs?: any) {
     this._component = component;
     this._inputs = inputs;
