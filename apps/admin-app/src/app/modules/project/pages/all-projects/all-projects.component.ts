@@ -8,6 +8,7 @@ import { ProjectModel, ProjectStatusEnum, Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { ProjectService } from '@svp-api-services';
 import { ApproveProjectComponent } from '../../components/approve-project.component';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({ 
   selector: 'app-all-projects',
@@ -19,7 +20,8 @@ import { ApproveProjectComponent } from '../../components/approve-project.compon
     SvpTypographyModule,
     SvpUtilityModule, CommonModule, NxDropdownModule,
     FormsModule,
-    SideViewComponent
+    SideViewComponent,
+    UtcToLocalDatePipe
   ],
 })
 export class AllProjectsComponent implements OnInit {
@@ -27,50 +29,7 @@ export class AllProjectsComponent implements OnInit {
   showSideView = false;
   sideViewService = inject(SideViewService);
 
-    // TODO: initialize allProjects as an empty array
   allProjects: ProjectModel[] | null = [];
-  // [
-  //   {
-  //     id: 7,
-  //     title: 'First Project',
-  //     description: 'Just another sample description',
-  //     status: 'In Progress',
-  //     dueDate: new Date(),
-  //     startDate: new Date(),
-  //     isPriority: true,
-  //     order: 1,
-  //   },
-  //   {
-  //     id: 8,
-  //     title: 'Second Project',
-  //     description: 'Just another sample description',
-  //     status: 'Completed',
-  //     startDate: new Date(),
-  //     dueDate: new Date(),
-  //     isPriority: false,
-  //     order: 2,
-  //   },
-  //   {
-  //     id: 9,
-  //     title: 'Second Project',
-  //     description: 'Just another sample description',
-  //     status: 'Completed',
-  //     startDate: new Date(),
-  //     dueDate: new Date(),
-  //     isPriority: false,
-  //     order: 2,
-  //   },
-  //   {
-  //     id: 10,
-  //     title: 'Second Project',
-  //     description: 'Just another sample description',
-  //     status: 'In Progress',
-  //     startDate: new Date(),
-  //     dueDate: new Date(),
-  //     isPriority: false,
-  //     order: 2,
-  //   }
-  // ];
   
   constructor(
     public projectService: ProjectService,
@@ -84,8 +43,8 @@ export class AllProjectsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProjects(); // TODO: uncomment this line
-    this.sideViewService.showComponent(ApproveProjectComponent, {id: 1}); // TODO: remove this line
+    this.loadProjects();
+    // this.sideViewService.showComponent(ApproveProjectComponent, {id: 12}); // TODO: remove this line
   }
 
   loadProjects(): void {

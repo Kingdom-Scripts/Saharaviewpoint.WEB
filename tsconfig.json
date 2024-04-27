@@ -10,6 +10,8 @@
       "@svp-services": ["libs/shared/services/src/index.ts"],
       "@svp-layout": ["libs/shared/layout/src/index.ts"],
       "@svp-auth-components": ["libs/shared/components/src/lib/auth/auth-index.ts"],
+      "@svp-pipes": ["libs/shared/pipes/src/index.ts"],
+      "@svp-environments": ["libs/shared/environments/index.ts"]
     },
     "baseUrl": ".",
   },

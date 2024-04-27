@@ -83,6 +83,8 @@ export class AuthService {
   }
 
   maskUserAsAuthenticated(authData: AuthDataModel, rememberMe: boolean) {
+    this.maskUserAsLoggedOut();
+    
     this.storageService.storeToken(authData.token, rememberMe);
     this.storageService.storeUser(authData.user, rememberMe);
     this.storageService.storeRefreshToken(authData.refreshToken, rememberMe);

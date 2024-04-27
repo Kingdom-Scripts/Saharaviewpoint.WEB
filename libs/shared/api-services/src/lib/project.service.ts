@@ -50,9 +50,7 @@ export class ProjectService {
     this.triggerFilterChange();
   }
 
-  triggerFilterChange(): void {
-    console.log('--> triggerFilterChange', this.searchParam);
-    
+  triggerFilterChange(): void {    
     this._searchParams$.next(this.searchParam);
   }
   
@@ -72,6 +70,10 @@ export class ProjectService {
 
   createProject(param: FormData): Observable<Result<ProjectModel>> {
     return this.http.post<Result<ProjectModel>>(`projects`, param);
+  }
+
+  approveProject(id: number, assigneeUid: string) {
+    return this.http.post<Result<ProjectModel>>(`projects/${id}/approve/${assigneeUid}`, null);
   }
 
   getProject(id: number): Observable<Result<ProjectModel>> {

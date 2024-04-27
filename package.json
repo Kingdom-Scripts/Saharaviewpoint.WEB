@@ -18,7 +18,7 @@
     "watch": "nx build --watch --configuration development",
     "test": "nx test"
   },
-  "private": true, 
+  "private": true,
   "dependencies": {
     "@angular/animations": "^17.1.2",
     "@angular/common": "^17.0.0",
@@ -40,6 +40,7 @@
     "apexcharts": "^3.35.3",
     "boxicons": "^2.1.4",
     "izitoast": "^1.4.0",
+    "luxon": "^3.4.4",
     "ng-apexcharts": "^1.7.1",
     "ng-dynamic-component": "^10.7.0",
     "rxjs": "~7.8.0",
@@ -68,6 +69,7 @@
     "@swc/core": "~1.3.85",
     "@swc/helpers": "~0.5.2",
     "@types/jasmine": "~5.1.0",
+    "@types/luxon": "^3.4.2",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "~8.48.0",

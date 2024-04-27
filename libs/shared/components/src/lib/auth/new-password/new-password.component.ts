@@ -31,29 +31,27 @@ export class NewPasswordComponent implements OnInit {
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   notify = inject(NotificationService);
-
+ 
   isInvitation = false;
-  param = {
+  invitationParam = {
     email: '',
     type: '',
-    token: '',
-    password: '',
-    confirmPassword: ''
+    token: ''
   };
 
   formGroup!: FormGroup;
   passwordStrength: number = 0;
   
   constructor() {
-    this.param.email = this.route.snapshot.params['email'];
-    this.param.type = this.route.snapshot.params['type'];
-    this.param.token = this.route.snapshot.params['token'];
+    this.invitationParam.email = this.route.snapshot.params['email'];
+    this.invitationParam.token = this.route.snapshot.params['token'];
     
-    if (this.param.email && this.param.type && this.param.token) {
-      this.isInvitation = true;
+    this.isInvitation = this.router.url.includes('accept-invitation');
+    if (this.isInvitation) {      
+      this.invitationParam.type = this.route.snapshot.params['type'];
     }
 
-    console.log(this.param);
+    console.log('--> Invitation Params', this.isInvitation)
   }
 
   ngOnInit(): void {
@@ -62,9 +60,6 @@ export class NewPasswordComponent implements OnInit {
 
   initForm(): void {
     this.formGroup = this.fb.group({
-      email: [this.param.email],
-      type: [this.param.type],
-      token: [this.param.token],
       password: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])],
       confirmPassword: ['', Validators.compose([Validators.required])]
     }, {
@@ -95,10 +90,10 @@ export class NewPasswordComponent implements OnInit {
   }
 
   setPassword(): void { 
-    this.param = this.formGroup.value;
-    console.log('--> Params: ', this.param);
+    const params = Object.assign({}, this.invitationParam, this.formGroup.value);
+    console.log('--> Params: ', params);
     this.notify.showLoader();
-    this.userService.acceptInvitation(this.param)
+    this.userService.acceptInvitation(params)
       .subscribe(async (res: Result<AuthDataModel>) => {
         this.notify.hideLoader();
         

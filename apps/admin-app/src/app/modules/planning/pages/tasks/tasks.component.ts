@@ -1,21 +1,21 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService } from '@svp-components';
+import {SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService, SvpTaskStatusCardComponent} from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
-import { TaskModel, TaskStatusEnum, Result, ProjectModel } from '@svp-models';
+import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, TaskSearchModel } from '@svp-models';
 import { NotificationService } from '@svp-services';
-import { TaskService } from '@svp-api-services';
+import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
 import { Router, RouterLink } from '@angular/router';
 import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { projectMockData } from 'apps/admin-app/src/app/shared/mock-data/projects.mock';
-import { tasksMock as tasksMockData } from 'apps/admin-app/src/app/shared/mock-data/tasks.mock';
-import { SvpStatusCardComponent } from 'libs/shared/components/src/lib/utilities/status-card.component';
+import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
+import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
-@Component({ 
+@Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   standalone: true,
@@ -28,72 +28,120 @@ import { SvpStatusCardComponent } from 'libs/shared/components/src/lib/utilities
     SideViewComponent,
     RouterLink,
     NgSelectModule,
-    SvpStatusCardComponent
+    SvpTaskStatusCardComponent,
+    UtcToLocalDatePipe
   ],
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnDestroy {
   taskService = inject(TaskService);
-  storageService = inject(SessionStorageUtility);
+  sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
   sideViewService = inject(SideViewService);
+  projectService = inject(ProjectService);
   router = inject(Router);
-  
-  taskStatusEnum = new TaskStatusEnum();
-  projectUid: string |  null;
+
   showSideView = false;
 
-    // TODO: initialize allTasks as an empty array
-  allTasks: TaskModel[] = tasksMockData;
+  allTasks: TaskModel[] = [];
 
   taskTypes: string[] = ['Epic', 'Task', 'Subtask'];
   selectedTaskType = 'Epic';
 
-  statuses: string[] = this.taskStatusEnum.asArray;
+  taskStatusEnum = new TaskStatusEnum();
+  statuses: string[] = ['Epic', 'Task']
   selectedStatus = '';
 
-  projects: ProjectModel[] = projectMockData;
-  selectedProjects: number[] = [1];
-  
+  projects$ = new Observable<ProjectModel[]>();
+  projectInput$ = new Subject<string>();
+  projectLoading = false;
+  selectedProjectId = 0;
+
   constructor() {
     // set up task search
     this.taskService.allTasks.subscribe((tasks: TaskModel[]) => {
       this.allTasks = tasks;
     });
 
-    // get the projectUid from session storage
-    this.projectUid = this.storageService.get('projectUid');
-    if (!this.projectUid) {
-      this.handleError();
-    }
-  }
-
-  projectIndex(title: string): number {
-    return this.projects.findIndex((project: ProjectModel) => project.title === title);
-  }
-  
-  async handleError(): Promise<void> {
-    const finish = await this.notify.errorMessage('Error', 'Project not found');
-    if (finish) {
-      this.router.navigate(['/project/all']);
+    // get the globalProjectId from session storage
+    const project = this.sessionStorage.getProject();
+    if (!project) {
+      this.notify.timedInfoMessage('Select a project', 'Please select a project to view tasks');
+    } else {
+      this.selectedProjectId = project.id;
+      this.projects$ = of([project]);
     }
   }
 
   ngOnInit(): void {
-    // this.loadTasks(); // TODO: uncomment this line
-    this.addNewTask(); // TODO: remove this line
-    console.log('--> Projects: ', this.projects);
-    const i = 4;
+    this.loadTasks();
+    this.loadProjects();
+
+    // this.addNewTask(); // TODO: remove this line
+    // this.viewTaskDetails(5); // TODO: remove this line
+  }
+
+  private loadProjects(): void {
+    this.projectService.listProjects().pipe(
+      switchMap((res: Result<ProjectModel[]>) => {
+        if (!res.success) {
+          this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
+        }
+        console.log('--> Projects: ', res.content ?? [])
+        return of (res.content ?? []);
+      })
+    ).subscribe((defaultItems: ProjectModel[]) => {
+      this.projects$ = concat(
+        of(defaultItems.map((item) => item)),
+        this.projectInput$.pipe(
+          distinctUntilChanged(),
+          tap(() => this.projectLoading = true),
+          switchMap((term) => this.projectService.listProjects({searchQuery: term} as ProjectSearchModel)
+          .pipe(
+            catchError(() => of([])), // empty list on error
+            tap(() => this.projectLoading = false)
+          )),
+          map((data: any) => data.content.map((item: any) => item))
+        )
+      )
+    })  
+  }
+
+  setProjectId($event: any) {
+    this.sessionStorage.setProject($event);
+    this.loadTasks();
+  }
+
+  loadTasks(): void {
+    this.notify.showLoader();
+    this.taskService.listTasks({projectId: this.selectedProjectId} as TaskSearchModel)
+      .subscribe((res: Result<TaskModel[]>) => {
+        this.notify.hideLoader();
+        if (res.success) {
+          this.allTasks = res.content ?? [];
+        } else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      }
+    );
   }
 
   addNewTask(): void {
-    const inputs = {projectUid: this.projectUid};
-    this.sideViewService.showComponent(AddTaskComponent, inputs);
+    this.sideViewService.showComponent(AddTaskComponent);
+        
+    this.sideViewService.triggerOutputs$.subscribe((outputs: { [key: string]: any}) => {
+      if (outputs['addedTask']) {
+        this.allTasks.unshift(outputs['addedTask']);
+      }
+    });
   }
 
-  // viewTaskDetails(id: number): void {
-  //   const inputs = {id: id};
-  //   this.sideViewService.showComponent(ApproveTaskComponent, inputs);
-  // }
+  viewTaskDetails(taskId: number): void {
+    const inputs = {taskId: taskId};
+    this.sideViewService.showComponent(TaskDetailsComponent, inputs);
+  }
 
-
+  ngOnDestroy(): void {
+    this.sideViewService.triggerOutputs$.unsubscribe();
+    this.sideViewService.closeSideView();
+  }
 }

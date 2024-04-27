@@ -1,7 +1,7 @@
 export class TaskStatusEnum {
-  REQUESTED = 'TODO';
+  TODO = 'TO DO';
   IN_PROGRESS = 'IN PROGRESS';
   COMPLETED = 'COMPLETED';
 
-  asArray = ['TODO', 'IN PROGRESS', 'DONE'];
+  asArray = ['TO DO', 'IN PROGRESS', 'DONE'];
 }

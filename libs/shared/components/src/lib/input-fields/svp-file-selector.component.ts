@@ -13,7 +13,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
             [ngClass]="{
               'rounded-es-none rounded-ee-none': selectedFiles.length > 0,
               'flex flex-col items-center justify-center hover:bg-gray-100 dark:hover:bg-night-600' : selectedFiles.length == 0,
-            }" 
+            }"
             [style.height.rem]="selectedFiles.length == 0 ? height : null">
             <div class="flex "
               [ngClass]="{
@@ -24,7 +24,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
                 <p class="mb-2 text-sm text-gray-500 dark:text-night-200">
-                  TODO: fix this selector to be able to drag and drop files
+                  <!-- TODO: fix this selector to be able to drag and drop files -->
                   <!-- <span class="font-semibold">Click to upload</span> or drag and drop <br /> -->
                   <span class="font-semibold">Click to upload files</span> <br />
                   <span class="text-xs" [ngClass]="{'mt-1': selectedFiles.length > 0}">SVG, PNG, JPG or GIF (MAX. 800x400px)</span>

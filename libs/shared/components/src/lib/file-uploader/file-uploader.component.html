@@ -1,0 +1,33 @@
+<div class="flex space-x-1.5">
+  <div *ngFor="let attachment of attachments" class="group relative w-full max-w-44 overflow-hidden rounded-lg items-center bg-white shadow-md cursor-pointer">
+
+    <div class="absolute w-full h-24 bg-gray-200/50 hidden group-hover:block"></div>
+    
+    <!-- Delete and Download button --->
+    <div class="absolute top-0 right-0 text-center mr-1 mt-1 text-sm space-x-1 hidden group-hover:flex">
+      <button class="flex items-center rounded-md bg-slate-900 p-1 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-4 w-4'" />
+      </button>
+
+      <button class="flex items-center rounded-md bg-slate-900 p-1 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-4 w-4'" />
+      </button>            
+    </div>
+    
+    <!-- Attachment thumbnail -->
+    <img class="h-24 rounded-t-lg object-cover mx-auto" src="{{assetBaseUrl}}{{attachment.thumbnailUrl}}" alt="{{attachment.name}}" />
+
+    <!-- Attachment metadata -->
+    <div class="p-1 bg-gray-100">
+      <a href="#">
+        <p class="tracking-tight text-sm text-slate-900">Screenshot 2024... 851.png</p>
+      </a>
+      
+      <div class="flex items-center justify-between">
+        <p>
+          <span class="text-sm text-slate-900">{{attachment.createdAt | utcToLocalDate }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,20 +1,20 @@
 <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
   <div class="flex flex-row justify-between">
     <div>
-      <div class="flex space-x-2">
+      <!-- <div class="flex space-x-2">
         <a routerLink="/project" class="text-gray-500 dark:text-night-200">Projects</a>
         <p>/</p>
-        <a routerLink="/project/{{projectUid}}" class="text-gray-500 dark:text-night-200">
+        <a routerLink="/project/{{globalProjectId}}" class="text-gray-500 dark:text-night-200">
           My very fist Project
         </a>
-      </div>
+      </div> -->
 
       <div>
         <h1 svp-subHeader>Tasks</h1>
       </div>
     </div>
 
-    <div class="flex space-x-3 my-4">      
+    <div class="flex space-x-3 my-4">
       <div svp-card-selector>
         <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'"/>
         <span>LIST VIEW</span>
@@ -23,22 +23,23 @@
       <div svp-card-selector>
         <svg-icon src="assets/icons/appicons/grid-view-outline.svg" [svgClass]="'h-4 h-4'"/>
         <span>DETAIL VIEW</span>
-      </div>    
+      </div>
     </div>
   </div>
-  
-  
+
+
   <div class="flex space-x-3">
     <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
-      
-    <ng-select [items]="projects"
-          [addTag]="true"
-          [multiple]="true"
+
+    <ng-select [items]="projects$ | async"
+          [addTag]="false"
+          [multiple]="false"
           bindValue="id"
           bindLabel="title"
-          [closeOnSelect]="false"
+          [closeOnSelect]="true"
           placeholder="Project"
-          [(ngModel)]="selectedProjects"
+          [(ngModel)]="selectedProjectId"
+          (change)="setProjectId($event)"
           class="w-80">
 
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
@@ -58,10 +59,10 @@
       <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
         <div class="flex space-x-1.5">
           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
-          
+
           <div>
             <strong>{{item.title}}</strong> <br />
-            <small>Owner: {{item.createdBy.fullName}}</small>
+            <small>Owner: {{item.createdBy.firstName}} {{item.createdBy.lastName}}</small>
           </div>
         </div>
       </ng-template>
@@ -109,7 +110,7 @@
       <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
         <div class="flex space-x-1.5">
           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
-          
+
           <div>
             <strong>{{item}}</strong> <br />
           </div>
@@ -118,7 +119,7 @@
     </ng-select>
   </div>
 
-  <div class="mt-6 min-h-80 py-8 px-14 rounded-xl bg-white dark:bg-night-700">
+  <div class="mt-6 min-h-80 py-8 px10 rounded-xl bgwhite dark:bg-night-700">
     <div class="text-end mb-8">
       <button svp-neutral type="button" (click)="addNewTask()">Create task</button>
     </div>
@@ -128,31 +129,29 @@
         <table class="fixed-header header-1 bordered">
           <thead>
             <tr>
-              <th width="5%"><span>#</span></th>
-              <th><span>Type</span></th>
-              <th width="30%"><span>Summary</span></th>
-              <th><span>Reporter</span></th>
+              <th width="8%"><span>Type</span></th>
+              <th style="max-width: 30%;"><span>Summary</span></th>
               <th><span>Status</span></th>
               <th><span>Created</span></th>
-              <th><span>Updated</span></th>
+              <!-- <th><span>Updated</span></th> -->
               <th><span>Due Date</span></th>
-              <th><span>Actions</span></th>
+              <th><span></span></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let task of allTasks; let index = index">
-              <td><span>{{ index + 1 }}</span></td>
-              <td class="cursor-pointer clickable" ><span>{{ task.type }}</span></td>
-              <td><span>{{ task.summary }}</span></td>
-              <td><span>{{ task.reporter.fullName }}</span></td>
+              <td><span>{{ task.type }}</span></td>
+              <td class="cursor-pointer clickable" (click)="viewTaskDetails(task.id)">
+                <span>{{ task.summary }}</span>
+              </td>
               <td>
                 <span>
-                  <svp-status-card [status]="task.status" />
+                  <svp-task-status-card [status]="task.status" />
                 </span>
               </td>
-              <td><span>{{ task.createdAt | date:'MMM dd, yyyy' }}</span></td>
-              <td><span>{{ task.updatedAt | date:'MMM dd, yyyy' }}</span></td>
-              <td><span>{{ task.dueDate | date:'MMM dd, yyyy' }}</span></td>
+              <td><span>{{ task.createdAt | utcToLocalDate }}</span></td>
+              <!-- <td><span>{{ task.updatedAt === null ? 'None' : task.updatedAt! | utcToLocalDate }}</span></td> -->
+              <td><span>{{ task.dueDate | utcToLocalDate }}</span></td>
               <td>
                 <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
                   <a (click)="(false)" class="btn btn-action">
@@ -160,14 +159,9 @@
                   </a>
                   <div class="nx-dropdown-content">
                     <ul>
-                      <li>
+                      <li (click)="viewTaskDetails(task.id)">
                         <a class="dropdown-item custom">
-                          View Task
-                        </a>
-                      </li>
-                      <li>
-                        <a [classList]="'dropdown-item custom'">
-                          Comment
+                          View Details
                         </a>
                       </li>
                       <li>
