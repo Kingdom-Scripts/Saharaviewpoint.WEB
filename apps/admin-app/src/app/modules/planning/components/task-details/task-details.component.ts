@@ -108,6 +108,7 @@ export class TaskDetailsComponent implements OnInit {
           this.task = res.content ?? {} as TaskModel;
           this.loadAttachments();
           this.loadTaskLogs();
+          this.loadComments();
         }
         else {
           this.notify.timedErrorMessage(res.title, res.message);
@@ -133,7 +134,19 @@ export class TaskDetailsComponent implements OnInit {
       .subscribe((res: Result<TaskLogModel[]>) => {
         if (res.success) {
           this.taskLogs = res.content ?? [];
-          console.table(this.taskLogs);
+        }
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
+  }
+
+  loadComments(): void {
+    this.taskService.listComments(this.task.id, this.commentPaging)
+      .subscribe((res: Result<TaskCommentModel[]>) => {
+        if (res.success) {
+          this.taskComments = res.content ?? [];
+          console.table(this.taskComments)
         }
         else {
           this.notify.timedErrorMessage(res.title, res.message);
@@ -151,16 +164,22 @@ export class TaskDetailsComponent implements OnInit {
       return;
     }
 
-    // TODO: implement API call
+    const param = {
+      message: this.commentMessage
+    }
 
-    // add new comment to the first of taskComments
-    this.taskComments.unshift({
-      id: this.taskComments.length + 1,
-      fullName: 'Mordecai Godwin',
-      message: this.commentMessage,
-      createdAt: ''
-    });
-    this.commentMessage = '';
+    this.taskService.addComment(this.task.id, param)
+      .subscribe((res: Result<TaskCommentModel>) => {
+        if (res.success) {
+          // add new comment to the first of taskComments
+          this.commentMessage = '';
+          this.taskComments.unshift(res.content ?? {} as TaskCommentModel);
+        }
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      }
+    );    
   }
 
   async deleteComment(commentId: number): Promise<void> {
@@ -169,8 +188,16 @@ export class TaskDetailsComponent implements OnInit {
     if (!confirmed) return;
 
     // TODO: implement API call
-    
-    this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
+    this.taskService.removeComment(this.task.id, commentId)
+      .subscribe((res: Result<any>) => {
+        if (res.success) {
+          this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
+        }
+        else {
+          this.notify.timedErrorMessage('Unable to delete comment', res.message);
+        }
+      }
+    );    
   }
 
   downloadAttachment(attachmentUrl: string): void {

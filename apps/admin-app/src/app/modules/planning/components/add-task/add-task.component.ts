@@ -64,8 +64,8 @@ export class AddTaskComponent implements OnInit {
     // TODO: remove the default values
     this.formGroup = this.fb.group({
       projectId: [this.globalProjectId, Validators.compose([Validators.required])],
-      type: ['Task', Validators.compose([Validators.required])],
-      summary: ['Just another task', Validators.compose([Validators.required, Validators.maxLength(255)])],
+      type: ['', Validators.compose([Validators.required])],
+      summary: ['', Validators.compose([Validators.required, Validators.maxLength(255)])],
       description: ['', Validators.compose([Validators.maxLength(5000)])],
       expectedStartDate: ['', Validators.compose([Validators.required])],
       dueDate: ['', Validators.compose([Validators.required])],
@@ -80,8 +80,6 @@ export class AddTaskComponent implements OnInit {
     }
 
     const formParam = this.getFormValue();
-
-    const temp = this.formGroup.value as TaskModel;
     
     this.notify.showLoader();
     this.taskService.createTask(formParam).subscribe({

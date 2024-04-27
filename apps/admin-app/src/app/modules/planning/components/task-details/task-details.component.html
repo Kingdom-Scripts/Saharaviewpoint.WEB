@@ -129,7 +129,7 @@
           <div *ngFor="let item of taskComments; let i = index" class="border-gray-300 py-1"
             [ngClass]="{'border-b-2': i !== taskComments.length - 1}">
             <div class="flex space-x-2">
-              <p svp-text medium>{{item.fullName}}</p>
+              <small svp-text medium>{{item.fullName}}</small>
               <p svp-text color="text-gray-500">{{item.createdAt | utcToTimeline}}</p>
             </div>
 

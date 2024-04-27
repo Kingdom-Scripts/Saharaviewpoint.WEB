@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
-import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel } from '@svp-models';
+import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel, TaskCommentModel } from '@svp-models';
 import { NotificationService } from '../../../services/src/lib/notification.service';
 import { UrlSerializer } from '@angular/router';
 
@@ -131,5 +131,20 @@ export class TaskService {
     let query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
     
     return this.http.get<Result<TaskLogModel[]>>(`tasks/${taskId}/logs?${query}`);
+  }
+
+  addComment(taskId: number, param: any): Observable<TaskCommentModel> {
+    return this.http.post<TaskCommentModel>(`tasks/${taskId}/comments`, param);
+  }
+
+  removeComment(taskId: number, commentId: number): Observable<Result<any>> {
+    return this.http.delete<Result<any>>(`tasks/${taskId}/comments/${commentId}`);
+  }
+
+  listComments(taskId: number, param: PagingRequestModel): Observable<Result<TaskCommentModel[]>> {
+    let query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
+    if (param.searchQuery && param.searchQuery != '') query += `&searchQuery=${param.searchQuery}`;
+    
+    return this.http.get<Result<TaskCommentModel[]>>(`tasks/${taskId}/comments?${query}`);
   }
 }
