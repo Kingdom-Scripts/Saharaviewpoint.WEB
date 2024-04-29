@@ -77,7 +77,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.loadProjects();
 
     // this.addNewTask(); // TODO: remove this line
-    // this.viewTaskDetails(5); // TODO: remove this line
+    this.viewTaskDetails(5); // TODO: remove this line
   }
 
   private loadProjects(): void {
