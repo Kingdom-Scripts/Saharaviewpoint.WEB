@@ -52,51 +52,13 @@ export class TaskDetailsComponent implements OnInit {
 
   taskComments: TaskCommentModel[] = [];
   commentPaging: PagingRequestModel = new PagingRequestModel();
-  
-  // taskComments = [
-  //   {
-  //     id: 1,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new  Date(2024, 3, 11),
-  //   },
-  //   {
-  //     id: 2,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new Date(2024, 3, 10, 8, 30, 0),
-  //   },
-  //   {
-  //     id: 3,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new Date(2024, 3, 9, 8, 30, 0),
-  //   },
-  //   {
-  //     id: 4,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new Date(2024, 2, 9, 8, 30, 0),
-  //   },
-  //   {
-  //     id: 5,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new Date(2024, 2, 8, 8, 30, 0),
-  //   },
-  //   {
-  //     id: 6,
-  //     fullName: 'Mordecai Godwin',
-  //     message: 'This is a comment and you\'ll write a lot here naturally.',
-  //     createdAt: new Date(2024, 1, 9, 8, 30, 0),
-  //   },
-  // ]
 
   commentMessage = '';
   
   ngOnInit(): void {
     console.clear();
-    this.getTask(); // TODO: uncomment this line
+    this.getTask();
+    this.toggleHistoryOrComments(); // TODO: remove this line
   }
 
   getTask(): void {
@@ -191,6 +153,7 @@ export class TaskDetailsComponent implements OnInit {
     this.taskService.removeComment(this.task.id, commentId)
       .subscribe((res: Result<any>) => {
         if (res.success) {
+          this.notify.timedSuccessMessage('Comment Deleted', 'Comment has been deleted successfully');
           this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
         }
         else {

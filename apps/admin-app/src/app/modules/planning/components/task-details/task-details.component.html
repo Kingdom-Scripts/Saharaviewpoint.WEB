@@ -106,7 +106,7 @@
             class="border-gray-300 py-1" [ngClass]="{'border-b-2': i !== taskComments.length - 1}">
             <div class="flex space-x-2">
               <p svp-text>{{item.description}}</p>
-              <p svp-text color="text-gray-500">{{item.createdAt | utcToTimeline}}</p>
+              <small color="text-gray-500">{{item.createdAt | utcToTimeline}}</small>
             </div>
 
             <div class="flex space-x-2" *ngIf="item.previousState || item.currentState">
@@ -130,13 +130,14 @@
             [ngClass]="{'border-b-2': i !== taskComments.length - 1}">
             <div class="flex space-x-2">
               <small svp-text medium>{{item.fullName}}</small>
-              <p svp-text color="text-gray-500">{{item.createdAt | utcToTimeline}}</p>
+              <small>-</small>
+              <small color="text-gray-500">{{item.createdAt | utcToTimeline}}</small>
             </div>
 
             <p svp-text>{{item.message}}</p>
 
             <div>
-              <a class="text-red-600 text-sm font-medium cursor-pointer" (click)="deleteComment(item.id)">Delete Comment</a>
+              <a class="text-red-600 text-sm font-medium cursor-pointer hover:text-red-800" (click)="deleteComment(item.id)"><small>Delete Comment</small></a>
             </div>
           </div>
         </ng-container>
