@@ -1,21 +1,43 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
-  "compilerOptions": {    
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "paths": {
-      "@svp-components": ["libs/shared/components/src/index.ts"],
-      "@svp-directives": ["libs/shared/directives/src/index.ts"],
-      "@svp-models": ["libs/shared/models/src/index.ts"],
-      "@svp-utilities": ["libs/shared/utilities/src/index.ts"],
-      "@svp-api-services": ["libs/shared/api-services/src/index.ts"],
-      "@svp-services": ["libs/shared/services/src/index.ts"],
-      "@svp-layout": ["libs/shared/layout/src/index.ts"],
-      "@svp-auth-components": ["libs/shared/components/src/lib/auth/auth-index.ts"],
-      "@svp-pipes": ["libs/shared/pipes/src/index.ts"],
-      "@svp-environments": ["libs/shared/environments/index.ts"]
+      "@svp-components": ["src/app/shared/components/index.ts"],
+      "@svp-directives": ["src/app/shared/directives/index.ts"],
+      "@svp-models": ["src/app/shared/models/index.ts"],
+      "@svp-utilities": ["src/app/shared/utilities/index.ts"],
+      "@svp-api-services": ["src/app/shared/api-services/index.ts"],
+      "@svp-services": ["src/app/shared/services/index.ts"],
+      "@svp-layout": ["src/app/shared/layout/index.ts"],
+      "@svp-pipes": ["src/app/shared/pipes/index.ts"]
     },
     "baseUrl": ".",
   },
   "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
     "strictTemplates": true
-  },
+  }
 }

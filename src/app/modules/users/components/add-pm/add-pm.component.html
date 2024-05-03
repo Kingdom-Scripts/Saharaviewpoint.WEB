@@ -1,0 +1,39 @@
+<div class="w-full h-full bg-gray-100 dark:bg-night-700">
+  <div class="px-4 py-6 bg-white flex dark:bg-night-900 dark:text-night-100">
+    <h1 svp-sub-header>Add New Project Manager</h1>
+
+    <div class="self-start grow flex justify-end mr-4 cursor-pointer text-gray-800 dark:text-night-200 hover:text-gray-500 dark:hover:text-night-400">
+      <svg-icon src="assets/icons/appicons/cancel.svg" [svgClass]="'h-4 w-4'" (click)="close()"/>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-6 px-10 mt-12" [formGroup]="newPmForm">
+    <div class="space-y-2">
+      <label svp-label for="firstName">First Name</label>
+      <input type="text" class="svp-input" formControlName="firstName" />
+      <svp-validation-errors [svpControl]="newPmForm.get('firstName')" />
+    </div>
+  
+    <div class="space-y-2">
+      <label svp-label for="lastName">Last Name</label>
+      <input type="text" class="svp-input" formControlName="lastName" />
+      <svp-validation-errors [svpControl]="newPmForm.get('lastName')" />
+    </div>
+  
+    <div class="space-y-2">
+      <label svp-label for="email">Email Address</label>
+      <input type="text" class="svp-input" formControlName="email" />
+      <svp-validation-errors [svpControl]="newPmForm.get('email')" />
+    </div>
+
+    <div class="space-y-2">
+      <label svp-label for="phone">Phone Number</label>
+      <input type="text" class="svp-input" formControlName="phone" />
+      <svp-validation-errors [svpControl]="newPmForm.get('phone')" />
+    </div>
+
+    <div>
+      <button svp-primary (click)="addNewPM()" isFullWidth>Invite Project Manager</button>
+    </div>
+  </div>
+</div>
