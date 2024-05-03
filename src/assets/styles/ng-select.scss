@@ -1,0 +1,25 @@
+.ng-select .ng-select-container {
+  @apply dark:bg-night-500 dark:border-night-400;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  @apply border-primary-500;
+}
+
+
+.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+  @apply dark:bg-night-400 dark:text-night-100;
+}
+
+.ng-dropdown-panel.ng-select-bottom {
+  @apply dark:bg-night-400
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  @apply dark:bg-night-700 dark:text-night-200
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  @apply dark:bg-night-500
+}

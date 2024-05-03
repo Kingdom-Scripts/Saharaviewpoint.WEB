@@ -1,0 +1,4 @@
+<div [ngClass]="{ dark: themeService.isDark }">
+  <router-outlet></router-outlet>
+  <app-responsive-helper [env]="environment"></app-responsive-helper>
+</div>

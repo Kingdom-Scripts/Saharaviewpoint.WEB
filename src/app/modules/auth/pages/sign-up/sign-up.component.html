@@ -1,0 +1,80 @@
+<form class="my-10 space-y-6" [formGroup]="registerForm">
+  <div class="text-center">
+    <h2 class="mb-1 text-3xl font-semibold text-gray-700 dark:text-white">
+      Sign Up<span class="text-primary-500">!</span>
+    </h2>
+  </div>
+
+  
+  <div class="space-y-3 text-left">
+
+    <div>
+      <auth-input svpType="text" svpId="firstName" [svpForm]="registerForm" svpLabel="First Name" />
+      <svp-validation-errors [svpControl]="registerForm.get('firstName')" />
+    </div>
+
+    <auth-input svpType="text" svpId="lastName" [svpForm]="registerForm" svpLabel="Last Name" />
+
+    <div>
+      <auth-input svpType="email" svpId="email" [svpForm]="registerForm" svpLabel="Email Address" svpAutoComplete="off" />
+      <svp-validation-errors [svpControl]="registerForm.get('email')" />
+    </div>
+
+    <auth-input svpType="password" [svpForm]="registerForm" svpId="password" svpLabel="Password" (keyUp)="calculatePasswordStrength($event)" />
+    <!-- Password Meeter -->
+    <div class="grid grid-cols-4 gap-2">
+      <div class="h-1 rounded-sm"
+        [ngClass]="{
+          'bg-gray-200 dark:bg-night-500': passwordStrength == 0,
+          'bg-red-700 dark:bg-red-400': passwordStrength > 0 && passwordStrength <= 25,
+          'bg-yellow-500 dark:bg-yellow-400': passwordStrength > 25 && passwordStrength <= 50,
+          'bg-green-500': passwordStrength > 50,
+          }"></div>
+
+      <div class="h-1 rounded-sm"
+        [ngClass]="{
+          'bg-gray-200 dark:bg-night-500': passwordStrength == 0,
+          'bg-yellow-500 dark:bg-yellow-400': passwordStrength > 25 && passwordStrength <= 50,
+          'bg-green-500': passwordStrength > 50,
+          }"></div>
+
+      <div class="h-1 rounded-sm"
+        [ngClass]="{
+          'bg-gray-200 dark:bg-night-500': passwordStrength == 0,
+          'bg-green-500': passwordStrength > 50,
+          }"></div>
+
+      <div class="h-1 rounded-sm"
+        [ngClass]="{
+          'bg-gray-200 dark:bg-night-500': passwordStrength == 0,
+          'bg-green-500': passwordStrength > 75,
+          }"></div>
+    </div>
+    <span class="text-xs text-gray-400 dark:text-night-300"
+      >Use 8 or more characters with a mix of letters, numbers & any of (!?*.#$).</span
+    >
+
+    <div>
+      <auth-input svpType="password" [svpForm]="registerForm" svpId="confirmPassword" svpLabel="Confirm Password" />
+      <svp-validation-errors [svpControl]="registerForm.get('confirmPassword')" />
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between space-x-3">
+    <div class="flex items-center mb-2">
+      <input id="accept-term" formControlName="acceptTerms" type="checkbox" />
+      <label for="accept-term" class="ml-2 block text-sm text-gray-400 dark:text-night-200">
+        I Accept the <a svp-anchor svpRoute="">Terms </a>
+      </label>
+    </div>
+  </div>
+  <svp-validation-errors [svpControl]="registerForm.get('acceptTerms')" />
+
+  <!-- Submit Button -->
+  <button svp-primary isFullWidth class="mt-5 mb-10" (click)="signUp()">Sign up</button>
+
+  <!-- Sign-up -->
+  <div class="text-sm text-gray-400 dark:text-night-200">
+    Already have an Account? <a svp-anchor svpRoute="/auth/sign-in">Sign in</a>
+  </div>
+</form>

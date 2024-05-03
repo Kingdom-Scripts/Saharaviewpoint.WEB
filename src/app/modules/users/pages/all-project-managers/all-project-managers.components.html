@@ -1,0 +1,64 @@
+<div class="mx-auto p-4 sm:px-6 lg:container">
+  <div class="mt-6 min-h-80 py-8 px-14 rounded-xl bg-white dark:bg-night-700">
+    <div class="text-end mb-8">
+      <button svp-neutral (click)="addNewPM()">Invite a User Manager</button>
+    </div>
+
+    <div class="w-full" #sample>
+      <div class="table-container" style="min-height: 320px; max-height: 500px;">
+        <table class="fixed-header header-1 bordered">
+          <thead>
+            <tr>
+              <th width="5%"><span>#</span></th>
+              <th width="40%"><span>Name</span></th>
+              <th><span>Email Address</span></th>
+              <th><span>Projects Managed</span></th>
+              <th><span>Status</span></th>
+              <th><span>Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of allUsers; let index = index">
+              <td><span>{{ index + 1 }}</span></td>
+              <td class="cursor-pointer clickable" (click)="viewUserDetails(user.uid)">
+                <span>{{ user.firstName }} {{ user.lastName }}</span>
+              </td>
+              <td><span>{{ user.email }}</span></td>
+              <td><span>{{ user.noOfProjects }}</span></td>
+              <td>
+                <span>
+                  {{user.isActive ? 'Active' : 'Suspended'}}
+                </span>
+              </td>
+              <td>
+                <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
+                  <a (click)="(false)" class="btn btn-action">
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                  </a>
+                  <div class="nx-dropdown-content">
+                    <ul>
+                      <li>
+                        <a class="dropdown-item custom">
+                          View Details
+                        </a>
+                      </li>
+                      <li >
+                        <a [classList]="'dropdown-item custom'">
+                          Suspend Access
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(sideViewService.isActive) {
+  <svp-side-view></svp-side-view>
+}

@@ -1,0 +1,186 @@
+<div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+  <div class="flex flex-row justify-between">
+    <div>
+      <!-- <div class="flex space-x-2">
+        <a routerLink="/project" class="text-gray-500 dark:text-night-200">Projects</a>
+        <p>/</p>
+        <a routerLink="/project/{{globalProjectId}}" class="text-gray-500 dark:text-night-200">
+          My very fist Project
+        </a>
+      </div> -->
+
+      <div>
+        <h1 svp-subHeader>Tasks</h1>
+      </div>
+    </div>
+
+    <div class="flex space-x-3 my-4">
+      <div svp-card-selector>
+        <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'"/>
+        <span>LIST VIEW</span>
+      </div>
+
+      <div svp-card-selector>
+        <svg-icon src="assets/icons/appicons/grid-view-outline.svg" [svgClass]="'h-4 h-4'"/>
+        <span>DETAIL VIEW</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="flex space-x-3">
+    <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
+
+    <ng-select [items]="projects$ | async"
+          [addTag]="false"
+          [multiple]="false"
+          bindValue="id"
+          bindLabel="title"
+          [closeOnSelect]="true"
+          placeholder="Project"
+          [(ngModel)]="selectedProjectId"
+          (change)="setProjectId($event)"
+          class="w-80">
+
+      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+        <div class="ng-value" *ngFor="let item of items | slice:0:1">
+            <span class="ng-value-label"><strong>Project:</strong> {{items[0].title}}</span>
+            <!-- <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> -->
+        </div>
+        <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{items.length - 1}} more...</span>
+        </div>
+      </ng-template>
+
+      <ng-template ng-header-tmp>
+        <input style="width: 100%;" type="text" placeholder="Search projects"/>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div class="flex space-x-1.5">
+          <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
+
+          <div>
+            <strong>{{item.title}}</strong> <br />
+            <small>Owner: {{item.createdBy.firstName}} {{item.createdBy.lastName}}</small>
+          </div>
+        </div>
+      </ng-template>
+    </ng-select>
+
+    <ng-select [items]="taskTypes"
+            [addTag]="true"
+            [multiple]="true"
+            [hideSelected]="false"
+            placeholder="Type"
+            [(ngModel)]="selectedTaskType"
+            typeToSearchText="Please enter 2 or more characters"
+            class="max-w-72">
+
+      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+        <div class="ng-value" *ngFor="let item of items | slice:0:1">
+            <span class="ng-value-label"><strong>Type:</strong> {{item}}</span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+        </div>
+        <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{items.length - 1}} more...</span>
+        </div>
+      </ng-template>
+    </ng-select>
+
+    <ng-select [items]="statuses"
+            [addTag]="true"
+            [multiple]="true"
+            [hideSelected]="false"
+            placeholder="Status"
+            [(ngModel)]="selectedStatus"
+            typeToSearchText="Please enter 2 or more characters"
+            class="max-w-80">
+
+      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+        <div class="ng-value" *ngFor="let item of items | slice:0:1">
+            <span class="ng-value-label"><strong>Status:</strong> {{item}}</span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+        </div>
+        <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{items.length - 1}} more...</span>
+        </div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div class="flex space-x-1.5">
+          <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5"/>
+
+          <div>
+            <strong>{{item}}</strong> <br />
+          </div>
+        </div>
+      </ng-template>
+    </ng-select>
+  </div>
+
+  <div class="mt-6 min-h-80 py-8 px10 rounded-xl bgwhite dark:bg-night-700">
+    <div class="text-end mb-8">
+      <button svp-neutral type="button" (click)="addNewTask()">Create task</button>
+    </div>
+
+    <div class="w-full" #sample>
+      <div class="table-container" style="min-height: 320px; max-height: 500px;">
+        <table class="fixed-header header-1 bordered">
+          <thead>
+            <tr>
+              <th width="8%"><span>Type</span></th>
+              <th style="max-width: 30%;"><span>Summary</span></th>
+              <th><span>Status</span></th>
+              <th><span>Created</span></th>
+              <!-- <th><span>Updated</span></th> -->
+              <th><span>Due Date</span></th>
+              <th><span></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of allTasks; let index = index">
+              <td><span>{{ task.type }}</span></td>
+              <td class="cursor-pointer clickable" (click)="viewTaskDetails(task.id)">
+                <span>{{ task.summary }}</span>
+              </td>
+              <td>
+                <span>
+                  <svp-task-status-card [status]="task.status" />
+                </span>
+              </td>
+              <td><span>{{ task.createdAt | utcToLocalDate }}</span></td>
+              <!-- <td><span>{{ task.updatedAt === null ? 'None' : task.updatedAt! | utcToLocalDate }}</span></td> -->
+              <td><span>{{ task.dueDate | utcToLocalDate }}</span></td>
+              <td>
+                <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
+                  <a (click)="(false)" class="btn btn-action">
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                  </a>
+                  <div class="nx-dropdown-content">
+                    <ul>
+                      <li (click)="viewTaskDetails(task.id)">
+                        <a class="dropdown-item custom">
+                          View Details
+                        </a>
+                      </li>
+                      <li>
+                        <a [classList]="'dropdown-item custom'">
+                          {{ task.dueDate ? 'Change Due Date' : 'Set Due Date' }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(sideViewService.isActive) {
+  <svp-side-view></svp-side-view>
+}

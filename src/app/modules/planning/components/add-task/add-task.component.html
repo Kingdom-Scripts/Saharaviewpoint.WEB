@@ -1,0 +1,93 @@
+<div class="w-full h-full bg-gray-100 dark:bg-night-700">
+  <div class="px-8 bg-gray-100 dark:bg-night-700">
+    <div class="flex py-6 bg-gray-100 dark:bg-night-700 sticky top-0">
+      <h1 svp-subHeader>Create Task</h1>
+
+      <div class="self-start grow flex justify-end -mr-4 cursor-pointer text-gray-800 dark:text-night-200 hover:text-gray-500 dark:hover:text-night-400">
+        <svg-icon src="assets/icons/appicons/cancel.svg" [svgClass]="'h-4 w-4'" (click)="close()"/>
+      </div>
+    </div>
+
+    <div class="space-y-6" [formGroup]="formGroup">
+      <p svp-text>
+        Required fields are marked with an asterisk <span class="text-red-700">*</span>
+      </p>
+
+      <div class="space-y-2">
+        <label svp-label for="projectId">Project <span class="text-red-700">*</span></label>
+        <ng-select [items]="projects$ | async"
+          bindLabel="title"
+          bindValue="id"
+          [minTermLength]="2"
+          [loading]="projectLoading"
+          placeholder="Select a project"
+          typeToSearchText="Please enter 2 or more characters"
+          [typeahead]="projectInput$"
+          formControlName="projectId"
+          class="w-[50%]">
+        </ng-select>
+        <svp-validation-errors [svpControl]="formGroup.get('projectId')" />
+      </div>
+  
+      <div class="space-y-2">
+        <label svp-label for="type">Task Type <span class="text-red-700">*</span></label>
+        <ng-select [items]="taskTypes"
+          [minTermLength]="2"
+          placeholder="Select a project type"
+          typeToSearchText="Please enter 2 or more characters"
+          formControlName="type"
+          class="w-[50%]">
+        </ng-select>
+        <svp-validation-errors [svpControl]="formGroup.get('type')" />
+      </div>
+
+      <hr class="border border-gray-300 dark:border-gray-700"/>
+
+      <div class="space-y-2">
+        <label svp-label for="summary">Summary <span class="text-red-700">*</span></label>
+        <input type="text" formControlName="summary" placeholder="What would you title this task?"/>
+        <svp-max-input-length [count]="formGroup.get('summary')?.value.length" [total]="250" [minThreshold]="100" />
+        <svp-validation-errors [svpControl]="formGroup.get('summary')" />
+      </div>
+
+      <div class="space-y-2">
+        <label svp-label for="description">Description</label>
+        <textarea cols="5" rows="8"
+          type="text" placeholder="Provide more information about this task"
+          formControlName="description"> </textarea>
+        <svp-max-input-length [count]="formGroup.get('description')?.value.length" [total]="5000" [minThreshold]="100" />
+        <svp-validation-errors [svpControl]="formGroup.get('description')" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label svp-label for="expectedStartDate">Expected Start Date</label>
+          <input
+            type="date" min="{{today | date: 'yyyy-MM-dd'}}"
+            formControlName="expectedStartDate"/>
+          <svp-validation-errors [svpControl]="formGroup.get('expectedStartDate')" />
+        </div>
+
+        <div class="space-y-2">
+          <label svp-label for="dueDate">Due Date</label>
+          <input
+            type="date"
+            formControlName="dueDate"/>
+          <svp-validation-errors [svpControl]="formGroup.get('dueDate')" />
+        </div>
+      </div>
+
+      <div class="w-full h-full row-span-2">
+        <label svp-label for="attachments" [marginBottom]="6">Attachments</label>
+        <div class="w-full mb-2"></div>
+        <svp-file-selector svpId="attachments" [svpForm]="formGroup" [height]="10" isMultiple (onFileChanged)="onFilesChanged($event)" />
+        <svp-validation-errors [svpControl]="formGroup.get('attachments')" />
+      </div>  
+    </div>
+
+    <div class="flex justify-end mt-6 py-3 px-8 -mx-8 space-x-6 bg-gray-100 border border-t-gray-300 dark:bg-night-700 sticky bottom-0">
+      <button class="hover:underline dark:text-night-100" (click)="close()">Cancel</button>
+      <button svp-primary (click)="createTask()">Create</button>
+    </div>
+  </div>
+</div>
