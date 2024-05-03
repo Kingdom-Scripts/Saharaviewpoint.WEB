@@ -92,7 +92,7 @@ export class AddTaskComponent implements OnInit {
           this.notify.timedErrorMessage('Task Creation Failed', res.message);
         }
       },
-      error: (error: Result<any>) => {
+      error: (error: Result<string>) => {
         this.notify.hideLoader();
         mapValidationErrors(this.formGroup, error.validationErrors);
         this.formGroup.markAllAsTouched();
@@ -136,6 +136,7 @@ export class AddTaskComponent implements OnInit {
             catchError(() => of([])), // empty list on error
             tap(() => this.projectLoading = false)
           )),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           map((data: any) => data.content.map((item: any) => item))
         )
       )

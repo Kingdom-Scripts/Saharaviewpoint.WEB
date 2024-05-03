@@ -19,7 +19,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     return this.injector.get(NotificationService);
   } */
 
-  handleError(error: any) {
+  handleError(error: Error) {
     // Check if it's an error from an HTTP response
     if (error instanceof HttpErrorResponse) {
       return; //http interceptor error handler has handled this already

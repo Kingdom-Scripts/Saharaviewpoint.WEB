@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
@@ -9,8 +9,4 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     standalone: true,
     imports: [AngularSvgIconModule, RouterOutlet],
 })
-export class AuthComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
-}
+export class AuthComponent {}

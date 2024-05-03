@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -25,7 +26,7 @@ export class AuthService {
   }
   
   checkUserData() {
-    let user = this.getUser();
+    const user = this.getUser();
     if (user === undefined || user === null) {
       this.authState.next(false);
     } else {
@@ -42,14 +43,14 @@ export class AuthService {
   }
 
   async logUserOut() {
-    let user = this.getUser();
+    const user = this.getUser();
     if (user === undefined || user === null) {
       this.maskUserAsLoggedOut();
       this.router.navigate(['/auth/sign-in']);
       return;
     }
     await this.notify.showLoader();
-    this.logout(user.uid).subscribe(async (res: Result<any>) => {
+    this.logout(user.uid).subscribe(async (res: Result<string>) => {
       if (res.success) {
         await this.notify.hideLoader();
         this.maskUserAsLoggedOut();
@@ -69,15 +70,15 @@ export class AuthService {
   }
 
   refreshToken() {    
-    let param = {
+    const param = {
       refreshToken: this.storageService.getRefreshToken()
     };
     
     return this.http.post<Result<AuthDataModel>>(`auth/refresh-token`, param);
   }
 
-  logout(userReference: string): Observable<Result<any>> {
-    return this.http.post<Result<any>>(`auth/${userReference}/logout`, null);
+  logout(userReference: string): Observable<Result<string>> {
+    return this.http.post<Result<string>>(`auth/${userReference}/logout`, null);
   }
 
   maskUserAsAuthenticated(authData: AuthDataModel, rememberMe: boolean) {
@@ -98,7 +99,7 @@ export class AuthService {
   }
 
   userIsInRole(roles: string[]): boolean {
-    let userRoles = this.storageService.getUserRoles() as AuthRoleData;
+    const userRoles = this.storageService.getUserRoles() as AuthRoleData;
 
     // Check if any of the roles in the provided array is present in userRoles
     return roles.some(role => userRoles[role]);
@@ -128,7 +129,7 @@ export class AuthService {
       passwordStrength += 25; // Contains at least one number
     }
 
-    if (/[\!\?\*\.\#\$\(\)]/.test(password)) {
+    if (/[!?*.#$()]/.test(password)) {
       passwordStrength += 25; // Contains at least one special character (!?#$*.)
     }
 

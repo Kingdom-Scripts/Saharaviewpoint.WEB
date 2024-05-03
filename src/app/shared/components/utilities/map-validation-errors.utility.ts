@@ -7,12 +7,12 @@ export function mapValidationErrors(form: FormGroup, errors: { [key: string]: st
   }
 
   Object.entries(errors).forEach(([key, errorMessages]) => {
-    let modelError: ValidationErrorModel = {
+    const modelError: ValidationErrorModel = {
       valid: false,
       messages: errorMessages
     };
 
-    let control = form.get(camelizeKey(key));
+    const control = form.get(camelizeKey(key));
 
     if (control) {    
       control.setErrors({apiError: modelError});

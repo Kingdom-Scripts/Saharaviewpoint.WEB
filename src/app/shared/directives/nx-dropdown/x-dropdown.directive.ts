@@ -1,4 +1,4 @@
-import { ReturnStatement } from '@angular/compiler';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Directive,
   ElementRef,
@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[x-dropdown]',
 })
 export class XDropdownDirective {
@@ -29,6 +30,7 @@ export class XDropdownDirective {
   }
 
   @HostListener('window:resize', ['$event'])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onResize(event: any) {
     this.positionDropdown(this.dropdown);
   }
@@ -39,7 +41,7 @@ export class XDropdownDirective {
 
     if (this.isOpen) {
       if (this.container === 'body') {
-        let dropdown = this.el.nativeElement.querySelector('.nx-dropdown-content');
+        const dropdown = this.el.nativeElement.querySelector('.nx-dropdown-content');
         this.appendToBody(dropdown);
       }
     } else {
@@ -50,16 +52,14 @@ export class XDropdownDirective {
   positionDropdown(dropdown: any) {
     if (!dropdown) return;
 
-    let rect = this.el.nativeElement.getBoundingClientRect();
+    const rect = this.el.nativeElement.getBoundingClientRect();
 
     this.renderer.setStyle(dropdown, 'display', 'inline-block');
-    let dropdownRect = dropdown.getBoundingClientRect();
+    const dropdownRect = dropdown.getBoundingClientRect();
     this.renderer.setStyle(dropdown, 'display', '');
 
     let left,
-      top,
-      right,
-      bottom = 0;
+      top = 0;
 
     if (rect.left + dropdownRect.width + rect.width > window.innerWidth) {
       left = rect.left - dropdownRect.width + rect.width;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -9,8 +9,4 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     imports: [FormsModule, RouterLink],
 })
-export class TwoStepsComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
-}
+export class TwoStepsComponent {}

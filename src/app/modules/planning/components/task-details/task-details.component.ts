@@ -145,7 +145,7 @@ export class TaskDetailsComponent implements OnInit {
     if (!confirmed) return;
 
     this.taskService.removeComment(this.task.id, commentId)
-      .subscribe((res: Result<any>) => {
+      .subscribe((res: Result<string>) => {
         if (res.success) {
           this.notify.timedSuccessMessage('Comment Deleted', 'Comment has been deleted successfully');
           this.taskComments = this.taskComments.filter(comment => comment.id !== commentId);
@@ -168,7 +168,7 @@ export class TaskDetailsComponent implements OnInit {
       
     this.notify.showLoader();
     this.taskService.deleteAttachment(this.task.id, id)
-      .subscribe((res: Result<any>) => {
+      .subscribe((res: Result<string>) => {
         this.notify.hideLoader();
         if (res.success) {
           // remove attachment from the task
@@ -181,8 +181,9 @@ export class TaskDetailsComponent implements OnInit {
     );
   }
 
-  uploadAttachments(e: any): void {
-    const files = e.target.files as File[];
+  uploadAttachments(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    const files = target.files as File[] | null;
     if (files == null) {
       console.log('--> Files is null');
       return;

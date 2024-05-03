@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, UserService } from '@svp-api-services';
 import { CommonModule } from '@angular/common';
 import { SvpButtonModule, SvpFormInputModule, passwordMatchValidator } from '@svp-components';

@@ -28,8 +28,8 @@ export class StorageService {
   }
 
   private setUserRoles(token: string, rememberMe: boolean) {
-    let decoded = JSON.parse(atob(token.split('.')[1]));
-    let userRoles = {
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    const userRoles = {
       SvpAdmin: decoded.role.includes('SvpAdmin'),
       SvpManager: decoded.role.includes('SvpManager'),
       BusinessAdmin: decoded.role.includes('BusinessAdmin'),
@@ -51,7 +51,7 @@ export class StorageService {
   }
 
   getUser() {
-    let user = this.getValue(`${this.domain}USER`);
+    const user = this.getValue(`${this.domain}USER`);
     if (user !== null && user !== undefined) {
       return JSON.parse(user) as UserModel;
     }
@@ -69,7 +69,7 @@ export class StorageService {
   }
 
   getUserRoles() {
-    let roles = this.getValue(`${this.domain}ROLES`);
+    const roles = this.getValue(`${this.domain}ROLES`);
     if(roles == null) return null;
     return JSON.parse(roles);
   }
@@ -91,7 +91,7 @@ export class StorageService {
   }
 
   private getValue(key: string): string | null {
-    let data = this.localStorageUtil.get(key);
+    const data = this.localStorageUtil.get(key);
     return data ?? this.sessionStorageUtil.get(key);
   }
 

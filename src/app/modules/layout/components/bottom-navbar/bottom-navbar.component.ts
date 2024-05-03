@@ -9,7 +9,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     imports: [AngularSvgIconModule],
 })
 export class BottomNavbarComponent implements OnInit {
-  constructor() {}
+  
 
-  ngOnInit(): void {}
+  
 }

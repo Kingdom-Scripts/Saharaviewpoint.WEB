@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
-import {ProjectStatusEnum, TaskStatusEnum} from '@svp-models';
+import {TaskStatusEnum} from '@svp-models';
 
 @Component({
   selector: "svp-task-status-card",

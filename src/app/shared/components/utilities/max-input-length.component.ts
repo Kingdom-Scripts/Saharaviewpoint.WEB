@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, booleanAttribute, input } from "@angular/core";
+import { Component, Input, input } from "@angular/core";
 
 
 @Component({
@@ -6,7 +6,7 @@ import { Component, Input, OnChanges, SimpleChanges, booleanAttribute, input } f
   standalone: true,
   template: `
     <span class="text-primary-500 -mt-1">
-      @if (count == 0 && count >= minThreshold()) {
+      @if (count === 0 && count >= minThreshold()) {
         <small>Max of {{total}} characters</small>
       } 
       @else if (count >= minThreshold() && count <= total) {

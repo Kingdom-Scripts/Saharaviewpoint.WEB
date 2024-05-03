@@ -39,7 +39,7 @@ export class ApproveProjectComponent implements OnInit{
   projectManagerInput$ = new Subject<string>();
   projectManagers$: Observable<ProjectManagerModel[]> = new Observable<ProjectManagerModel[]>();
 
-  // constructor() {}
+  // 
 
   ngOnInit(): void {
     this.getProject();
@@ -89,7 +89,8 @@ export class ApproveProjectComponent implements OnInit{
               catchError(() => of([])), // empty list on error
               tap(() => this.projectManagersLoading = false)
             )),
-            map((data: any) => data.content.map((item: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            map((data: any) => data.content?.map((item: any) => {
               return {
                 uid: item.uid,
                 name: `${item.firstName} ${item.lastName}`
@@ -109,7 +110,7 @@ export class ApproveProjectComponent implements OnInit{
 
     this.notify.showLoader();
     this.projectService.approveProject(this.id, this.selectedProjectManagerUid)
-      .subscribe((res: Result<any>) => {
+      .subscribe((res: Result<ProjectModel>) => {
         this.notify.hideLoader();
         if (res.success) {
           this.notify.timedSuccessMessage('Project Approved', 'Project has been approved and assigned to the selected project manager');

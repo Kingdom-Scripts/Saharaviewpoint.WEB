@@ -16,8 +16,9 @@ export class ErrorService {
     private router: Router
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public handleError<T>() {
-    return (error: unknown): Observable<never> => {
+    return (error: unknown): Observable<Result<never>> => {
       console.log('--> Error: ', error);
       
       this.notify.hideLoader();
@@ -25,6 +26,7 @@ export class ErrorService {
       if (error instanceof HttpErrorResponse) {
           switch (error.status) {
           case 400: //Bad Request
+          {
             const msg400: Result<never> = new Result();            
             msg400.success = false;
             msg400.title = 'Bad Request';
@@ -40,8 +42,10 @@ export class ErrorService {
             }
 
             return throwError(msg400 as Result<never>);
+          }
           case 401: //Authentication error
-            let msg401: Result<never> = new Result();
+          {
+            const msg401: Result<never> = new Result();
             msg401.success = false;
             msg401.title = 'Authentication Required';
             msg401.message =
@@ -55,9 +59,11 @@ export class ErrorService {
             });
 
             return throwError(msg401);
+          }
 
           case 403: //Authorization error
-            let msg403: Result<never> = new Result();
+          {
+            const msg403: Result<never> = new Result();
             msg403.success = false;
             msg403.title = 'Privilege Access Required';
             msg403.message = `Access Denied: You do not have enough privilege to view this page!`;
@@ -68,9 +74,10 @@ export class ErrorService {
             this.nav.back();
 
             return of(msg403);
-
+          }
           case 500: //Authentication error
-            let msg500: Result<never> = new Result();
+          {
+            const msg500: Result<never> = new Result();
             msg500.success = false;
             msg500.title = 'Internal Server Error';
             msg500.message = error?.error?.message ?? error.message;
@@ -79,9 +86,11 @@ export class ErrorService {
             this.notify.errorMessage(msg500.title, msg500.message);
 
             return of(msg500);
+          }
           case 0:
+          {
             // possibly network error. Show toast
-            let msg0: Result<never> = new Result();
+            const msg0: Result<never> = new Result();
             msg0.success = false;
             msg0.title = 'Unknown Server Error';
             msg0.message =
@@ -91,8 +100,9 @@ export class ErrorService {
             this.notify.errorMessage(msg0.title, msg0.message);
 
             return of(msg0);
+          }
           default: {
-            let msg: Result<never> = new Result();
+            const msg: Result<never> = new Result();
             msg.success = false;
             msg.title = 'Unknown Server Error';
             msg.message = `Unknown Server Error: ${error.message}`;
@@ -104,11 +114,13 @@ export class ErrorService {
           }
         }
       } else {
-        let msg: Result<never> = new Result();
+        const msg: Result<never> = new Result();
         msg.success = false;
         msg.title = 'Client Side Error';
-        msg.message = `Error: ${error.error.message}`;
-        msg.path = error.url?.toString();
+        if (error instanceof HttpErrorResponse) {
+          msg.message = `Error: ${error.error.message}`;
+          msg.path = error.url?.toString();
+        }
 
         this.notify.errorMessage(msg.title, msg.message);
 

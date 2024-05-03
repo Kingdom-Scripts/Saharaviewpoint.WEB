@@ -1,5 +1,6 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SideViewService {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavbarMobileSubmenuComponent } from '../navbar-mobile-submenu/navbar-mobile-submenu.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -22,7 +22,7 @@ import { SubMenuItem } from '@svp-models';
         NavbarMobileSubmenuComponent,
     ],
 })
-export class NavbarMobileMenuComponent implements OnInit {
+export class NavbarMobileMenuComponent {
   constructor(public menuService: MenuService) {}
 
   public toggleMenu(subMenu: SubMenuItem) {
@@ -33,5 +33,5 @@ export class NavbarMobileMenuComponent implements OnInit {
     this.menuService.showMobileMenu = false;
   }
 
-  ngOnInit(): void {}
+  
 }

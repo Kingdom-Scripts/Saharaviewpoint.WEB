@@ -32,8 +32,6 @@ export class SignUpComponent implements OnInit {
   
   returnUrl!: string;
 
-  registerClient!: any;
-
   constructor(private fb: FormBuilder,
     private route: ActivatedRoute,
     private authService: AuthService,
@@ -74,10 +72,10 @@ export class SignUpComponent implements OnInit {
       return;
     }
 
-    this.registerClient = Object.assign({}, this.registerForm.value);
+    const param = Object.assign({}, this.registerForm.value);
 
     this.notify.showLoader();
-    this.authService.signUpClient(this.registerClient)
+    this.authService.signUpClient(param)
       .subscribe(async (res: Result<AuthDataModel>) => {
         this.notify.hideLoader();
         

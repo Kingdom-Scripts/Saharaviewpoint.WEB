@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/directive-selector */
 import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, Directive, ElementRef, EventEmitter, Inject, OnDestroy, Output } from '@angular/core';
 import { filter, fromEvent, Subscription } from 'rxjs';

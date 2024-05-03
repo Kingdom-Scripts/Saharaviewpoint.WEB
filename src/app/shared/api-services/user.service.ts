@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, switchMap } from 'rxjs';
-import { AuthDataModel, ProjectManagerModel, ProjectManagerSearchModel, Result, UserModel } from '@svp-models';
+import { AuthDataModel, ProjectManagerModel, ProjectManagerSearchModel, Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
 
 @Injectable({
@@ -29,7 +30,7 @@ export class UserService {
           this.notify.hideLoader();
 
           if (res.success) {
-            let data = res.content ?? [];
+            const data = res.content ?? [];
             this.allProjectManagers.next(data);
           }
           else {
@@ -53,7 +54,7 @@ export class UserService {
       param = new ProjectManagerSearchModel();
     }
 
-    let query = `searchQuery=${param.searchQuery ?? ''}`
+    const query = `searchQuery=${param.searchQuery ?? ''}`
     
     return this.http.get<Result<ProjectManagerModel[]>>(`users/project-managers?${query}`);
   }

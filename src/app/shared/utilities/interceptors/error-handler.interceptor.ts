@@ -1,4 +1,4 @@
-import { HttpRequest, HttpHandlerFn, HttpEvent } from "@angular/common/http";
+import { HttpRequest, HttpHandlerFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { catchError, throwError, Observable, switchMap } from "rxjs";
 import { NotificationService } from "@svp-services";
@@ -62,7 +62,8 @@ export function errorHandlerInterceptor(request: HttpRequest<unknown>, next: Htt
 }
 
 // resend a request
-function resendResult(request: HttpRequest<unknown>, next: HttpHandlerFn, errorService: ErrorService): Observable<HttpEvent<unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resendResult(request: HttpRequest<unknown>, next: HttpHandlerFn, errorService: ErrorService): Observable<any> {
 
   return next(request).pipe(
     catchError(errorService.handleError())

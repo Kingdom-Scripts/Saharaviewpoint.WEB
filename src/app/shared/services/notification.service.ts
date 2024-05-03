@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import topbar from 'topbar';
 import iziToast, { IziToastSettings } from 'izitoast';
@@ -7,8 +8,6 @@ import { ThemeService } from './theme/theme.service';
   providedIn: 'root',
 })
 export class NotificationService {
-  private Toast!: any;
-  //modalRef!: BsModalRef;
 
   constructor(private themeService: ThemeService) {
     iziToast.settings({
@@ -34,7 +33,7 @@ export class NotificationService {
   showMessage(message?: string): Promise<boolean>;
   
   showMessage(title: string = '', message: string = ''): Promise<boolean> {
-    let id: string = this.generateUniqueID();
+    const id: string = this.generateUniqueID();
     iziToast.show({
       id: id,
       title: title,
@@ -54,7 +53,7 @@ export class NotificationService {
   successMessage(title?: string, message?: string): Promise<boolean>;
 
   successMessage(title: string = '', message: string = ''): Promise<boolean> {
-    let id: string = this.generateUniqueID();
+    const id: string = this.generateUniqueID();
     iziToast.success({
       id: id,
       title: title,
@@ -75,7 +74,7 @@ export class NotificationService {
   infoMessage(message?: string): Promise<boolean>;
 
   infoMessage(title: string = '', message: string = ''): Promise<boolean> {
-    let id: string = this.generateUniqueID();
+    const id: string = this.generateUniqueID();
     iziToast.info({
       id: id,
       title: title,
@@ -96,7 +95,7 @@ export class NotificationService {
   errorMessage(message?: string): Promise<boolean>;
 
   errorMessage(title: string = '', message: string = ''): Promise<boolean> {
-    let id: string = this.generateUniqueID();
+    const id: string = this.generateUniqueID();
     iziToast.error({
       id: id,
       title: title,

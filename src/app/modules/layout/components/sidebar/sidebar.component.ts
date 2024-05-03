@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MenuService } from '@svp-services';
 import { RouterLink } from '@angular/router';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgClass } from '@angular/common';
 import { ThemeService } from '@svp-services';
+import { Menu } from 'src/app/core/constants/menu';
 
 @Component({
     selector: 'app-sidebar',
@@ -18,13 +19,11 @@ import { ThemeService } from '@svp-services';
     ],
 })
 export class SidebarComponent implements OnInit {
-  @Input({required: true}) menu: any;
-  
   constructor(public themeService: ThemeService, public menuService: MenuService) {
   }
 
   ngOnInit(): void {
-    this.menuService.setUpService(this.menu.pages);
+    this.menuService.setUpService(Menu.pages);
   }
 
   public toggleSidebar() {

@@ -97,13 +97,14 @@ export class TasksComponent implements OnInit, OnDestroy {
             catchError(() => of([])), // empty list on error
             tap(() => this.projectLoading = false)
           )),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           map((data: any) => data.content.map((item: any) => item))
         )
       )
     })  
   }
 
-  setProjectId($event: any) {
+  setProjectId($event: ProjectModel) {
     this.sessionStorage.setProject($event);
     this.loadTasks();
   }
@@ -125,6 +126,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   addNewTask(): void {
     this.sideViewService.showComponent(AddTaskComponent);
         
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.sideViewService.triggerOutputs$.subscribe((outputs: { [key: string]: any}) => {
       if (outputs['addedTask']) {
         this.allTasks.unshift(outputs['addedTask']);

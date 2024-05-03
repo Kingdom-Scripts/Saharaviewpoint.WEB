@@ -6,7 +6,7 @@ import { NxDropdownModule } from "@svp-directives";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { AddPmComponent } from "../../components/add-pm/add-pm.component";
 import { UserService } from "@svp-api-services";
-import { ProjectManagerModel, Result, UserModel } from "@svp-models";
+import { ProjectManagerModel, Result } from "@svp-models";
 import { NotificationService } from "@svp-services";
 
 @Component({

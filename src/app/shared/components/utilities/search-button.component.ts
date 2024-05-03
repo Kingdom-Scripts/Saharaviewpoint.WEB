@@ -49,7 +49,7 @@ export class SvpSearchButtonComponent {
     this.onSearch.emit(this.searchTerm);
   }
 
-  handleOnKeyUp(e: any): void {
+  handleOnKeyUp(e: KeyboardEvent): void {
     // if the Enter key is pressed, emit the search event
     if (e.key === 'Enter') {
       this.onSearch.emit(this.searchTerm);

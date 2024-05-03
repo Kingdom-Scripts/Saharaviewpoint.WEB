@@ -1,23 +1,23 @@
 <div class="w-full h-full bg-gray-100 dark:bg-night-700 relative">
   <div class="px-8 bg-gray-100 dark:bg-night-700">
     <div class="flex space-x-12 py-4 sticky top-0 items-center bg-gray-100 dark:bg-night-700">
-      @if (loadError == false) {
+      @if (loadError === false) {
         <svp-status-card [status]="project.status" />
       
         <div class="flex flex-col space-y-1">
           <p svp-text>Project created</p>
-          <h1 svp-subHeader>{{ project.startDate | utcToLocalDate }}</h1>
+          <h1 svp-sub-header>{{ project.startDate | utcToLocalDate }}</h1>
         </div>
         
         <div class="flex flex-col space-y-1">
           <p svp-text>Project created</p>
           <!-- Add created date to API response -->
-          <h1 svp-subHeader>{{ project.startDate | utcToLocalDate}}</h1>
+          <h1 svp-sub-header>{{ project.startDate | utcToLocalDate}}</h1>
         </div>
       
         <div class="flex flex-col space-y-1">
           <p svp-text>Project Manager</p>
-          <h1 svp-subHeader>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</h1>
+          <h1 svp-sub-header>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</h1>
         </div>
       }
 
@@ -28,7 +28,7 @@
 
     <div *ngIf="loadError === undefined">
       <div class="w-44 h-full m-auto">
-        <h1 svp-subHeader>Loading...</h1>
+        <h1 svp-sub-header>Loading...</h1>
       </div>
     </div>
 
@@ -51,7 +51,7 @@
             <!-- TASKS -->
             <div class="flex space-x-2 items-center">      
               <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'"/>
-              <h1 svp-subHeader>Tasks</h1>
+              <h1 svp-sub-header>Tasks</h1>
             </div>
 
             <p svp-text italic *ngIf="true">No tasks created yet</p>
@@ -80,7 +80,7 @@
             <!-- ATTACHMENTS -->
             <div class="flex space-x-2 items-center pt-10">      
               <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'"/>
-              <h1 svp-subHeader>Attachments</h1>
+              <h1 svp-sub-header>Attachments</h1>
             </div>
 
             <div class="flex space-x-2 items-center" *ngIf="project.design">
@@ -92,7 +92,7 @@
           <div class="space-y-4">
             <!-- RECENT ACTIVITIES -->
             <div class="ml-6">      
-              <h1 svp-subHeader>Recent Activities</h1>
+              <h1 svp-sub-header>Recent Activities</h1>
               <p svp-text italic *ngIf="true" class="mt-2">No recent activities</p>
             </div>
 
@@ -104,21 +104,21 @@
                   <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                     <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
                   </span>
-                  <h1 svp-subHeader>Admin assigned task to James Sylvester</h1>
+                  <h1 svp-sub-header>Admin assigned task to James Sylvester</h1>
                   <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">January 13th, 2024</time>
               </li>
               <li class="mt-10 ms-6">
                 <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                   <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
                 </span>
-                <h1 svp-subHeader>Task Created - Ground breaking</h1>
+                <h1 svp-sub-header>Task Created - Ground breaking</h1>
                 <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">February 13th, 2024</time>
               </li>
               <li class="mt-10 ms-6">
                 <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                   <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
                 </span>
-                <h1 svp-subHeader>Ground breaking assigned to James Sylvester</h1>
+                <h1 svp-sub-header>Ground breaking assigned to James Sylvester</h1>
                 <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 13th, 2024</time>
               </li>
             </ol> -->

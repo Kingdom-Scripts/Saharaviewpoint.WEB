@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, switchMap } from 'rxjs';
@@ -29,7 +30,7 @@ export class ProjectService {
           this.notify.hideLoader();
 
           if (res.success) {
-            let data = res.content ?? [];
+            const data = res.content ?? [];
             this.allProjects.next(data);
           }
           else {
@@ -59,7 +60,7 @@ export class ProjectService {
       param = new ProjectSearchModel();
     }
     
-    let query = `searchQuery=${param.searchQuery || ''}
+    const query = `searchQuery=${param.searchQuery || ''}
       &status=${param.status || ''}
       &startDueDate=${param.startDueDate || ''}
       &endDueDate=${param.endDueDate || ''}
@@ -84,12 +85,12 @@ export class ProjectService {
     return this.http.put<Result<ProjectModel>>(`projects/${id}`, param);
   }
 
-  deleteProject(id: number): Observable<Result<any>> {
-    return this.http.delete<Result<any>>(`projects/${id}`);
+  deleteProject(id: number): Observable<Result<string>> {
+    return this.http.delete<Result<string>>(`projects/${id}`);
   }
 
-  reAssignProject(id: number, param: any): Observable<Result<any>> {
-    return this.http.post<Result<any>>(`projects/${id}/reassign`, param);
+  reAssignProject(id: number, param: any): Observable<Result<string>> {
+    return this.http.post<Result<string>>(`projects/${id}/reassign`, param);
   }
 
   countProjects(): Observable<Result<number>> {
@@ -99,7 +100,7 @@ export class ProjectService {
 
   // #region TYPES
   listTypes(searchTerm?: string): Observable<Result<ProjectTypeModel[]>> {
-    let query = searchTerm ? `?searchTerm=${searchTerm}` : '';
+    const query = searchTerm ? `?searchTerm=${searchTerm}` : '';
     return this.http.get<Result<ProjectTypeModel[]>>(`projects/types${query}`);
   }
 
@@ -107,8 +108,8 @@ export class ProjectService {
     return this.http.post<Result<ProjectTypeModel>>(`projects/types`, param);
   }
 
-  deleteType(id: number): Observable<Result<any>> {
-    return this.http.delete<Result<any>>(`projects/types/${id}`);
+  deleteType(id: number): Observable<Result<string>> {
+    return this.http.delete<Result<string>>(`projects/types/${id}`);
   }
   // #endregion
 }

@@ -3,7 +3,7 @@ import { MenuService } from '@svp-services';
 import { SidebarSubmenuComponent } from '../sidebar-submenu/sidebar-submenu.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { NgFor, NgClass, NgTemplateOutlet, NgIf } from '@angular/common';
+import { NgFor, NgClass, NgTemplateOutlet } from '@angular/common';
 import { SubMenuItem } from '@svp-models';
 
 @Component({

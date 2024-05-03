@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'h1[svp-subHeader], h2[svp-subHeader], h3[svp-subHeader], h4[svp-subHeader], h5[svp-subHeader], h6[svp-subHeader]',
+  selector: 'h1[svp-sub-header], h2[svp-sub-header], h3[svp-sub-header], h4[svp-sub-header], h5[svp-sub-header], h6[svp-sub-header]',
   standalone: true,
   imports: [CommonModule],
   template: `

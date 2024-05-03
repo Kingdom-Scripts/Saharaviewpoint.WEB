@@ -65,7 +65,7 @@ export class AddPmComponent implements OnInit {
             this.notify.errorMessage(res.message);
           }
         },
-        error: async (err: Result<any>) => {
+        error: async (err: Result<string>) => {
           mapValidationErrors(this.newPmForm, err.validationErrors);
           this.newPmForm.markAllAsTouched();
         }

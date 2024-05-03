@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { ClickOutsideDirective } from '@svp-directives';
@@ -17,7 +17,7 @@ import { AuthService } from '@svp-api-services';
         RouterLink,
     ],
 })
-export class ProfileMenuComponent implements OnInit {
+export class ProfileMenuComponent {
   public isMenuOpen = false;
   user?: UserModel;
 
@@ -26,8 +26,6 @@ export class ProfileMenuComponent implements OnInit {
     private storageService: StorageService) {
       this.ListenForAuthChange();
     }
-
-  ngOnInit(): void {}
 
   public toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;

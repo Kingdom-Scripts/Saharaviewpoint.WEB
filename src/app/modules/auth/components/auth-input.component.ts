@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
@@ -16,7 +16,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
         {{svpLabel}}
       </label>
 
-      @if (originalType == 'password') {
+      @if (originalType === 'password') {
         <span class="absolute top-2.5 right-5 cursor-pointer text-gray-400 dark:text-night-300" (click)="toggleShowPassword()">
           @if (!showPassword) {
           <svg-icon src="assets/icons/heroicons/outline/eye-off.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
@@ -28,7 +28,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     </div>
   `
 })
-export class SvpAuthInputComponent {
+export class SvpAuthInputComponent implements OnInit {
   originalType!: 'text' | 'number' | 'password' | 'email';
   @Input({required: true}) svpType!: 'text' | 'number' | 'password' | 'email';
   @Input({required: true}) svpId: string = '';
@@ -36,8 +36,8 @@ export class SvpAuthInputComponent {
   @Input() svpAutoComplete: 'on' | 'off' = 'on';
   @Input({required: true}) svpForm!: FormGroup;
 
-  @Output() valueChanged: EventEmitter<any> = new EventEmitter<any>();
-  @Output() keyUp: EventEmitter<any> = new EventEmitter<any>();
+  @Output() valueChanged: EventEmitter<string> = new EventEmitter<string>();
+  @Output() keyUp: EventEmitter<string> = new EventEmitter<string>();
 
   ngOnInit(): void {
     this.originalType = this.svpType;

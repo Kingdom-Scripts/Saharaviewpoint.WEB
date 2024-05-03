@@ -1,5 +1,6 @@
-import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
 import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel, TaskCommentModel } from '@svp-models';
 import { NotificationService } from '@svp-services';
@@ -29,7 +30,7 @@ export class TaskService {
           this.notify.hideLoader();
 
           if (res.success) {
-            let data = res.content ?? [];
+            const data = res.content ?? [];
             this.allTasks.next(data);
           }
           else {
@@ -54,7 +55,7 @@ export class TaskService {
   }
   
   listTasks(param: TaskSearchModel): Observable<Result<TaskModel[]>> {
-    let query = `projectId=${param.projectId}
+    const query = `projectId=${param.projectId}
       ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}
       ${param.status ? `&status=${param.status}` : ''}`;
 
@@ -78,11 +79,11 @@ export class TaskService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const request = new HttpRequest('POST', `tasks/${taskId}/attachments`, formData, {
-        reportProgress: true, // Enable progress tracking,
-        responseType: 'json', // Ensure response is parsed as JSON
+    // const request = new HttpRequest('POST', `tasks/${taskId}/attachments`, formData, {
+    //     reportProgress: true, // Enable progress tracking,
+    //     responseType: 'json', // Ensure response is parsed as JSON
         
-      });
+    //   });
       
     let count = 1;
     return this.http.post(`tasks/${taskId}/attachments`, formData, {
@@ -90,7 +91,7 @@ export class TaskService {
       observe: 'events', // Enable event tracking
       responseType: 'json' // Ensure response is parsed as JSON
     }).pipe(
-      map((event: HttpEvent<Result<any>>) => {
+      map((event: HttpEvent<Result<string>>) => {
         console.log(`--> Event: ${count}`, event);
         count++;
           if (event.type === HttpEventType.UploadProgress) {
@@ -122,12 +123,12 @@ export class TaskService {
     // );
   }
 
-  deleteAttachment(taskId: number, documentId: number): Observable<Result<any>> {
-    return this.http.delete<Result<any>>(`tasks/${taskId}/attachments/${documentId}`);
+  deleteAttachment(taskId: number, documentId: number): Observable<Result<string>> {
+    return this.http.delete<Result<string>>(`tasks/${taskId}/attachments/${documentId}`);
   }
 
   listLogs(taskId: number, param: PagingRequestModel): Observable<Result<TaskLogModel[]>> {
-    let query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
+    const query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
     
     return this.http.get<Result<TaskLogModel[]>>(`tasks/${taskId}/logs?${query}`);
   }
@@ -136,8 +137,8 @@ export class TaskService {
     return this.http.post<TaskCommentModel>(`tasks/${taskId}/comments`, param);
   }
 
-  removeComment(taskId: number, commentId: number): Observable<Result<any>> {
-    return this.http.delete<Result<any>>(`tasks/${taskId}/comments/${commentId}`);
+  removeComment(taskId: number, commentId: number): Observable<Result<string>> {
+    return this.http.delete<Result<string>>(`tasks/${taskId}/comments/${commentId}`);
   }
 
   listComments(taskId: number, param: PagingRequestModel): Observable<Result<TaskCommentModel[]>> {
