@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import {SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService, SvpTaskStatusCardComponent} from '@svp-components';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({
   selector: 'app-tasks',
@@ -27,10 +28,11 @@ import { TaskDetailsComponent } from '../../components/task-details/task-details
     SideViewComponent,
     RouterLink,
     NgSelectModule,
-    SvpTaskStatusCardComponent
+    SvpTaskStatusCardComponent,
+    UtcToLocalDatePipe
   ],
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnDestroy {
   taskService = inject(TaskService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
@@ -71,11 +73,11 @@ export class TasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadTasks(); // TODO: uncomment this line
-    this.loadProjects(); // TODO: uncomment this line
+    this.loadTasks();
+    this.loadProjects();
 
     // this.addNewTask(); // TODO: remove this line
-    // this.viewTaskDetails(5); // TODO: remove this line
+    this.viewTaskDetails(5); // TODO: remove this line
   }
 
   private loadProjects(): void {
@@ -125,15 +127,12 @@ export class TasksComponent implements OnInit {
 
   addNewTask(): void {
     this.sideViewService.showComponent(AddTaskComponent);
-    
-    this.sideViewService.outputs.addedTask.subscribe((task: TaskModel) => {
-      this.allTasks.unshift(task);
+        
+    this.sideViewService.triggerOutputs$.subscribe((outputs: { [key: string]: any}) => {
+      if (outputs['addedTask']) {
+        this.allTasks.unshift(outputs['addedTask']);
+      }
     });
-  }
-  
-  addedTask(task: TaskModel): void {
-    console.log('-> Task added: ', task);
-    this.allTasks.unshift(task);
   }
 
   viewTaskDetails(taskId: number): void {
@@ -141,5 +140,8 @@ export class TasksComponent implements OnInit {
     this.sideViewService.showComponent(TaskDetailsComponent, inputs);
   }
 
-
+  ngOnDestroy(): void {
+    this.sideViewService.triggerOutputs$.unsubscribe();
+    this.sideViewService.closeSideView();
+  }
 }

@@ -83,7 +83,7 @@
                     <svp-status-card [status]="project.status" />
                   </span>
                 </td>
-                <td><span>{{ project.dueDate | date:'MMM dd, yyyy' }}</span></td>
+                <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>
               </tr>
             </tbody>
           </table>

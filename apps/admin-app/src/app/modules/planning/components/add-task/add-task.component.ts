@@ -35,10 +35,8 @@ export class AddTaskComponent implements OnInit {
   taskTypeEnum = new TaskTypeEnum();
   
   @Output() exit = new EventEmitter();
-  @Output() addedTask = new EventEmitter<TaskModel>();
-
-  today = new Date();
   
+  today = new Date();
   globalProjectId!: number | null;
 
   formGroup!: FormGroup;
@@ -63,11 +61,12 @@ export class AddTaskComponent implements OnInit {
   }
 
   initForm(): void {
+    // TODO: remove the default values
     this.formGroup = this.fb.group({
       projectId: [this.globalProjectId, Validators.compose([Validators.required])],
-      type: ['Task', Validators.compose([Validators.required])],
-      summary: ['First of the first', Validators.compose([Validators.required, Validators.maxLength(255)])],
-      description: ['This is a description and you\'ll write a lot here naturally.', Validators.compose([Validators.maxLength(5000)])],
+      type: ['', Validators.compose([Validators.required])],
+      summary: ['', Validators.compose([Validators.required, Validators.maxLength(255)])],
+      description: ['', Validators.compose([Validators.maxLength(5000)])],
       expectedStartDate: ['', Validators.compose([Validators.required])],
       dueDate: ['', Validators.compose([Validators.required])],
       attachments: [''],
@@ -81,14 +80,14 @@ export class AddTaskComponent implements OnInit {
     }
 
     const formParam = this.getFormValue();
-
+    
     this.notify.showLoader();
     this.taskService.createTask(formParam).subscribe({
       next: (res: Result<TaskModel>) => {
         this.notify.hideLoader();
         if (res.success) {
           this.notify.timedSuccessMessage('Task Created', 'Task has been created successfully');
-          this.addedTask.emit(res.content);
+          this.sideViewService.triggerOutputs$.next({'addedTask': res.content});
           this.exit.emit();
         } else {
           this.notify.timedErrorMessage('Task Creation Failed', res.message);

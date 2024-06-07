@@ -149,9 +149,9 @@
                   <svp-task-status-card [status]="task.status" />
                 </span>
               </td>
-              <td><span>{{ task.createdAt | date:'MMM dd, yyyy' }}</span></td>
-              <!-- <td><span>{{ task.updatedAt === null ? 'None' : task.updatedAt! | date:'MMM dd, yyyy' }}</span></td> -->
-              <td><span>{{ task.dueDate | date:'MMM dd, yyyy' }}</span></td>
+              <td><span>{{ task.createdAt | utcToLocalDate }}</span></td>
+              <!-- <td><span>{{ task.updatedAt === null ? 'None' : task.updatedAt! | utcToLocalDate }}</span></td> -->
+              <td><span>{{ task.dueDate | utcToLocalDate }}</span></td>
               <td>
                 <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
                   <a (click)="(false)" class="btn btn-action">

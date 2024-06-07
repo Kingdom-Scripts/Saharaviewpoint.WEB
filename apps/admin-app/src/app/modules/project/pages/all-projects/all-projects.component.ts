@@ -8,6 +8,7 @@ import { ProjectModel, ProjectStatusEnum, Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { ProjectService } from '@svp-api-services';
 import { ApproveProjectComponent } from '../../components/approve-project.component';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({ 
   selector: 'app-all-projects',
@@ -19,7 +20,8 @@ import { ApproveProjectComponent } from '../../components/approve-project.compon
     SvpTypographyModule,
     SvpUtilityModule, CommonModule, NxDropdownModule,
     FormsModule,
-    SideViewComponent
+    SideViewComponent,
+    UtcToLocalDatePipe
   ],
 })
 export class AllProjectsComponent implements OnInit {

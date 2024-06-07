@@ -4,5 +4,5 @@ export interface DocumentModel {
   type: string;
   url: string;
   thumbnailUrl: string;
-  createdAt: Date;
+  createdAt: string;
 }

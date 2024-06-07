@@ -6,6 +6,7 @@ import { ProjectModel, ProjectStatusEnum, Result } from '@svp-models';
 import { Router } from '@angular/router';
 import { ProjectService } from '@svp-api-services';
 import { NotificationService } from '@svp-services';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,8 @@ import { NotificationService } from '@svp-services';
     SvpTypographyModule,
     SvpUtilityModule,
     CommonModule,
-    SvpDashboardCardComponent
+    SvpDashboardCardComponent,
+    UtcToLocalDatePipe
   ],
 })
 export class HomeComponent implements OnInit {
