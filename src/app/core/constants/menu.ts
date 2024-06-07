@@ -42,21 +42,21 @@ export class Menu {
         // },
       ],
     },
-    {
-      group: 'Config',
-      separator: false,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/cog.svg',
-          label: 'Settings',
-          route: '/settings',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/bell.svg',
-          label: 'Notifications',
-          route: '/gift',
-        },
-      ],
-    },
+    // {
+    //   group: 'Config',
+    //   separator: false,
+    //   items: [
+    //     {
+    //       icon: 'assets/icons/heroicons/outline/cog.svg',
+    //       label: 'Settings',
+    //       route: '/settings',
+    //     },
+    //     {
+    //       icon: 'assets/icons/heroicons/outline/bell.svg',
+    //       label: 'Notifications',
+    //       route: '/gift',
+    //     },
+    //   ],
+    // },
   ];
 }
