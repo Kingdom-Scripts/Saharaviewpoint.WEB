@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { environment } from '../../../../environments/environment.prod';
 
 @Component({
     selector: 'app-responsive-helper',
@@ -9,10 +9,6 @@ import { environment } from '../../../../environments/environment.prod';
     standalone: true,
     imports: [NgIf],
 })
-export class ResponsiveHelperComponent implements OnInit {
-  public env: any = environment;
-
-  constructor() {}
-
-  ngOnInit(): void {}
+export class ResponsiveHelperComponent {
+  @Input({required: true}) env: any = null;
 }

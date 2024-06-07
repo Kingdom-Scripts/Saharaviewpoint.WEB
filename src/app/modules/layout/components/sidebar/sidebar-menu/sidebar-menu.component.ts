@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { MenuService } from '../../../services/menu.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MenuService } from '@svp-services';
 import { SidebarSubmenuComponent } from '../sidebar-submenu/sidebar-submenu.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { NgFor, NgClass, NgTemplateOutlet, NgIf } from '@angular/common';
-import { SubMenuItem } from '../../../../../core/models/menu.model';
+import { NgFor, NgClass, NgTemplateOutlet } from '@angular/common';
+import { SubMenuItem } from '@svp-models';
 
 @Component({
     selector: 'app-sidebar-menu',
@@ -22,12 +22,10 @@ import { SubMenuItem } from '../../../../../core/models/menu.model';
         SidebarSubmenuComponent
     ],
 })
-export class SidebarMenuComponent implements OnInit {
+export class SidebarMenuComponent {
   constructor(public menuService: MenuService) {}
 
   public toggleMenu(subMenu: SubMenuItem) {
     this.menuService.toggleMenu(subMenu);
   }
-
-  ngOnInit(): void {}
 }

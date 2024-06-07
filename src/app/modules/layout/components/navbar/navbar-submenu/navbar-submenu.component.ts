@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { NgFor, NgTemplateOutlet, NgIf } from '@angular/common';
-import { SubMenuItem } from '../../../../../core/models/menu.model';
+import { SubMenuItem } from '@svp-models';
 
 @Component({
     selector: 'div[navbar-submenu]',
@@ -18,10 +18,6 @@ import { SubMenuItem } from '../../../../../core/models/menu.model';
         AngularSvgIconModule,
     ],
 })
-export class NavbarSubmenuComponent implements OnInit {
+export class NavbarSubmenuComponent {
   @Input() public submenu = <SubMenuItem[]>{};
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }

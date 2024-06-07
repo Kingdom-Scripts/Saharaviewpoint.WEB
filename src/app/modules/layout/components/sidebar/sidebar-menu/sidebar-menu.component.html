@@ -12,10 +12,12 @@
       @for (item of menu.items; track $index) {
         <li>
           <!-- Menu List -->
-          <div (click)="toggleMenu(item)" class="group relative text-gray-400 dark:text-night-400">
+          <div class="group relative text-gray-400 dark:text-night-400">
             <!-- Icon -->
             <div
-              [ngClass]="item.active && !menuService.showSideBar ? 'text-primary-500' : ''"
+              [ngClass]="{
+                'text-primary-500': item.active && !menuService.showSideBar
+                }"
               class="pointer-events-none absolute m-2">
               <svg-icon src="{{ item.icon }}" [svgClass]="'h-5 w-5'"> </svg-icon>
             </div>
@@ -28,7 +30,7 @@
 
             <!-- Workaround:: Enable routerLink -->
             <ng-template #parentMenu let-item="item">
-              <div
+              <div (click)="toggleMenu(item)"
                 routerLink="{{ item.route }}"
                 class="flex h-9 cursor-pointer items-center justify-start rounded text-gray-600 hover:bg-gray-100 dark:text-night-100 dark:hover:bg-night-600">
                 <a
@@ -41,7 +43,7 @@
 
             <!-- Workaround:: Disable routerLink -->
             <ng-template #childMenu let-item="item">
-              <div
+              <div (click)="toggleMenu(item)"
                 class="flex h-9 cursor-pointer items-center justify-start rounded hover:bg-gray-100 dark:hover:bg-night-600">
                 <a
                   class="ml-10 truncate text-xs font-semibold tracking-wide text-gray-600 focus:outline-none dark:text-night-100">

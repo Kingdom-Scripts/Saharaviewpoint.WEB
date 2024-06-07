@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MenuService } from '../../../services/menu.service';
+import { Component, Input } from '@angular/core';
+import { MenuService } from '@svp-services';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
-import { SubMenuItem } from '../../../../../core/models/menu.model';
+import { SubMenuItem } from '@svp-models';
 
 @Component({
     selector: 'app-sidebar-submenu',
@@ -19,18 +19,16 @@ import { SubMenuItem } from '../../../../../core/models/menu.model';
         AngularSvgIconModule,
     ],
 })
-export class SidebarSubmenuComponent implements OnInit {
+export class SidebarSubmenuComponent  {
   @Input() public submenu = <SubMenuItem>{};
 
   constructor(public menuService: MenuService) {}
 
-  ngOnInit(): void {}
-
-  public toggleMenu(menu: any) {
+  public toggleMenu(menu: SubMenuItem) {
     this.menuService.toggleSubMenu(menu);
   }
 
-  private collapse(items: Array<any>) {
+  private collapse(items: Array<SubMenuItem>) {
     items.forEach((item) => {
       item.expanded = false;
       if (item.children) this.collapse(item.children);

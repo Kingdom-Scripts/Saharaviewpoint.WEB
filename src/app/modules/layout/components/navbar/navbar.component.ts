@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuService } from '../../services/menu.service';
+import { Component } from '@angular/core';
+import { MenuService } from '@svp-services';
 import { NavbarMobileComponent } from './navbar-mobile/navbar-mobilecomponent';
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { NavbarMenuComponent } from './navbar-menu/navbar-menu.component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { SvpTypographyModule } from '@svp-components';
 
 @Component({
     selector: 'app-navbar',
@@ -15,13 +16,13 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
         NavbarMenuComponent,
         ProfileMenuComponent,
         NavbarMobileComponent,
+        SvpTypographyModule
     ],
 })
-export class NavbarComponent implements OnInit {
-  constructor(private menuService: MenuService) {}
+export class NavbarComponent {
 
-  ngOnInit(): void {}
-
+  constructor(public menuService: MenuService) {}  
+    
   public toggleMobileMenu(): void {
     this.menuService.showMobileMenu = true;
   }

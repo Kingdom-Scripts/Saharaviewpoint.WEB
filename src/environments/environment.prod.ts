@@ -1,3 +1,7 @@
 export const environment = {
-  production: false,
+  staging: false,
+  production: true,
+  env_name: 'Production',
+  assetBaseUrl: '',
+  apiUrl: ''
 };

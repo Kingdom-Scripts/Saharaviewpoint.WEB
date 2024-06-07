@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FooterComponent } from './components/footer/footer.component';
 import { NavigationEnd, Router, RouterOutlet, Event } from '@angular/router';
+import { Menu } from '../../core/constants/menu';
+import { FooterComponent } from './components/footer/footer.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 
@@ -13,6 +14,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 })
 export class LayoutComponent implements OnInit {
   private mainContent: HTMLElement | null = null;
+  public Menu = Menu;
 
   constructor(private router: Router) {
     this.router.events.subscribe((event: Event) => {

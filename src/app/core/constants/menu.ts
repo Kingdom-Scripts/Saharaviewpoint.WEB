@@ -1,9 +1,9 @@
-import { MenuItem } from '../models/menu.model';
+import { MenuItem } from '@svp-models';
 
 export class Menu {
   public static pages: MenuItem[] = [
     {
-      group: 'Base',
+      group: 'Admin Base',
       separator: false,
       items: [
         {
@@ -11,66 +11,52 @@ export class Menu {
           label: 'Dashboard',
           route: '/dashboard'
         },
+        {
+          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          label: 'Projects',
+          route: '/project',
+        },
+        {
+          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          label: 'Tasks',
+          route: '/tasks'
+        },
+      ],
+    },
+    {
+      group: 'Management',
+      separator: false,
+      items: [
+        {
+          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          label: 'Users',
+          route: '/users',
+          children: [
+            { label: 'Project Managers', route: '/users/project-managers' }
+          ]
+        },
         // {
-        //   icon: 'assets/icons/heroicons/outline/lock-closed.svg',
-        //   label: 'Auth',
-        //   route: '/auth',
-        //   children: [
-        //     { label: 'Sign up', route: '/auth/sign-up' },
-        //     { label: 'Sign in', route: '/auth/sign-in' },
-        //     { label: 'Forgot Password', route: '/auth/forgot-password' },
-        //     { label: 'New Password', route: '/auth/new-password' },
-        //     { label: 'Two Steps', route: '/auth/two-steps' },
-        //   ],
+        //   icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+        //   label: 'Project Managers',
+        //   route: '/project-managers',
         // },
       ],
     },
     // {
-    //   group: 'Collaboration',
-    //   separator: true,
+    //   group: 'Config',
+    //   separator: false,
     //   items: [
     //     {
-    //       icon: 'assets/icons/heroicons/outline/download.svg',
-    //       label: 'Download',
-    //       route: '/download',
+    //       icon: 'assets/icons/heroicons/outline/cog.svg',
+    //       label: 'Settings',
+    //       route: '/settings',
     //     },
     //     {
-    //       icon: 'assets/icons/heroicons/outline/gift.svg',
-    //       label: 'Gift Card',
+    //       icon: 'assets/icons/heroicons/outline/bell.svg',
+    //       label: 'Notifications',
     //       route: '/gift',
-    //     },
-    //     {
-    //       icon: 'assets/icons/heroicons/outline/users.svg',
-    //       label: 'Users',
-    //       route: '/users',
     //     },
     //   ],
     // },
-    {
-      group: 'Config',
-      separator: false,
-      items: [
-        {
-          icon: 'assets/icons/heroicons/outline/cog.svg',
-          label: 'Settings',
-          route: '/settings',
-        },
-        {
-          icon: 'assets/icons/heroicons/outline/bell.svg',
-          label: 'Notifications',
-          route: '/gift',
-        },
-        // {
-        //   icon: 'assets/icons/heroicons/outline/folder.svg',
-        //   label: 'Folders',
-        //   route: '/folders',
-        //   children: [
-        //     { label: 'Current Files', route: '/folders/current-files' },
-        //     { label: 'Downloads', route: '/folders/download' },
-        //     { label: 'Trash', route: '/folders/trash' },
-        //   ],
-        // },
-      ],
-    },
   ];
 }

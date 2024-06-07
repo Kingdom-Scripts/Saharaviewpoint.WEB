@@ -1,4 +1,95 @@
 <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
-  <!-- Header -->
+  <div class="flex space-x-6 mt-8">
+    <!-- Card 1 -->
+    <div class="flex-1" (click)="navigateTo('project/all')">
+      <svp-dashboard-card icon="assets/icons/appicons/project.svg" [title]="'Projects'" [description]="'There are ' + projectCount + ' total projects'" />
+    </div>
+
+    <!-- Card 2 -->
+    <div class="flex-1">
+      <svp-dashboard-card icon="assets/icons/appicons/project-outlined.svg" [title]="'Tasks'" [description]="'There are ' + allTasks + ' pending tasks'" />
+    </div>
+
+    <!-- Card 3 -->
+    <div class="flex-1">
+      <svp-dashboard-card icon="assets/icons/appicons/chart.svg" [title]="'Reports'" [description]="'There are ' + allReports + ' new reports'" />
+    </div>
+
+    <!-- Card 4 -->
+    <!-- <div class="flex-1">
+      <svp-dashboard-card icon="assets/icons/appicons/message-outline.svg" [title]="'Messages'" [description]="'There are ' + newMessages + ' new messages'" />
+    </div> -->
+  </div>
+
+  @if(allProjects === null) {
+    <div class="mt-6 bg-white min-h-80 py-8 px-4 rounded-xl ">
+      <div class="flex flex-col space-y-4 items-center justify-center">
+        <svg-icon src="assets/icons/appicons/empty-project.svg" [svgClass]="'h-64 w-64'"/>
+        
+        <h1 svp-sub-header>
+          No Projects yet.
+        </h1>
+
+        <p svp-text>
+          Click here to start a project
+        </p>  
+
+        <button svp-neutral type="button">Add new project</button>
+      </div>
+    </div>
+  }
+  @else {
+    <div class="mt-6 min-h-80 py-8 px-14 rounded-xl bg-white dark:bg-night-700">      
+      <div class="flex flex-row justify-between mb-8">
+        <div class="flex space-x-3">
+          <div svp-card-selector [isActive]="projectService.searchParam.status === null" (click)="projectService.filterByStatus(null)">
+            <svg-icon src="assets/icons/appicons/hamburger-menu.svg" [svgClass]="'h-4 w-4 dark:text-white'" />
+            <span>All Projects</span>
+          </div>
+    
+          <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.IN_PROGRESS)" [isActive]="projectService.searchParam.status === projectStatusEnum.IN_PROGRESS">
+            <div class="rounded-full p-2 bg-[#800080]"></div>
+            <span>Active Projects</span>
+          </div>
+    
+          <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.COMPLETED)" [isActive]="projectService.searchParam.status === projectStatusEnum.COMPLETED">
+            <div class="rounded-full p-2 bg-[#008000]"></div>
+            <span>Completed Projects</span>
+          </div>
+        </div>
+
+        <a svp-neutral type="button" svpRoute="/project/new">Add new project</a>
+      </div>
+
+      <div class="w-full">
+        <div class="table-container" style="min-height: 320px; max-height: 500px;">
+          <table class="fixed-header header-1 bordered">
+            <thead>
+              <tr>
+                <th width="5%"><span>#</span></th>
+                <th width="30%"><span>PROJECT NAME</span></th>
+                <th><span>PROJECT MANAGER</span></th>
+                <th><span>Status</span></th>
+                <th><span>End Date</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let project of allProjects; let index = index">
+                <td><span>{{ index + 1 }}</span></td>
+                <td><span>{{ project.title }}</span></td>
+                <td><span>{{ project.assignee ?  project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span></td>
+                <td>
+                  <span>
+                    <svp-status-card [status]="project.status" />
+                  </span>
+                </td>
+                <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
   
-</div>
+</div> 

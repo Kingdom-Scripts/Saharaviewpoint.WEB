@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
-import { MenuService } from '../../../../services/menu.service';
-import { SubMenuItem } from '../../../../../../core/models/menu.model';
+import { MenuService } from '@svp-services';
+import { SubMenuItem } from '@svp-models';
 
 @Component({
     selector: 'app-navbar-mobile-submenu',
@@ -19,18 +19,16 @@ import { SubMenuItem } from '../../../../../../core/models/menu.model';
         AngularSvgIconModule,
     ],
 })
-export class NavbarMobileSubmenuComponent implements OnInit {
+export class NavbarMobileSubmenuComponent {
   @Input() public submenu = <SubMenuItem>{};
 
   constructor(private menuService: MenuService) {}
 
-  ngOnInit(): void {}
-
-  public toggleMenu(menu: any) {
+  public toggleMenu(menu: SubMenuItem) {
     this.menuService.toggleSubMenu(menu);
   }
 
-  private collapse(items: Array<any>) {
+  private collapse(items: Array<SubMenuItem>) {
     items.forEach((item) => {
       item.expanded = false;
       if (item.children) this.collapse(item.children);
