@@ -43,15 +43,15 @@ export class NewPasswordComponent implements OnInit {
   passwordStrength: number = 0;
   
   constructor() {
-    this.invitationParam.email = this.route.snapshot.params['email'];
-    this.invitationParam.token = this.route.snapshot.params['token'];
+    this.invitationParam.email = this.route.snapshot.queryParams['email'];
+    this.invitationParam.token = this.route.snapshot.queryParams['token'];
     
     this.isInvitation = this.router.url.includes('accept-invitation');
     if (this.isInvitation) {      
-      this.invitationParam.type = this.route.snapshot.params['type'];
+      this.invitationParam.type = this.route.snapshot.queryParams['type'];
     }
 
-    console.log('--> Invitation Params', this.isInvitation)
+    console.log('--> Invitation Params', this.isInvitation);
   }
 
   ngOnInit(): void {
@@ -86,7 +86,32 @@ export class NewPasswordComponent implements OnInit {
   }
 
   resetPassword(): void {
-    throw new Error('Method not implemented.');
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
+
+    const params = Object.assign({}, this.invitationParam, this.formGroup.value);
+    this.notify.showLoader();
+    this.authService.resetPassword(params)
+      .subscribe(async (res: Result<AuthDataModel>) => {
+        this.notify.hideLoader();
+        
+        if (res.success) {
+          if (res.content) {
+            this.notify.timedSuccessMessage('Password reset successfully.');
+
+          this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
+          this.router.navigate(['dashboard']);
+          }
+          else {
+            this.notify.timedSuccessMessage('Password reset successfully. Please login with your new password.');
+            this.router.navigate(['/auth/sign-in']);
+          }
+        } else {
+          this.notify.errorMessage(res.title, res.message);
+        }
+      });
   }
 
   setPassword(): void { 

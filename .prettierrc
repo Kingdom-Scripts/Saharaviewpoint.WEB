@@ -1,0 +1,28 @@
+{
+  "singleQuote": true,
+  "semi": true,
+  "quoteProps": "consistent",
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "bracketSameLine": true,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "printWidth": 160,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "parser": "json",
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "parser": "markdown",
+        "tabWidth": 4
+      }
+    }
+  ]
+}

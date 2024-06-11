@@ -61,26 +61,6 @@ export class AuthService {
     });
   }
 
-  signUpClient(param: any): Observable<Result<AuthDataModel>> {
-    return this.http.post<Result<AuthDataModel>>(`auth/sign-up`, param);
-  }
-
-  login(param: LoginModel): Observable<Result<AuthDataModel>> {
-    return this.http.post<Result<AuthDataModel>>('auth/token', param);
-  }
-
-  refreshToken() {    
-    const param = {
-      refreshToken: this.storageService.getRefreshToken()
-    };
-    
-    return this.http.post<Result<AuthDataModel>>(`auth/refresh-token`, param);
-  }
-
-  logout(userReference: string): Observable<Result<string>> {
-    return this.http.post<Result<string>>(`auth/${userReference}/logout`, null);
-  }
-
   maskUserAsAuthenticated(authData: AuthDataModel, rememberMe: boolean) {
     this.maskUserAsLoggedOut();
     
@@ -134,5 +114,33 @@ export class AuthService {
     }
 
     return passwordStrength;
+  }
+
+  login(param: LoginModel): Observable<Result<AuthDataModel>> {
+    return this.http.post<Result<AuthDataModel>>('auth/token', param);
+  }
+
+  signUpClient(param: any): Observable<Result<AuthDataModel>> {
+    return this.http.post<Result<AuthDataModel>>(`auth/sign-up`, param);
+  }
+
+  refreshToken() {    
+    const param = {
+      refreshToken: this.storageService.getRefreshToken()
+    };
+    
+    return this.http.post<Result<AuthDataModel>>(`auth/refresh-token`, param);
+  }
+
+  logout(userReference: string): Observable<Result<string>> {
+    return this.http.post<Result<string>>(`auth/${userReference}/logout`, null);
+  }
+
+  forgotPassword(param: any): Observable<Result<string>> {
+    return this.http.post<Result<string>>(`auth/forgot-password`, param);
+  }
+
+  resetPassword(param: any): Observable<Result<AuthDataModel>> {
+    return this.http.post<Result<AuthDataModel>>(`auth/reset-password`, param);
   }
 }

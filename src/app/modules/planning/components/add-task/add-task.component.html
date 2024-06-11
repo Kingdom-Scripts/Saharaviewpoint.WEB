@@ -26,7 +26,7 @@
           formControlName="projectId"
           class="w-[50%]">
         </ng-select>
-        <svp-validation-errors [svpControl]="formGroup.get('projectId')" />
+        <svp-validation-errors [control]="formGroup.get('projectId')" />
       </div>
   
       <div class="space-y-2">
@@ -38,7 +38,7 @@
           formControlName="type"
           class="w-[50%]">
         </ng-select>
-        <svp-validation-errors [svpControl]="formGroup.get('type')" />
+        <svp-validation-errors [control]="formGroup.get('type')" />
       </div>
 
       <hr class="border border-gray-300 dark:border-gray-700"/>
@@ -47,7 +47,7 @@
         <label svp-label for="summary">Summary <span class="text-red-700">*</span></label>
         <input type="text" formControlName="summary" placeholder="What would you title this task?"/>
         <svp-max-input-length [count]="formGroup.get('summary')?.value.length" [total]="250" [minThreshold]="100" />
-        <svp-validation-errors [svpControl]="formGroup.get('summary')" />
+        <svp-validation-errors [control]="formGroup.get('summary')" />
       </div>
 
       <div class="space-y-2">
@@ -56,7 +56,7 @@
           type="text" placeholder="Provide more information about this task"
           formControlName="description"> </textarea>
         <svp-max-input-length [count]="formGroup.get('description')?.value.length" [total]="5000" [minThreshold]="100" />
-        <svp-validation-errors [svpControl]="formGroup.get('description')" />
+        <svp-validation-errors [control]="formGroup.get('description')" />
       </div>
 
       <div class="grid grid-cols-2 gap-6">
@@ -65,7 +65,7 @@
           <input
             type="date" min="{{today | date: 'yyyy-MM-dd'}}"
             formControlName="expectedStartDate"/>
-          <svp-validation-errors [svpControl]="formGroup.get('expectedStartDate')" />
+          <svp-validation-errors [control]="formGroup.get('expectedStartDate')" />
         </div>
 
         <div class="space-y-2">
@@ -73,7 +73,7 @@
           <input
             type="date"
             formControlName="dueDate"/>
-          <svp-validation-errors [svpControl]="formGroup.get('dueDate')" />
+          <svp-validation-errors [control]="formGroup.get('dueDate')" />
         </div>
       </div>
 
@@ -81,7 +81,7 @@
         <label svp-label for="attachments" [marginBottom]="6">Attachments</label>
         <div class="w-full mb-2"></div>
         <svp-file-selector svpId="attachments" [svpForm]="formGroup" [height]="10" isMultiple (onFileChanged)="onFilesChanged($event)" />
-        <svp-validation-errors [svpControl]="formGroup.get('attachments')" />
+        <svp-validation-errors [control]="formGroup.get('attachments')" />
       </div>  
     </div>
 
