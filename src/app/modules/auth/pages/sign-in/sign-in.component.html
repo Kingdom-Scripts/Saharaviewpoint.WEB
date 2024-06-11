@@ -10,12 +10,12 @@
   <div class="space-y-3 text-left">
     <div>
       <auth-input svpType="email" svpId="email" [svpForm]="loginForm" svpLabel="Email Address" />
-      <svp-validation-errors [svpControl]="loginForm.get('email')" />
+      <svp-validation-errors [control]="loginForm.get('email')" />
     </div>
 
     <div>
       <auth-input svpType="password" svpId="password" [svpForm]="loginForm" svpLabel="Password" />
-      <svp-validation-errors [svpControl]="loginForm.get('password')" />
+      <svp-validation-errors [control]="loginForm.get('password')" />
     </div>
   </div>
 

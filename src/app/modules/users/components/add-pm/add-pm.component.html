@@ -11,25 +11,25 @@
     <div class="space-y-2">
       <label svp-label for="firstName">First Name</label>
       <input type="text" class="svp-input" formControlName="firstName" />
-      <svp-validation-errors [svpControl]="newPmForm.get('firstName')" />
+      <svp-validation-errors [control]="newPmForm.get('firstName')" />
     </div>
   
     <div class="space-y-2">
       <label svp-label for="lastName">Last Name</label>
       <input type="text" class="svp-input" formControlName="lastName" />
-      <svp-validation-errors [svpControl]="newPmForm.get('lastName')" />
+      <svp-validation-errors [control]="newPmForm.get('lastName')" />
     </div>
   
     <div class="space-y-2">
       <label svp-label for="email">Email Address</label>
       <input type="text" class="svp-input" formControlName="email" />
-      <svp-validation-errors [svpControl]="newPmForm.get('email')" />
+      <svp-validation-errors [control]="newPmForm.get('email')" />
     </div>
 
     <div class="space-y-2">
       <label svp-label for="phone">Phone Number</label>
       <input type="text" class="svp-input" formControlName="phone" />
-      <svp-validation-errors [svpControl]="newPmForm.get('phone')" />
+      <svp-validation-errors [control]="newPmForm.get('phone')" />
     </div>
 
     <div>
