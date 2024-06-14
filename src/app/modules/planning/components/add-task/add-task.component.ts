@@ -32,7 +32,7 @@ export class AddTaskComponent implements OnInit {
   projectService = inject(ProjectService);
   taskService = inject(TaskService);
   fb = inject(FormBuilder);
-  taskTypeEnum = new TaskTypeEnum();
+  taskTypeEnum = TaskTypeEnum;
   
   @Output() exit = new EventEmitter();
   

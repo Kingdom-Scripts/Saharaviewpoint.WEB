@@ -9,7 +9,7 @@ import { NotificationService } from '@svp-services';
   providedIn: 'root',
 })
 export class TaskService {  
-  projectStatusEnum = new TaskStatusEnum();
+  projectStatusEnum = TaskStatusEnum;
 
   searchParam = new TaskSearchModel();
   private _searchParams$ = new Subject<TaskSearchModel>;

@@ -47,7 +47,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   taskTypes: string[] = ['Epic', 'Task', 'Subtask'];
   selectedTaskType = 'Epic';
 
-  taskStatusEnum = new TaskStatusEnum();
+  taskStatusEnum = TaskStatusEnum;
   statuses: string[] = ['Epic', 'Task']
   selectedStatus = '';
 

@@ -19,7 +19,11 @@ export class Menu {
         {
           icon: 'assets/icons/heroicons/outline/chart-pie.svg',
           label: 'Tasks',
-          route: '/tasks'
+          route: '/tasks',
+          children: [
+            { label: 'All Tasks', route: '/tasks/all' },
+            { label: 'Board', route: '/tasks/board' }
+          ]
         },
       ],
     },

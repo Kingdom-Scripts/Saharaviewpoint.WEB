@@ -25,5 +25,5 @@ import {TaskStatusEnum} from '@svp-models';
 export class SvpTaskStatusCardComponent {
   @Input({required: true}) status: string = '';
 
-  statusEnum = new TaskStatusEnum();
+  statusEnum = TaskStatusEnum;
 }

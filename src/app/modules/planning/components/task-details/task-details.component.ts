@@ -38,8 +38,8 @@ export class TaskDetailsComponent implements OnInit {
 
   assetBaseUrl = environment.assetBaseUrl;
   
-  taskTypeEnum = new TaskTypeEnum();
-  taskStatusEnum = new TaskStatusEnum();
+  taskTypeEnum = TaskTypeEnum;
+  taskStatusEnum = TaskStatusEnum;
 
   taskTypes = this.taskTypeEnum.asArray;
   taskStatuses = this.taskStatusEnum.asArray;

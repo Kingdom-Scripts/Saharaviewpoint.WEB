@@ -48,6 +48,91 @@
   .iziToast-color-green {
     @apply bg-primary-900;
   }
+    /* Buttons */
+    .btn {
+      @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-xs font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none xl:text-sm;
+    }
+    .btn-lg {
+      @apply px-7 py-2.5 text-base;
+    }
+    .btn-sm {
+      @apply px-2.5 py-1.5 text-xs;
+    }
+    .btn[disabled] {
+      @apply cursor-not-allowed opacity-60;
+    }
+  
+    .btn-primary {
+      @apply border-primary bg-primary shadow-primary/60 hover:bg-primary-900 text-white;
+    }
+    .btn-outline-primary {
+      @apply border-primary text-primary hover:bg-primary shadow-none hover:text-white;
+    }
+  
+    .btn-secondary {
+      @apply border-secondary bg-secondary shadow-secondary/60 hover:bg-secondary-700 text-white;
+    }
+    .btn-outline-secondary {
+      @apply border-secondary text-secondary hover:bg-secondary shadow-none hover:text-white;
+    }
+  
+    .btn-success {
+      @apply border-success bg-success shadow-success/60 hover:bg-success-700 text-white;
+    }
+    .btn-outline-success {
+      @apply border-success text-success hover:bg-success shadow-none hover:text-white;
+    }
+  
+    .btn-info {
+      @apply border-info bg-info shadow-info/60 hover:bg-info-700 text-white;
+    }
+    .btn-outline-info {
+      @apply border-info text-info hover:bg-info shadow-none hover:text-white;
+    }
+  
+    .btn-danger {
+      @apply border-danger bg-danger shadow-danger/60 hover:bg-danger-700 text-white;
+    }
+    .btn-outline-danger {
+      @apply border-danger text-danger hover:bg-danger shadow-none hover:text-white;
+    }
+  
+    .btn-warning {
+      @apply border-warning bg-warning shadow-warning/60 hover:bg-warning-700 text-white;
+    }
+    .btn-outline-warning {
+      @apply border-warning text-warning hover:bg-warning shadow-none hover:text-white;
+    }
+  
+    .btn-info {
+      @apply border-info bg-info shadow-info/60 text-white;
+    }
+    .btn-outline-info {
+      @apply border-info text-info hover:bg-info shadow-none hover:text-white;
+    }
+  
+    /* Badge */
+    .badge {
+      @apply relative my-1 rounded border border-transparent px-2 py-0.5 text-xs font-semibold text-white;
+    }
+    .badge-outline-primary {
+      @apply border-primary text-primary hover:bg-primary-100;
+    }
+    .badge-outline-secondary {
+      @apply border-secondary text-secondary hover:bg-secondary-100;
+    }
+    .badge-outline-success {
+      @apply border-success text-success hover:bg-success-100;
+    }
+    .badge-outline-danger {
+      @apply border-danger text-danger hover:bg-danger-100;
+    }
+    .badge-outline-warning {
+      @apply border-warning text-warning hover:bg-warning-100;
+    }
+    .badge-outline-info {
+      @apply border-info text-info hover:bg-info-100;
+    }
 }
 
 /** Scroll bar **/
@@ -69,8 +154,8 @@
 }
 
 /* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+::-webkit-scrollbar-track { 
+  background: #d67e2a;
 }
 
 /* Handle */
