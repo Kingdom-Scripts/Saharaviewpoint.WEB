@@ -1,12 +1,12 @@
 <div class="mx-auto px-4 py-4 sm:px-8">
-  <div class="flex flex-row justify-between">
+  <div class="mt-4 flex flex-row justify-between">
     <div>
       <div>
         <h1 svp-sub-header>My Very First Project</h1>
       </div>
     </div>
 
-    <div class="my-4 flex space-x-3">
+    <div class="flex space-x-3">
       <div svp-card-selector>
         <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'" />
         <span>LIST VIEW</span>
@@ -19,46 +19,145 @@
     </div>
   </div>
 
-  <div class="flex space-x-3">
+  <div class="mt-4 flex space-x-3">
     <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
   </div>
 
   <div class="grid grid-cols-6 gap-x-4">
     <div class="col-span-5">
-      <div class="mb-3 mt-6 grid grid-cols-3 gap-x-4">
-        <div class="flex w-full justify-between rounded-t-md bg-gray-200 px-4 py-3">
-          <p svp-text class="font-semibold">TO DO</p>
-          <p>3 items</p>
+      <div class="mt-6 grid grid-cols-3 gap-x-4">
+        <!-- TO DO -->
+        <div class="bg-gray-200">
+          <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3">
+            <p svp-text class="font-bold">TO DO</p>
+            <p>{{ todoTasks.length }} items</p>
+          </div>
         </div>
 
-        <div class="flex w-full justify-between rounded-t-md bg-gray-200 px-4 py-3">
-          <p svp-text class="font-semibold">IN PROGRESS</p>
-          <p>3 items</p>
+        <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3">
+          <p svp-text class="font-bold">IN PROGRESS</p>
+          <p>{{ inProgressTasks.length }} items</p>
         </div>
 
-        <div class="flex w-full justify-between rounded-t-md bg-gray-200 px-4 py-3">
-          <p svp-text class="font-semibold">COMPLETED</p>
-          <p>3 items</p>
+        <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3">
+          <p svp-text class="font-bold">COMPLETED</p>
+          <p>{{ completedTasks.length }} items</p>
         </div>
       </div>
 
-      <div class="mb-3 mt-6 grid grid-cols-3 gap-x-4">
-        <div class="space-y-2" *ngFor="let t of [1, 1]">
-          <div>
-            <p svp-text bold>First Epic</p>
-          </div>
-          <div class="">
-            <div class="space-y-2 rounded-b-md bg-gray-200 p-1.5">
-              @for (task of tasks; track task.id) {
-              <div class="cursor-pointer space-y-4 bg-white px-3 py-2 hover:border hover:border-white hover:bg-gray-200" cdkDrag>
-                <div class="flex justify-between">
-                  <p svp-text class="hover:underline">
-                    {{task.title}}
-                  </p>
+      <ng-scrollbar class="h-[calc(100vh-330px)]" [visibility]="'hover'" [appearance]="'compact'">
+        <div class="mb-3 grid grid-cols-3 gap-x-4">
+          <!-- TO DO -->
+          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+            <div
+              id="todoList"
+              class="task-list h-full space-y-2"
+              cdkDropList
+              cdkDropListSortingDisabled
+              [cdkDropListData]="todoTasks"
+              [cdkDropListConnectedTo]="['inProgressList']"
+              (cdkDropListDropped)="drop($event)">
+              @for (task of todoTasks; track task.id) {
+              <div
+                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
+                cdkDrag
+                [cdkDragData]="task"
+                (click)="viewTaskDetails(task.id)">
+                <div class="">
+                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
+                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <p class="text-gray-400">{{task.dueDate}}</p>
+                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                  <!-- TODO: children icon -->
+                  <div class="flex space-x-2">
+                    <button type="button" class="text-info hover:text-info-800">
+                      <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
+                    </button>
+                    <button type="button" class="text-danger hover:text-danger-800">
+                      <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+
+              <!-- ADD NEW TASK BUTTON -->
+              <button type="button" class="btn btn-primary mt-4 w-full" (click)="addNewTask()">
+                <svg-icon src="assets/icons/plus.svg" [svgClass]="'h-5 h-5'" />
+                <span>Add Task</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- IN PROGRESS -->
+          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+            <div
+              id="inProgressList"
+              class="task-list h-full space-y-2"
+              cdkDropList
+              cdkDropListSortingDisabled
+              [cdkDropListData]="inProgressTasks"
+              [cdkDropListConnectedTo]="['todoList', 'completedList']"
+              (cdkDropListDropped)="drop($event)">
+              <ng-container *ngIf="inProgressTasks.length === 0">
+                <p class="mt-10 text-center text-gray-500">No tasks in progress</p>
+              </ng-container>
+              @for (task of inProgressTasks; track task.id) {
+              <div
+                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
+                cdkDrag
+                [cdkDragData]="task"
+                (click)="viewTaskDetails(task.id)">
+                <div class="">
+                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
+                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                  <!-- TODO: children icon -->
+                  <div class="flex space-x-2">
+                    <button type="button" class="text-info hover:text-info-800">
+                      <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
+                    </button>
+                    <button type="button" class="text-danger hover:text-danger-800">
+                      <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- COMPLETED -->
+          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+            <div
+              id="completedList"
+              class="task-list h-full space-y-2"
+              cdkDropList
+              cdkDropListSortingDisabled
+              [cdkDropListData]="completedTasks"
+              [cdkDropListConnectedTo]="['inProgressList']"
+              (cdkDropListDropped)="drop($event)">
+              <ng-container *ngIf="completedTasks.length === 0">
+                <p class="mt-10 text-center text-gray-500">No tasks completed</p>
+              </ng-container>
+              @for (task of completedTasks; track task.id) {
+              <div
+                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
+                cdkDrag
+                [cdkDragData]="task"
+                (click)="viewTaskDetails(task.id)">
+                <div class="">
+                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
+                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
                   <div class="flex space-x-2">
                     <button type="button" class="text-info hover:text-info-800">
@@ -74,9 +173,11 @@
             </div>
           </div>
         </div>
-      </div>
+      </ng-scrollbar>
     </div>
-
-    <div></div>
   </div>
 </div>
+
+@if(sideViewService.isActive) {
+<svp-side-view></svp-side-view>
+}

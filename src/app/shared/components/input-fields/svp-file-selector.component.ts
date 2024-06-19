@@ -7,7 +7,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="" [formGroup]="svpForm">
+    <div [formGroup]="svpForm">
       <div class="flex flex-col items-center justify-center w-full">
         <label for="{{svpId}}" class="w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:border-night-500 dark:bg-night-700 hover:border-solid"
             [ngClass]="{

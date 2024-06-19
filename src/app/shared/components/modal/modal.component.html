@@ -1,0 +1,17 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center overflow-hidden h-full">
+  <div class="fixed inset-0 transition-opacity" (click)="close()">
+    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+  </div>
+
+  <div
+    class="transform overflow-hidde rounded-lg bg-white text-left transition-all w-[95%]"
+    [ngClass]="{
+      'sm:w-[calc(100vw/5)]': size === 'small',
+      'sm:w-[calc(100vw/3)]': size === 'normal',
+      'sm:w-[calc(100vw/2)]': size === 'large'
+    }"
+    style="max-height: 90%; overflow-y: auto">
+    <!-- Content -->
+    <div #container></div>
+  </div>
+</div>

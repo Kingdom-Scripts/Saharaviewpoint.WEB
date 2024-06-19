@@ -18,6 +18,7 @@ export * from './api-response-models/task/task.model';
 export * from './api-response-models/task/task-log.model';
 export * from './api-response-models/document.model';
 export * from './api-response-models/task/task-comment.model';
+export * from './api-response-models/task/task-board.model';
 
 export * from './utils/AlertModel';
 export * from './utils/AuthRoleData';

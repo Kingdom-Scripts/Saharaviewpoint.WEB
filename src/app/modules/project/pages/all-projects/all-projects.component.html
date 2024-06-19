@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="">
+    <div>
       <svp-search-button svpPlaceholder="Search projects" displaySearchButton="true" widthClass="w-80" (onChange)="projectService.searchParam.searchQuery = $event" (onSearch)="projectService.searchProjects($event)" />
       
       <div class="flex space-x-3 mb-4 mt-6">
@@ -114,7 +114,7 @@
                 <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>
                 <td>
                   <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
-                    <a (click)="(false)" class="btn btn-action">
+                    <a (click)="(false)" class="">
                       <i class="bx bx-dots-vertical-rounded"></i>
                     </a>
                     <div class="nx-dropdown-content">

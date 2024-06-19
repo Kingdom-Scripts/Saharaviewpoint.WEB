@@ -1,0 +1,25 @@
+<div>
+  <div class="bg-primary p-4">
+    <h2 class="text-lg font-bold text-white">{{ title }}</h2>
+  </div>
+
+  <div class="bg-white p-4">
+    <p class="font-medium">{{ message }}</p>
+    <form [formGroup]="reasonForm">
+      <textarea formControlName="reason" class="mt-4 min-h-48 w-full rounded border border-gray-300 p-2" placeholder="Reason or remark"></textarea>
+
+      <div class="mt-2 text-red-700">
+        <svp-validation-errors [control]="reasonForm.get('reason')" />
+      </div>
+
+      <div>
+        <svp-max-input-length [count]="reasonForm.get('reason')?.value.length" [total]="5000" [minThreshold]="5" />
+      </div>
+    </form>
+  </div>
+
+  <div class="flex justify-end bg-white p-4">
+    <button class="rounded bg-primary px-4 py-2 text-white" (click)="confirmAction()">{{confirmText}}</button>
+    <button class="ml-2 rounded border border-primary px-4 py-2 text-primary" (click)="cancelAction()">{{cancelText}}</button>
+  </div>
+</div>

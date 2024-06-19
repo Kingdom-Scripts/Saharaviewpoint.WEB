@@ -2,7 +2,7 @@
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
-import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel, TaskCommentModel } from '@svp-models';
+import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel, TaskCommentModel, TaskBoardModel } from '@svp-models';
 import { NotificationService } from '@svp-services';
 
 @Injectable({
@@ -61,7 +61,16 @@ export class TaskService {
 
     
     return this.http.get<Result<TaskModel[]>>(`tasks?${query}`, );
-  }  
+  }
+
+  listBoardTasks(projectId: number): Observable<Result<TaskBoardModel[]>> {
+    return this.http.get<Result<TaskBoardModel[]>>(`tasks/${projectId}/board`);
+  }
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  moveTask(taskId: number, param: any): Observable<Result<string>> {
+    return this.http.patch<Result<string>>(`tasks/${taskId}/status`, param);
+  }
   
   createTask(param: any): Observable<Result<TaskModel>> {
     return this.http.post<Result<TaskModel>>('tasks', param);
