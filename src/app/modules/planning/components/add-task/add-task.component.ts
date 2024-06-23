@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Output, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { ProjectService, TaskService } from "@svp-api-services";
-import { MaxInputLengthComponent, SideViewService, SvpButtonModule, SvpFormInputModule, SvpTypographyModule, mapValidationErrors } from "@svp-components";
+import { MaxInputLengthComponent, SvpButtonModule, SvpFormInputModule, SvpTypographyModule, mapValidationErrors } from "@svp-components";
 import { Result, ProjectModel, ProjectSearchModel, TaskTypeEnum, TaskModel } from "@svp-models";
 import { NotificationService } from "@svp-services";
 import { SessionStorageUtility } from "@svp-utilities";
@@ -27,14 +27,15 @@ import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of,
 })
 export class AddTaskComponent implements OnInit {
   sessionStorage = inject(SessionStorageUtility)
-  sideViewService = inject(SideViewService);
   notify = inject(NotificationService);
   projectService = inject(ProjectService);
   taskService = inject(TaskService);
   fb = inject(FormBuilder);
   taskTypeEnum = TaskTypeEnum;
+
+  close!: () => void;
   
-  @Output() exit = new EventEmitter();
+  @Output() addedTask = new EventEmitter<TaskModel>();
   
   today = new Date();
   globalProjectId!: number | null;
@@ -86,8 +87,8 @@ export class AddTaskComponent implements OnInit {
         this.notify.hideLoader();
         if (res.success) {
           this.notify.timedSuccessMessage('Task Created', 'Task has been created successfully');
-          this.sideViewService.triggerOutputs$.next({'addedTask': res.content});
-          this.exit.emit();
+          this.addedTask.next(res.content  ?? {} as TaskModel);
+          // this.close();
         } else {
           this.notify.timedErrorMessage('Task Creation Failed', res.message);
         }
@@ -150,9 +151,5 @@ export class AddTaskComponent implements OnInit {
     else {
       this.attachments = null;
     }
-  }
-  
-  close() {
-    this.exit.emit();
   }
 }

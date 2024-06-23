@@ -66,4 +66,16 @@ export class UserService {
   acceptInvitation(param: any): Observable<Result<AuthDataModel>> {
     return this.http.post<Result<AuthDataModel>>(`users/accept-invitation`, param);
   }
+
+  suspendUser(uid: string): Observable<Result<string>> {
+    return this.http.patch<Result<string>>(`users/${uid}/suspend`, {});
+  }
+
+  activateUser(uid: string): Observable<Result<string>> {
+    return this.http.patch<Result<string>>(`users/${uid}/activate`, {});
+  }
+
+  checkEmail(email: string): Observable<Result<boolean>> {
+    return this.http.get<Result<boolean>>(`users/check-email?email=${email}`);
+  }
 }

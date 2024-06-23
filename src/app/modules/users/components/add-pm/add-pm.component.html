@@ -22,8 +22,12 @@
   
     <div class="space-y-2">
       <label svp-label for="email">Email Address</label>
-      <input type="text" class="svp-input" formControlName="email" />
-      <svp-validation-errors [control]="newPmForm.get('email')" />
+      <input type="text" class="svp-input" formControlName="email" (change)="onEmailChange()" />
+      <svp-validation-errors [control]="newPmForm.get('email')" [customMessages]="{
+        required: 'Email is required',
+        email: 'Invalid email address',
+        emailExists: 'Email already exists in the system.'
+      }" />
     </div>
 
     <div class="space-y-2">

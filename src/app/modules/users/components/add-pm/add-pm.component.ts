@@ -41,6 +41,26 @@ export class AddPmComponent implements OnInit {
       phone: ['', Validators.compose([Validators.required])],
     });
   }
+
+  onEmailChange(): void {
+    const emailControl = this.newPmForm.controls['email']
+    if (emailControl.invalid) {
+      return;
+    }
+
+    const email = emailControl.value;
+    this.userService.checkEmail(email)
+      .subscribe({
+        next: (res: Result<boolean>) => {
+          if (res.success && res.content === true) {
+            emailControl.setErrors({ emailExists: true });
+          }
+          else {
+            emailControl.setErrors(null);
+          }
+        }
+      });
+  }
   
   addNewPM() {
     console.log('Adding project manager');

@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app/app-routing.module';
 import { baseUrlInterceptor } from './app/shared/utilities/interceptors/base-url.interceptor';
 import { authInterceptor } from './app/shared/utilities/interceptors/auth.interceptor';
 import { errorHandlerInterceptor } from './app/shared/utilities/interceptors/error-handler.interceptor';
+import { provideAngularSvgIcon } from 'angular-svg-icon';
 
 if (environment.production || environment.staging) {
   enableProdMode()
@@ -23,7 +24,8 @@ bootstrapApplication(AppComponent, {
     provideAnimationsAsync(),
     provideHttpClient(
       withInterceptors([baseUrlInterceptor, authInterceptor, errorHandlerInterceptor])
-    )
+    ),
+    // provideAngularSvgIcon()
   ]
 }).catch((err) =>
   console.error(err)

@@ -32,6 +32,7 @@
     "angular-svg-icon": "^17.0.0",
     "apexcharts": "^3.35.3",
     "boxicons": "^2.1.4",
+    "headlessui-angular": "^0.0.9",
     "izitoast": "^1.4.0",
     "luxon": "^3.4.4",
     "ng-apexcharts": "^1.7.1",

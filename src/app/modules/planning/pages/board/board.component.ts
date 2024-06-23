@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SideViewComponent, SideViewService, SvpButtonModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
-import { ProjectModel, Result, TaskBoardModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
+import { ProjectModel, ProjectSearchModel, ProjectStatusEnum, Result, TaskBoardModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -10,12 +10,14 @@ import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
 import { Router } from '@angular/router';
 import { NotificationService } from '@svp-services';
-import { Observable, Subject, firstValueFrom, of } from 'rxjs';
+import { Observable, Subject, catchError, concat, distinctUntilChanged, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 import { ModalService } from 'src/app/shared/components/modal/modal.service';
 import { ConfirmActionComponent, ConfirmActionResult } from 'src/app/shared/components/confirm-action/confirm-action.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-board',
@@ -33,9 +35,11 @@ import { ConfirmActionComponent, ConfirmActionResult } from 'src/app/shared/comp
     DragDropModule,
     NgScrollbarModule,
     UtcToLocalDatePipe,
+    NgSelectModule,
+    FormsModule,
   ],
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent {
   taskService = inject(TaskService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
@@ -47,7 +51,7 @@ export class BoardComponent implements OnInit {
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
   projectLoading = false;
-  selectedProjectId = 0;
+  selectedProjectId!: number;
 
   allTypes = TaskTypeEnum.asArray;
   allTasks: TaskBoardModel[] = [];
@@ -56,18 +60,15 @@ export class BoardComponent implements OnInit {
   completedTasks: TaskBoardModel[] = [];
 
   constructor() {
+    this.loadProjects();
+
     // get the globalProjectId from session storage
     const project = this.sessionStorage.getProject();
-    if (!project) {
-      this.notify.timedInfoMessage('Select a project', 'Please select a project to view tasks');
-    } else {
+    if (project) {
       this.selectedProjectId = project.id;
       this.projects$ = of([project]);
+      this.loadTasks();
     }
-  }
-
-  ngOnInit(): void {
-    if (this.selectedProjectId > 0) this.loadTasks();
   }
 
   loadTasks() {
@@ -83,6 +84,39 @@ export class BoardComponent implements OnInit {
         this.notify.timedErrorMessage(res.title, res.message);
       }
     });
+  }
+
+  private loadProjects(): void {
+    const initialParam = {status: ProjectStatusEnum.IN_PROGRESS, priorityOnly: false} as ProjectSearchModel;
+    this.projectService.listProjects(initialParam).pipe(
+      switchMap((res: Result<ProjectModel[]>) => {
+        if (!res.success) {
+          this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
+        }
+        console.log('--> Projects: ', res.content ?? [])
+        return of (res.content ?? []);
+      })
+    ).subscribe((defaultItems: ProjectModel[]) => {
+      this.projects$ = concat(
+        of(defaultItems.map((item) => item)),
+        this.projectInput$.pipe(
+          distinctUntilChanged(),
+          tap(() => this.projectLoading = true),
+          switchMap((term) => this.projectService.listProjects({searchQuery: term, status: ProjectStatusEnum.IN_PROGRESS} as ProjectSearchModel)
+          .pipe(
+            catchError(() => of([])), // empty list on error
+            tap(() => this.projectLoading = false)
+          )),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          map((data: any) => data.content.map((item: any) => item))
+        )
+      )
+    })  
+  }
+
+  setProjectId($event: ProjectModel) {
+    this.sessionStorage.setProject($event);
+    this.loadTasks();
   }
 
   addNewTask(): void {
@@ -106,6 +140,7 @@ export class BoardComponent implements OnInit {
     console.log('--> Event:', event);
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      return;
     } else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
@@ -121,8 +156,13 @@ export class BoardComponent implements OnInit {
     // Move the item to the new status
     const moved = await this.moveTask(movedItem, newStatus);
 
+    // update the task status if movement was successful
+    if (moved) {
+      movedItem.status = newStatus;
+    }
+
     // revert movement if it failed
-    if (!moved) {
+    else {
       if (event.previousContainer === event.container) {
         moveItemInArray(event.previousContainer.data, event.currentIndex, event.previousIndex);
       } else {

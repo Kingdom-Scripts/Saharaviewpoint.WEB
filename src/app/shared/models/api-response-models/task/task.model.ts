@@ -8,7 +8,8 @@ export interface TaskModel {
   summary: string;
   description: string;
   status: string;
-  createdAt: string;
+  createdAt: Date;
+  updatedAt: string;
   expectedStartDate: string;
   dueDate: string;
   projectId: number,

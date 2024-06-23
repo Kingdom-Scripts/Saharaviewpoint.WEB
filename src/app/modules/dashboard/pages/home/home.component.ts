@@ -23,7 +23,7 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
   ],
 })
 export class HomeComponent implements OnInit {
-  projectStatusEnum = new ProjectStatusEnum();
+  projectStatusEnum = ProjectStatusEnum;
 
   projectCount = 0;
   allTasks = 0;

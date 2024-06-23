@@ -6,9 +6,16 @@ import { DateTime, Interval } from 'luxon';
   standalone: true
 })
 export class UtcToTimelinePipe implements PipeTransform {
-  transform(utcDateString: string): string {
+  transform(utcDateString: string | Date): string {
     // Parse UTC date string into local date using Luxon
-    const localDate = DateTime.fromISO(utcDateString, { zone: 'utc' }).toLocal();
+    let localDate: DateTime;
+    if (utcDateString instanceof Date) {
+      // Convert Date object to Luxon DateTime
+      localDate = DateTime.fromJSDate(utcDateString).toLocal();
+    } else {
+      // Parse UTC date string into local date using Luxon
+      localDate = DateTime.fromISO(utcDateString, { zone: 'utc' }).toLocal();
+    }
     
     // Convert to timeline
     const now = DateTime.now();

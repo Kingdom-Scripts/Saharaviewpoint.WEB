@@ -1,0 +1,20 @@
+<div
+  class="base relative bg-white pt-[4rem] shadow-[rgba(0,0,15,0.5)_10px_5px_4px_0px] dark:bg-dark"
+  [ngClass]="{
+    'w-[calc(100vw/5)]': size === 'small',
+    'w-[calc(100vw/3)]': size === 'normal',
+    'w-[calc(100vw/2)]': size === 'large'
+  }">
+  <!-- Title and Close button -->
+  <div class="header absolute left-0 right-0 top-0 flex justify-between bg-primary px-5 py-3 text-white shadow shadow-secondary">
+    <h1 class="text-xl font-medium dark:text-white-dark">{{ title }}</h1>
+    <button (click)="close()">
+      <svg-icon src="assets/icons/x.svg" [svgClass]="'w-6 h-6 cursor-pointer'" (click)="close()"></svg-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div #container></div>
+</div>
+
+<div class="overlay active" (click)="close()"></div>

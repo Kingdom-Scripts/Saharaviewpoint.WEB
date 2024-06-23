@@ -31,35 +31,13 @@ export class AllProjectManagersComponent implements OnInit {
   notify = inject(NotificationService);
   
   allUsers: ProjectManagerModel[] = [];
-  //  = [
-  //   {
-  //     id: 1,
-  //     name: 'John Doe',
-  //     email: 'john@doe.com',
-  //     noOfProjects: 5,
-  //     status: 'Active'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Doe Mary',
-  //     email: 'doe@mary.com',
-  //     noOfProjects: 2,
-  //     status: 'Active'
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'John Doe',
-  //     email: 'deee@dooo.com',
-  //     noOfProjects: 10,
-  //     status: 'Inactive'
-  //   }
-  // ]
 
   ngOnInit(): void {
     console.log('showing all project managers')
     this.loadProjectManagers();
 
-      // this.sideViewService.showComponent(AddPmComponent);
+    // TODO: remove the line below
+      this.sideViewService.showComponent(AddPmComponent);
   }
 
   // load all project managers
@@ -83,5 +61,39 @@ export class AllProjectManagersComponent implements OnInit {
 
   addNewPM(): void {
     this.sideViewService.showComponent(AddPmComponent);
+  }
+  
+  async suspendUser(user: ProjectManagerModel): Promise<void> {
+    const confirmed = await this.notify.confirmAction('Are you sure you want to suspend this user?');
+    if (!confirmed) return;
+
+    this.notify.showLoader();
+    this.userService.suspendUser(user.uid).subscribe((res: Result<string>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('User suspended successfully');
+        user.isActive = false;
+      }
+      else {
+        this.notify.timedErrorMessage('Unable to suspend user', res.message);
+      }
+    });
+  }
+
+  async activateUser(user: ProjectManagerModel): Promise<void> {
+    const confirmed = await this.notify.confirmAction('Are you sure you want to activate this user?');
+    if (!confirmed) return;
+
+    this.notify.showLoader();
+    this.userService.activateUser(user.uid).subscribe((res: Result<string>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('User activated successfully');
+        user.isActive = true;
+      }
+      else {
+        this.notify.timedErrorMessage('Unable to activate user', res.message);
+      }
+    });
   }
 }

@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy,  inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import {SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService, SvpTaskStatusCardComponent} from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
-import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, TaskSearchModel } from '@svp-models';
+import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, TaskSearchModel, ProjectStatusEnum } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
@@ -14,6 +14,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 import { UtcToLocalDatePipe } from '@svp-pipes';
+import { MenuModule } from 'headlessui-angular';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 
 @Component({
   selector: 'app-tasks',
@@ -29,10 +32,17 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
     RouterLink,
     NgSelectModule,
     SvpTaskStatusCardComponent,
-    UtcToLocalDatePipe
+    UtcToLocalDatePipe, MenuModule, 
   ],
+  animations: [
+    trigger('toggleAnimation', [
+        transition(':enter', [style({ opacity: 0, transform: 'scale(0.95)' }), animate('100ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))]),
+        transition(':leave', [animate('75ms', style({ opacity: 0, transform: 'scale(0.95)' }))]),
+    ]),
+],
 })
-export class TasksComponent implements OnInit, OnDestroy {
+export class TasksComponent implements OnDestroy {
+  sidePanelService = inject(SidePanelService);
   taskService = inject(TaskService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
@@ -54,31 +64,28 @@ export class TasksComponent implements OnInit, OnDestroy {
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
   projectLoading = false;
-  selectedProjectId = 0;
+  selectedProjectId!: number;
 
   constructor() {
     // set up task search
+    this.loadProjects();
+
     this.taskService.allTasks.subscribe((tasks: TaskModel[]) => {
       this.allTasks = tasks;
     });
 
     // get the globalProjectId from session storage
     const project = this.sessionStorage.getProject();
-    if (!project) {
-      this.notify.timedInfoMessage('Select a project', 'Please select a project to view tasks');
-    } else {
+    if (project) {
       this.selectedProjectId = project.id;
       this.projects$ = of([project]);
+      this.loadTasks();
     }
   }
 
-  ngOnInit(): void {
-    this.loadTasks();
-    this.loadProjects();
-  }
-
   private loadProjects(): void {
-    this.projectService.listProjects().pipe(
+    const initialParam = {status: ProjectStatusEnum.IN_PROGRESS, priorityOnly: false} as ProjectSearchModel;
+    this.projectService.listProjects(initialParam).pipe(
       switchMap((res: Result<ProjectModel[]>) => {
         if (!res.success) {
           this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
@@ -92,7 +99,7 @@ export class TasksComponent implements OnInit, OnDestroy {
         this.projectInput$.pipe(
           distinctUntilChanged(),
           tap(() => this.projectLoading = true),
-          switchMap((term) => this.projectService.listProjects({searchQuery: term} as ProjectSearchModel)
+          switchMap((term) => this.projectService.listProjects({searchQuery: term, status: ProjectStatusEnum.IN_PROGRESS} as ProjectSearchModel)
           .pipe(
             catchError(() => of([])), // empty list on error
             tap(() => this.projectLoading = false)
@@ -124,14 +131,18 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   addNewTask(): void {
-    this.sideViewService.showComponent(AddTaskComponent);
-        
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.sideViewService.triggerOutputs$.subscribe((outputs: { [key: string]: any}) => {
-      if (outputs['addedTask']) {
-        this.allTasks.unshift(outputs['addedTask']);
+    this.sidePanelService.open(AddTaskComponent, {
+      title: 'Add New Task',
+      outputs: {
+        addedTask: (task: TaskModel) => {
+          this.addNewTaskToAllTasks(task);
+        }
       }
-    });
+    })
+  }
+
+  addNewTaskToAllTasks(task: TaskModel): void {
+    this.allTasks.unshift(task);
   }
 
   viewTaskDetails(taskId: number): void {

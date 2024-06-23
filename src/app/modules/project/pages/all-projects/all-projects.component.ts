@@ -25,7 +25,7 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
   ],
 })
 export class AllProjectsComponent implements OnInit {
-  projectStatusEnum = new ProjectStatusEnum();
+  projectStatusEnum = ProjectStatusEnum;
   showSideView = false;
   sideViewService = inject(SideViewService);
 

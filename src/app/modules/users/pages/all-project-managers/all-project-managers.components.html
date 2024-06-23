@@ -26,8 +26,11 @@
               <td><span>{{ user.email }}</span></td>
               <td><span>{{ user.noOfProjects }}</span></td>
               <td>
-                <span>
-                  {{user.isActive ? 'Active' : 'Suspended'}}
+                <span *ngIf="user.isActive" class="badge bg-success">
+                  Active
+                </span>
+                <span *ngIf="!user.isActive" class="badge bg-danger">
+                  Suspended
                 </span>
               </td>
               <td>
@@ -37,14 +40,19 @@
                   </a>
                   <div class="nx-dropdown-content">
                     <ul>
-                      <li>
+                      <!-- <li>
                         <a class="dropdown-item custom">
                           View Details
                         </a>
-                      </li>
-                      <li >
+                      </li> -->
+                      <li (click)="suspendUser(user)" *ngIf="user.isActive">
                         <a [classList]="'dropdown-item custom'">
                           Suspend Access
+                        </a>
+                      </li>
+                      <li (click)="activateUser(user)" *ngIf="!user.isActive">
+                        <a [classList]="'dropdown-item custom'">
+                          Restore Access
                         </a>
                       </li>
                     </ul>

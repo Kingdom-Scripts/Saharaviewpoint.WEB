@@ -19,7 +19,7 @@ export class ErrorService {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public handleError<T>() {
     return (error: unknown): Observable<Result<never>> => {
-      console.log('--> Error: ', error);
+    
       
       this.notify.hideLoader();
 

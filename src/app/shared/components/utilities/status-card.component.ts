@@ -25,5 +25,5 @@ import { ProjectStatusEnum } from "@svp-models";
 export class SvpStatusCardComponent {
   @Input({required: true}) status: string = '';
 
-  ProjectStatusEnum = new ProjectStatusEnum();
+  ProjectStatusEnum = ProjectStatusEnum;
 }

@@ -4,142 +4,198 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import "boxicons";
+@import 'boxicons';
 
 @import '../node_modules/@ng-select/ng-select/scss/default.theme.scss';
-@import "./assets/styles/ng-select.scss";
-@import "./assets/styles/table.scss";
+@import './assets/styles/ng-select.scss';
+@import './assets/styles/table.scss';
 
 @layer base {
-	[type='text'],
-	[type='email'],
-	[type='url'],
-	[type='password'],
-	[type='number'],
-	[type='date'],
-	[type='datetime-local'],
-	[type='month'],
-	[type='search'],
-	[type='tel'],
-	[type='time'],
-	[type='week'],
-	[multiple],
-  input
-	textarea,
-	select {
-		@apply w-full rounded-md border border-gray-300 text-xs placeholder-gray-400 focus:z-10  focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-night-500 dark:bg-night-700 dark:text-night-200 dark:placeholder-night-200;
-	}
+  /* Paragraph */
+  p {
+    @apply text-sm font-normal text-gray-800 dark:text-gray-200;
+    @apply md:text-base lg:text-lg;
+  }
 
-	[type='checkbox'],
-	[type='radio'] {
-		@apply h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-night-600 dark:bg-night-700 dark:ring-offset-night-800 dark:focus:ring-primary-600;
-	}
+  /* Headers */
+  h1 {
+    @apply text-3xl font-bold text-gray-900 dark:text-gray-100;
+    @apply md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-gray-900 dark:text-gray-100;
+    @apply md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-gray-900 dark:text-gray-100;
+    @apply md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl;
+  }
+
+  h4 {
+    @apply text-lg font-medium text-gray-900 dark:text-gray-100;
+    @apply md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl;
+  }
+
+  h5 {
+    @apply text-base font-medium text-gray-900 dark:text-gray-100;
+    @apply md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl;
+  }
+
+  h6 {
+    @apply text-sm font-medium text-gray-900 dark:text-gray-100;
+    @apply md:text-base lg:text-lg xl:text-xl 2xl:text-2xl;
+  }
+
+  [type='text'],
+  [type='email'],
+  [type='url'],
+  [type='password'],
+  [type='number'],
+  [type='date'],
+  [type='datetime-local'],
+  [type='month'],
+  [type='search'],
+  [type='tel'],
+  [type='time'],
+  [type='week'],
+  [multiple],
+  input textarea,
+  select {
+    @apply w-full rounded-md border border-gray-300 text-xs placeholder-gray-400 focus:z-10  focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-night-500 dark:bg-night-700 dark:text-night-200 dark:placeholder-night-200;
+  }
+
+  [type='checkbox'],
+  [type='radio'] {
+    @apply h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-night-600 dark:bg-night-700 dark:ring-offset-night-800 dark:focus:ring-primary-600;
+  }
 }
 
 @layer components {
-	.dropdown-content { 
-		@apply pointer-events-none scale-95 opacity-0 duration-100 ease-in;
-	}
+  .dropdown-content {
+    @apply pointer-events-none scale-95 opacity-0 duration-100 ease-in;
+  }
 
-	.dropdown:hover > .dropdown-content {
-		@apply pointer-events-auto block scale-100 animate-fade-in-up opacity-100 duration-200;
-	}
+  .dropdown:hover > .dropdown-content {
+    @apply pointer-events-auto block scale-100 animate-fade-in-up opacity-100 duration-200;
+  }
 
   .iziToast-color-green {
     @apply bg-primary-900;
   }
-    /* Buttons */
-    .btn {
-      @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-xs font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none xl:text-sm;
-    }
-    .btn-lg {
-      @apply px-7 py-2.5 text-base;
-    }
-    .btn-sm {
-      @apply px-2.5 py-1.5 text-xs;
-    }
-    .btn[disabled] {
-      @apply cursor-not-allowed opacity-60;
-    }
-  
-    .btn-primary {
-      @apply border-primary bg-primary shadow-primary/60 hover:bg-primary-900 text-white;
-    }
-    .btn-outline-primary {
-      @apply border-primary text-primary hover:bg-primary shadow-none hover:text-white;
-    }
-  
-    .btn-secondary {
-      @apply border-secondary bg-secondary shadow-secondary/60 hover:bg-secondary-700 text-white;
-    }
-    .btn-outline-secondary {
-      @apply border-secondary text-secondary hover:bg-secondary shadow-none hover:text-white;
-    }
-  
-    .btn-success {
-      @apply border-success bg-success shadow-success/60 hover:bg-success-700 text-white;
-    }
-    .btn-outline-success {
-      @apply border-success text-success hover:bg-success shadow-none hover:text-white;
-    }
-  
-    .btn-info {
-      @apply border-info bg-info shadow-info/60 hover:bg-info-700 text-white;
-    }
-    .btn-outline-info {
-      @apply border-info text-info hover:bg-info shadow-none hover:text-white;
-    }
-  
-    .btn-danger {
-      @apply border-danger bg-danger shadow-danger/60 hover:bg-danger-700 text-white;
-    }
-    .btn-outline-danger {
-      @apply border-danger text-danger hover:bg-danger shadow-none hover:text-white;
-    }
-  
-    .btn-warning {
-      @apply border-warning bg-warning shadow-warning/60 hover:bg-warning-700 text-white;
-    }
-    .btn-outline-warning {
-      @apply border-warning text-warning hover:bg-warning shadow-none hover:text-white;
-    }
-  
-    .btn-info {
-      @apply border-info bg-info shadow-info/60 text-white;
-    }
-    .btn-outline-info {
-      @apply border-info text-info hover:bg-info shadow-none hover:text-white;
-    }
-  
-    /* Badge */
-    .badge {
-      @apply relative my-1 rounded border border-transparent px-2 py-0.5 text-xs font-semibold text-white;
-    }
-    .badge-outline-primary {
-      @apply border-primary text-primary hover:bg-primary-100;
-    }
-    .badge-outline-secondary {
-      @apply border-secondary text-secondary hover:bg-secondary-100;
-    }
-    .badge-outline-success {
-      @apply border-success text-success hover:bg-success-100;
-    }
-    .badge-outline-danger {
-      @apply border-danger text-danger hover:bg-danger-100;
-    }
-    .badge-outline-warning {
-      @apply border-warning text-warning hover:bg-warning-100;
-    }
-    .badge-outline-info {
-      @apply border-info text-info hover:bg-info-100;
-    }
+
+  /* Buttons */
+  .btn {
+    @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-xs font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none xl:text-sm;
+  }
+  .btn-lg {
+    @apply px-7 py-2.5 text-base;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+  .btn[disabled] {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  .btn-primary {
+    @apply border-primary bg-primary text-white shadow-primary/60 hover:bg-primary-900;
+  }
+  .btn-outline-primary {
+    @apply border-primary text-primary shadow-none hover:bg-primary hover:text-white;
+  }
+
+  .btn-secondary {
+    @apply border-secondary bg-secondary text-white shadow-secondary/60 hover:bg-secondary-700;
+  }
+  .btn-outline-secondary {
+    @apply border-secondary text-secondary shadow-none hover:bg-secondary hover:text-white;
+  }
+
+  .btn-success {
+    @apply border-success bg-success text-white shadow-success/60 hover:bg-success-700;
+  }
+  .btn-outline-success {
+    @apply border-success text-success shadow-none hover:bg-success hover:text-white;
+  }
+
+  .btn-info {
+    @apply border-info bg-info text-white shadow-info/60 hover:bg-info-700;
+  }
+  .btn-outline-info {
+    @apply border-info text-info shadow-none hover:bg-info hover:text-white;
+  }
+
+  .btn-danger {
+    @apply border-danger bg-danger text-white shadow-danger/60 hover:bg-danger-700;
+  }
+  .btn-outline-danger {
+    @apply border-danger text-danger shadow-none hover:bg-danger hover:text-white;
+  }
+
+  .btn-warning {
+    @apply border-warning bg-warning text-white shadow-warning/60 hover:bg-warning-700;
+  }
+  .btn-outline-warning {
+    @apply border-warning text-warning shadow-none hover:bg-warning hover:text-white;
+  }
+
+  .btn-info {
+    @apply border-info bg-info text-white shadow-info/60;
+  }
+  .btn-outline-info {
+    @apply border-info text-info shadow-none hover:bg-info hover:text-white;
+  }
+
+  /* Badge */
+  .badge {
+    @apply relative my-1 rounded border border-transparent px-2 py-0.5 text-xs font-semibold text-white;
+  }
+  .badge-outline-primary {
+    @apply border-primary text-primary hover:bg-primary-100;
+  }
+  .badge-outline-secondary {
+    @apply border-secondary text-secondary hover:bg-secondary-100;
+  }
+  .badge-outline-success {
+    @apply border-success text-success hover:bg-success-100;
+  }
+  .badge-outline-danger {
+    @apply border-danger text-danger hover:bg-danger-100;
+  }
+  .badge-outline-warning {
+    @apply border-warning text-warning hover:bg-warning-100;
+  }
+  .badge-outline-info {
+    @apply border-info text-info hover:bg-info-100;
+  }
+
+  /* dropdown */
+  .dropdown {
+    @apply relative;
+  }
+  .dropdown > button {
+    @apply flex;
+  }
+  .dropdown ul {
+    @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 text-black shadow;
+  }
+  .dropdown ul li > a,
+  .dropdown ul li > button {
+    @apply flex items-center px-4 py-2 hover:bg-primary/10 hover:text-primary;
+  }
+
+  .dropdown ul li > button {
+    @apply w-full;
+  }
 }
 
 /** Scroll bar **/
 @supports selector(::-webkit-scrollbar) {
-	.supports-scrollbars\: pr-2 {
-		padding-right: 0.5rem;
-	}
+  .supports-scrollbars\: pr-2 {
+    padding-right: 0.5rem;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -154,21 +210,20 @@
 }
 
 /* Track */
-::-webkit-scrollbar-track { 
+::-webkit-scrollbar-track {
   background: #d67e2a;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #d67e2a;  /* color of the scroll thumb */
+  background: #d67e2a; /* color of the scroll thumb */
   transition: all 0.3s ease;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #d67e2a
+  background: #d67e2a;
 }
 
-
 /** Plugins **/
-@import "./assets/styles/apexchart.scss";
+@import './assets/styles/apexchart.scss';

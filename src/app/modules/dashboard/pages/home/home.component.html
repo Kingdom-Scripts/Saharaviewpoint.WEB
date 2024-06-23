@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <a svp-neutral type="button" svpRoute="/project/new">Add new project</a>
+        <!-- <a svp-neutral type="button" svpRoute="/project/new">Add new project</a> -->
       </div>
 
       <div class="w-full">
@@ -67,8 +67,9 @@
             <thead>
               <tr>
                 <th width="5%"><span>#</span></th>
-                <th width="30%"><span>PROJECT NAME</span></th>
-                <th><span>PROJECT MANAGER</span></th>
+                <th width="30%"><span>Name</span></th>
+                <th><span>Project Owner</span></th>
+                <th><span>Project Manager</span></th>
                 <th><span>Status</span></th>
                 <th><span>End Date</span></th>
               </tr>
@@ -77,6 +78,11 @@
               <tr *ngFor="let project of allProjects; let index = index">
                 <td><span>{{ index + 1 }}</span></td>
                 <td><span>{{ project.title }}</span></td>
+                <td>
+                  <span>
+                    {{project.createdBy?.firstName + ' ' + project.createdBy?.lastName}}
+                  </span>
+                </td>
                 <td><span>{{ project.assignee ?  project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span></td>
                 <td>
                   <span>
