@@ -111,13 +111,14 @@
                 </div>
 
                 <div class="flex justify-between">
-                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                  <p class="text-gray-400 text-sm">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
                   <div class="flex space-x-2">
-                    <button type="button" class="text-info hover:text-info-800">
+                    <!-- TODO: implement edit task -->
+                    <!-- <button type="button" class="text-info hover:text-info-800">
                       <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
-                    </button>
-                    <button type="button" class="text-danger hover:text-danger-800">
+                    </button> -->
+                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
                       <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
                     </button>
                   </div>
@@ -164,13 +165,14 @@
                 </div>
 
                 <div class="flex justify-between">
-                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                  <p class="text-gray-400 text-sm">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
                   <div class="flex space-x-2">
-                    <button type="button" class="text-info hover:text-info-800">
+                    <!-- TODO: implement edit -->
+                    <!-- <button type="button" class="text-info hover:text-info-800">
                       <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
-                    </button>
-                    <button type="button" class="text-danger hover:text-danger-800">
+                    </button> -->
+                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
                       <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
                     </button>
                   </div>
@@ -211,13 +213,14 @@
                 </div>
 
                 <div class="flex justify-between">
-                  <p class="text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                  <p class="text-gray-400 text-sm">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
                   <div class="flex space-x-2">
-                    <button type="button" class="text-info hover:text-info-800">
+                    <!-- TODO: implement edit -->
+                    <!-- <button type="button" class="text-info hover:text-info-800">
                       <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
-                    </button>
-                    <button type="button" class="text-danger hover:text-danger-800">
+                    </button> -->
+                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
                       <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
                     </button>
                   </div>

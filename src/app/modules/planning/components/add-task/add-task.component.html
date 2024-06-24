@@ -1,15 +1,8 @@
 <div class="w-full h-full bg-gray-100 dark:bg-night-700">
   <div class="px-8 bg-gray-100 dark:bg-night-700">
-    <div class="flex py-6 bg-gray-100 dark:bg-night-700 sticky top-0">
-      <h1 svp-sub-header>Create Task</h1>
-
-      <div class="self-start grow flex justify-end -mr-4 cursor-pointer text-gray-800 dark:text-night-200 hover:text-gray-500 dark:hover:text-night-400">
-        <svg-icon src="assets/icons/appicons/cancel.svg" [svgClass]="'h-4 w-4'" (click)="close()"/>
-      </div>
-    </div>
 
     <div class="space-y-6" [formGroup]="formGroup">
-      <p svp-text>
+      <p class="text-sm">
         Required fields are marked with an asterisk <span class="text-red-700">*</span>
       </p>
 
@@ -24,21 +17,42 @@
           typeToSearchText="Please enter 2 or more characters"
           [typeahead]="projectInput$"
           formControlName="projectId"
-          class="w-[50%]">
+          class="w-full">
         </ng-select>
         <svp-validation-errors [control]="formGroup.get('projectId')" />
       </div>
   
-      <div class="space-y-2">
-        <label svp-label for="type">Task Type <span class="text-red-700">*</span></label>
-        <ng-select [items]="taskTypes"
+      <div class="grid grid-cols-2 gap-2" [ngClass]="{
+        'grid-cols-1': !parentLabel
+      }">
+        <div class="space-y-2">
+          <label svp-label for="type">Task Type <span class="text-red-700">*</span></label>
+          <ng-select [items]="taskTypes"
+            [minTermLength]="2"
+            placeholder="Select a project type"
+            typeToSearchText="Please enter 2 or more characters"
+            formControlName="type"
+            class="w-full"
+            (change)="taskTypeChanged($event)">
+          </ng-select>
+          <svp-validation-errors [control]="formGroup.get('type')" />
+        </div>
+
+        <div class="space-y-2" *ngIf="parentLabel">
+          <label svp-label for="parentId">{{parentLabel}} <span class="text-red-700" *ngIf="formGroup.get('type')?.value === 'Subtask'">*</span></label>
+          <ng-select [items]="tasks$ | async"
+          bindLabel="summary"
+          bindValue="id"
           [minTermLength]="2"
-          placeholder="Select a project type"
+          [loading]="taskLoading"
+          placeholder="Select a task"
           typeToSearchText="Please enter 2 or more characters"
-          formControlName="type"
-          class="w-[50%]">
+          [typeahead]="taskInput$"
+          formControlName="parentId"
+          class="w-full">
         </ng-select>
-        <svp-validation-errors [control]="formGroup.get('type')" />
+          <svp-validation-errors [control]="formGroup.get('parentId')" />
+        </div>
       </div>
 
       <hr class="border border-gray-300 dark:border-gray-700"/>

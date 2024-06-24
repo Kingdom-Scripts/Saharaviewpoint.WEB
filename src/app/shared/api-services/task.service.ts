@@ -63,6 +63,10 @@ export class TaskService {
     return this.http.get<Result<TaskModel[]>>(`tasks?${query}`, );
   }
 
+  deleteTask(taskId: number): Observable<Result<string>> {
+    return this.http.delete<Result<string>>(`tasks/${taskId}`);
+  }
+
   listBoardTasks(projectId: number): Observable<Result<TaskBoardModel[]>> {
     return this.http.get<Result<TaskBoardModel[]>>(`tasks/${projectId}/board`);
   }

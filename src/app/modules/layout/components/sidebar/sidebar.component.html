@@ -5,25 +5,22 @@
     <!-- Logo -->
     <div class="relative h-10">
       @if (menuService.showSideBar) {
-        <div class="flex items-center">
-          <a class="flex items-center justify-center rounded bg-primary-500 p-2 focus:outline-none focus:ring-1">
-            <svg-icon src="assets/icons/logo.svg"> </svg-icon>
+        <div class="">
+          <a class="">
+            <svg-icon src="assets/images/logo.svg" [svgClass]="'w-auto h-20 -ml-9 -mt-2'"> </svg-icon>
           </a>
-          <b class="ml-1 pl-2 text-sm font-bold dark:text-night-50">
-            SaharaViewpoint
-          </b>
         </div>
       }
       <button
         (click)="toggleSidebar()"
-        class="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded text-gray-400 transition-all duration-200 focus:outline-none hover:text-gray-500 dark:text-night-400 dark:hover:text-night-300"
+        class="absolute top-2 right-2 flex h-5 w-5 mt-3 items-center justify-center rounded text-gray-400 transition-all duration-200 focus:outline-none hover:text-gray-500 dark:text-night-400 dark:hover:text-night-300"
         [ngClass]="{ 'rotate-180': !menuService.showSideBar }">
         <svg-icon src="assets/icons/heroicons/solid/chevron-double-left.svg"> [svgClass]="'h-5 w-5'"> </svg-icon>
       </button>
     </div>
 
     <!-- Separator -->
-    <div class="pt-3">
+    <div class="pt-4">
       <hr class="border-dashed border-gray-200 dark:border-night-500" />
     </div>
 

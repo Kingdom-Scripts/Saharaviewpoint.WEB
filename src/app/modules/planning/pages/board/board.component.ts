@@ -231,4 +231,29 @@ export class BoardComponent {
       return false;
     }
   }
+
+  async deleteTask(task: TaskBoardModel): Promise<void> {
+    const confirmed = await this.notify.confirmAction('Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.', 'Delete Task');
+    if (!confirmed) return;
+
+    this.notify.showLoader();
+    this.taskService.deleteTask(task.id).subscribe((res: Result<string>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('Task Deleted', 'Task has been deleted successfully');
+        this.allTasks = this.allTasks.filter(task => task.id !== task.id);
+        if (task.status === TaskStatusEnum.TODO) {
+          this.todoTasks = this.todoTasks.filter(t => t.id !== task.id);
+        }
+        else if (task.status === TaskStatusEnum.IN_PROGRESS) {
+          this.inProgressTasks = this.inProgressTasks.filter(t => t.id !== task.id);
+        }
+        else {
+          this.completedTasks = this.completedTasks.filter(t => t.id !== task.id);
+        }
+      } else {
+        this.notify.timedErrorMessage('Task Deletion Failed', res.message);
+      }
+    });
+  }
 }

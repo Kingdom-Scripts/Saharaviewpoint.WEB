@@ -198,11 +198,15 @@
                       <li (click)="viewTaskDetails(task.id)">
                         <a class="dropdown-item custom"> View Details </a>
                       </li>
-                      <li>
+                      <li (click)="deleteTask(task.id)">
+                        <a class="dropdown-item custom"> Delete </a>
+                      </li>
+                      <!-- TODO: implement change or set due date -->
+                      <!-- <li>
                         <a [classList]="'dropdown-item custom'">
                           {{ task.dueDate ? 'Change Due Date' : 'Set Due Date' }}
                         </a>
-                      </li>
+                      </li> -->
                     </ul>
                   </div>
                 </div>

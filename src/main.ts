@@ -25,7 +25,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(
       withInterceptors([baseUrlInterceptor, authInterceptor, errorHandlerInterceptor])
     ),
-    // provideAngularSvgIcon()
+    provideAngularSvgIcon()
   ]
 }).catch((err) =>
   console.error(err)
