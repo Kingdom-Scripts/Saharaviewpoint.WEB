@@ -13,7 +13,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
   imports: [CommonModule, ComponentOutletInjectorModule, AngularSvgIconModule],
 })
 export class SidePanelComponent {
-  @Input({ required: true }) title = '';
+  @Input({ required: true }) title!: string | undefined;
   @Input({ required: true }) size: 'small' | 'normal' | 'large' = 'normal';
 
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;

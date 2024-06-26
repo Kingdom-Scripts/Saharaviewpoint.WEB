@@ -43,7 +43,7 @@
       [closeOnSelect]="true"
       placeholder="Select a project"
       [(ngModel)]="selectedProjectId"
-      (change)="setProjectId($event)"
+      (change)="setProject($event)"
       class="w-80">
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
         <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
@@ -77,7 +77,8 @@
       [multiple]="true"
       [hideSelected]="false"
       placeholder="Type"
-      [(ngModel)]="selectedTaskType"
+      [(ngModel)]="taskSearchParams.types"
+      (change)="loadTasks()"
       typeToSearchText="Please enter 2 or more characters"
       class="max-w-72">
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
@@ -97,7 +98,8 @@
       [multiple]="true"
       [hideSelected]="false"
       placeholder="Status"
-      [(ngModel)]="selectedStatus"
+      [(ngModel)]="taskSearchParams.statuses"
+      (change)="loadTasks()"
       typeToSearchText="Please enter 2 or more characters"
       class="max-w-80">
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">

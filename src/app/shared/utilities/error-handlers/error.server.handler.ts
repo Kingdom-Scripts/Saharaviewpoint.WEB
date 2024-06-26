@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { NotificationService } from '@svp-services';
 import { NavigationUtility } from '../navigation.utility';
-import { Result } from '@svp-models';
+import { Result, StatusCodes } from '@svp-models';
 
 @Injectable({
   providedIn: 'root',
@@ -18,14 +18,12 @@ export class ErrorService {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public handleError<T>() {
-    return (error: unknown): Observable<Result<never>> => {
-    
-      
+    return (error: unknown): Observable<Result<never>> => {      
       this.notify.hideLoader();
 
       if (error instanceof HttpErrorResponse) {
           switch (error.status) {
-          case 400: //Bad Request
+          case StatusCodes.BAD_REQUEST: //Bad Request
           {
             const msg400: Result<never> = new Result();            
             msg400.success = false;
@@ -43,7 +41,7 @@ export class ErrorService {
 
             return throwError(msg400 as Result<never>);
           }
-          case 401: //Authentication error
+          case StatusCodes.UNAUTHORIZED: //Authentication error
           {
             const msg401: Result<never> = new Result();
             msg401.success = false;
@@ -61,21 +59,13 @@ export class ErrorService {
             return throwError(msg401);
           }
 
-          case 403: //Authorization error
+          case StatusCodes.FORBIDDEN: //Authorization error
           {
-            const msg403: Result<never> = new Result();
-            msg403.success = false;
-            msg403.title = 'Privilege Access Required';
-            msg403.message = `Access Denied: You do not have enough privilege to view this page!`;
-            msg403.path = error.url?.toString();
+            const msg403: Result<never> = error.error;
 
-            this.notify.errorMessage(msg403.title, msg403.message);
-
-            this.nav.back();
-
-            return of(msg403);
+            return throwError(msg403);
           }
-          case 500: //Authentication error
+          case StatusCodes.INTERNAL_SERVER_ERROR: //Authentication error
           {
             const msg500: Result<never> = new Result();
             msg500.success = false;

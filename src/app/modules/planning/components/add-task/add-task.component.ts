@@ -194,14 +194,14 @@ export class AddTaskComponent implements OnInit {
       this.formGroup.get('parentId')?.setValidators([Validators.required]);
 
       // load only tasks
-      this.taskSearchModel.type = TaskTypeEnum.TASK;
+      this.taskSearchModel.types = [TaskTypeEnum.TASK];
       this.loadTasks();
     } else if ($event === TaskTypeEnum.TASK) {
       this.parentLabel = 'Assign To A Epic';
       this.formGroup.get('parentId')?.clearValidators();
 
       // load only Epics
-      this.taskSearchModel.type = TaskTypeEnum.EPIC;
+      this.taskSearchModel.types = [TaskTypeEnum.EPIC];
       this.loadTasks();
     } else {
       this.parentLabel = undefined;

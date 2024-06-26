@@ -9,6 +9,7 @@ import { NotificationService } from '@svp-services';
 import { ProjectService } from '@svp-api-services';
 import { ApproveProjectComponent } from '../../components/approve-project.component';
 import { UtcToLocalDatePipe } from '@svp-pipes';
+import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 
 @Component({ 
   selector: 'app-all-projects',
@@ -26,16 +27,14 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
 })
 export class AllProjectsComponent implements OnInit {
   projectStatusEnum = ProjectStatusEnum;
-  showSideView = false;
   sideViewService = inject(SideViewService);
+  sidePanel = inject(SidePanelService);
 
   allProjects: ProjectModel[] | null = [];
   
   constructor(
     public projectService: ProjectService,
-    private notify: NotificationService,
-    private sideViewComponent: SideViewComponent, private side: SideViewService
-  ) {
+    private notify: NotificationService) {
     // set up project search
     this.projectService.allProjects.subscribe((projects: ProjectModel[]) => {
       this.allProjects = projects;
@@ -44,6 +43,7 @@ export class AllProjectsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
+    this.viewProjectDetails(7);  // TODO: remove this line
   }
 
   loadProjects(): void {
@@ -65,6 +65,10 @@ export class AllProjectsComponent implements OnInit {
 
   viewProjectDetails(id: number): void {
     const inputs = {id: id};
-    this.sideViewService.showComponent(ApproveProjectComponent, inputs);
+    this.sidePanel.open(ApproveProjectComponent, {
+      inputs: inputs,
+      size: 'large'
+    });
+    // this.sideViewService.showComponent(ApproveProjectComponent, inputs);
   }
 }

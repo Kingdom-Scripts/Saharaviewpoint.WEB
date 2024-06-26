@@ -39,7 +39,7 @@ export class SidePanelService {
 }
 
 export interface SidePanelModel {
-  title: string;
+  title?: string | undefined;
   size?: 'small' | 'normal' | 'large';
   inputs?: any;
   outputs?: any;

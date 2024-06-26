@@ -12,12 +12,12 @@ export class Menu {
           route: '/dashboard'
         },
         {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          icon: 'assets/icons/project.svg',
           label: 'Projects',
           route: '/project',
         },
         {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          icon: 'assets/icons/tasks-app.svg',
           label: 'Tasks',
           route: '/tasks',
           children: [
@@ -32,8 +32,8 @@ export class Menu {
       separator: false,
       items: [
         {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
-          label: 'Users',
+          icon: 'assets/icons/users.svg',
+          label: 'User Management',
           route: '/users',
           children: [
             { label: 'Project Managers', route: '/users/project-managers' }

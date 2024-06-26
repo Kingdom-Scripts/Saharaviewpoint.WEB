@@ -31,3 +31,5 @@ export * from './enums/ProjectStatusEnum';
 export * from './enums/RoleEnum';
 export * from './enums/TaskStatusEnum';
 export * from './enums/TaskTypeEnum';
+
+export * from './status-codes.model';

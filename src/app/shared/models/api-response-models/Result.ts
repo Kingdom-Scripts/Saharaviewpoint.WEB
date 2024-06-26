@@ -1,7 +1,6 @@
 import { Paging } from "./Paging";
 
 export class Result<T> {
-  code?: string;
   content?: T;
   detail?: string;
   instance?: string;

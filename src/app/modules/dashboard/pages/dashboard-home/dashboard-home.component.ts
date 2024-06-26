@@ -9,8 +9,8 @@ import { NotificationService } from '@svp-services';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
+  selector: 'app-dashboard-home',
+  templateUrl: './dashboard-home.component.html',
   standalone: true,
   imports: [
     AngularSvgIconModule,
@@ -22,7 +22,7 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
     UtcToLocalDatePipe
   ],
 })
-export class HomeComponent implements OnInit {
+export class DashboardHomeComponent implements OnInit {
   projectStatusEnum = ProjectStatusEnum;
 
   projectCount = 0;

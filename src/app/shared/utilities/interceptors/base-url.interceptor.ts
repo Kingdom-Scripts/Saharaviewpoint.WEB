@@ -10,7 +10,8 @@ export function baseUrlInterceptor(request: HttpRequest<unknown>, next: HttpHand
   }
 
   request = request.clone({
-    headers: request.headers.set('Accept', 'application/json'),
+    headers: request.headers.set('Accept', 'application/json')
+                            .set('AppType', 'Admin'),
     url: `${BASE_PATH}/${request.url}`,
   });
 

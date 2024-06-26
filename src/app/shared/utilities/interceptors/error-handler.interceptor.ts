@@ -18,11 +18,6 @@ export function errorHandlerInterceptor(request: HttpRequest<unknown>, next: Htt
   const notify = inject(NotificationService);
   const router = inject(Router);
 
-  // skip if it is loading assets
-  if (request.url.includes('assets')) {
-    return next(request);
-  }
-
   return next(request).pipe(
     catchError(error => {
       // attempt to refresh token if existing one has expired.

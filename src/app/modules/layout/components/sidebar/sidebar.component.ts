@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MenuService } from '@svp-services';
 import { RouterLink } from '@angular/router';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
@@ -6,6 +6,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgClass } from '@angular/common';
 import { ThemeService } from '@svp-services';
 import { Menu } from 'src/app/core/constants/menu';
+import { AuthService } from '@svp-api-services';
 
 @Component({
     selector: 'app-sidebar',
@@ -19,8 +20,9 @@ import { Menu } from 'src/app/core/constants/menu';
     ],
 })
 export class SidebarComponent implements OnInit {
-  constructor(public themeService: ThemeService, public menuService: MenuService) {
-  }
+  menuService = inject(MenuService);
+  authService = inject(AuthService);
+  themeService = inject(ThemeService);
 
   ngOnInit(): void {
     this.menuService.setUpService(Menu.pages);
@@ -32,5 +34,10 @@ export class SidebarComponent implements OnInit {
 
   toggleTheme() {
     this.themeService.theme = !this.themeService.isDark ? 'dark' : 'light';
+  }
+
+  async logout() {
+    await this.authService.logUserOut();
+    this.authService.maskUserAsLoggedOut();
   }
 }

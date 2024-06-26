@@ -114,9 +114,7 @@
                 </td>
                 <td><span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span></td>
                 <td>
-                  <span>
                     <svp-status-card [status]="project.status" />
-                  </span>
                 </td>
                 <td><span>{{ project.startDate | utcToLocalDate }}</span></td>
                 <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>

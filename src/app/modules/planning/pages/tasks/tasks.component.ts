@@ -55,13 +55,14 @@ export class TasksComponent implements OnDestroy {
 
   showSideView = false;
 
+  taskSearchParams = new TaskSearchModel();
   allTasks: TaskModel[] = [];
 
   taskTypes: string[] = ['Epic', 'Task', 'Subtask'];
-  selectedTaskType = 'Epic';
+  selectedTaskType = ['Epic'];
 
   taskStatusEnum = TaskStatusEnum;
-  statuses: string[] = ['Epic', 'Task'];
+  statuses: string[] = ['TO DO', 'IN PROGRESS', 'COMPLETED'];
   selectedStatus = '';
 
   projects$ = new Observable<ProjectModel[]>();
@@ -118,14 +119,10 @@ export class TasksComponent implements OnDestroy {
       });
   }
 
-  setProjectId($event: ProjectModel) {
-    this.sessionStorage.setProject($event);
-    this.loadTasks();
-  }
-
   loadTasks(): void {
+    this.taskSearchParams.projectId = this.selectedProjectId;
     this.notify.showLoader();
-    this.taskService.listTasks({ projectId: this.selectedProjectId } as TaskSearchModel).subscribe((res: Result<TaskModel[]>) => {
+    this.taskService.listTasks(this.taskSearchParams).subscribe((res: Result<TaskModel[]>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.allTasks = res.content ?? [];
@@ -133,6 +130,12 @@ export class TasksComponent implements OnDestroy {
         this.notify.timedErrorMessage(res.title, res.message);
       }
     });
+  }
+
+  setProject($event: ProjectModel) {
+    this.sessionStorage.setProject($event);
+    this.selectedProjectId = $event.id;
+    this.loadTasks();
   }
 
   addNewTask(): void {

@@ -45,8 +45,8 @@ export class TaskService {
     this.triggerFilterChange();
   }
 
-  filterByStatus(status: string | null): void {
-    this.searchParam.status = status;
+  filterByStatus(statuses: string[] | null): void {
+    this.searchParam.statuses = statuses;
     this.triggerFilterChange();
   }
 
@@ -55,12 +55,21 @@ export class TaskService {
   }
   
   listTasks(param: TaskSearchModel): Observable<Result<TaskModel[]>> {
-    const query = `projectId=${param.projectId}
-      ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}
-      ${param.status ? `&status=${param.status}` : ''}`;
+    let query = `projectId=${param.projectId}
+      ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}`;
 
+    param.types?.forEach(type => {
+      query += `&types=${type}`;
+    });
+
+    param.statuses?.forEach(status => {
+      query += `&statuses=${status}`;
+    });
+
+    // remove any extra spaces
+    const cleanQuery = query.replace(/\s+/g, ' ').trim();
     
-    return this.http.get<Result<TaskModel[]>>(`tasks?${query}`, );
+    return this.http.get<Result<TaskModel[]>>(`tasks?${cleanQuery}`, );
   }
 
   deleteTask(taskId: number): Observable<Result<string>> {
