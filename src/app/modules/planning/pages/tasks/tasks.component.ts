@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService, SvpTaskStatusCardComponent } from '@svp-components';
+import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent,  SvpTaskStatusCardComponent } from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
@@ -43,11 +43,10 @@ import { SidePanelService } from 'src/app/shared/components/side-panel/side-pane
   ],
 })
 export class TasksComponent implements OnDestroy {
-  sidePanelService = inject(SidePanelService);
   taskService = inject(TaskService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
-  sideViewService = inject(SideViewService);
+  sidePanel = inject(SidePanelService);
   projectService = inject(ProjectService);
   router = inject(Router);
 
@@ -71,6 +70,8 @@ export class TasksComponent implements OnDestroy {
   constructor() {
     // set up task search
     this.loadProjects();
+
+    this.viewTaskDetails(12); // TODO: remove this line
 
     this.taskService.allTasks.subscribe((tasks: TaskModel[]) => {
       this.allTasks = tasks;
@@ -137,7 +138,7 @@ export class TasksComponent implements OnDestroy {
   }
 
   addNewTask(): void {
-    this.sidePanelService.open(AddTaskComponent, {
+    this.sidePanel.open(AddTaskComponent, {
       title: 'Add New Task',
       outputs: {
         addedTask: (task: TaskModel) => {
@@ -152,8 +153,11 @@ export class TasksComponent implements OnDestroy {
   }
 
   viewTaskDetails(taskId: number): void {
-    const inputs = { taskId: taskId };
-    this.sideViewService.showComponent(TaskDetailsComponent, inputs);
+    // const inputs = { taskId: taskId };
+    // this.sideViewService.showComponent(TaskDetailsComponent, inputs);
+    this.sidePanel.open(TaskDetailsComponent, {
+      inputs: { taskId: taskId },
+    })
   }
 
   changeTaskStatus(task: TaskModel, status: string): void {
@@ -188,7 +192,9 @@ export class TasksComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sideViewService.triggerOutputs$.unsubscribe();
-    this.sideViewService.closeSideView();
+    // TODO:
+    // this.sideViewService.triggerOutputs$.unsubscribe();
+    // this.sideViewService.closeSideView();
+    return;
   }
 }
