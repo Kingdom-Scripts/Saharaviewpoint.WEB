@@ -159,24 +159,18 @@
                 <span>{{ task.summary }}</span>
               </td>
               <td>
-                <div class="dropdown w-max">
-                  <div hlMenu>
-                    <svp-task-status-card [status]="task.status" class="cursor-pointer" hlMenuButton />
-
-                    <ul *hlMenuItems @toggleAnimation class="ltr:right-0 rtl:left-0">
-                      <li>
-                        <a href="javascript:;" *hlMenuItem="let menuItem">Download</a>
-                      </li>
-                      <li>
-                        <a href="javascript:;" *hlMenuItem="let menuItem">Share</a>
-                      </li>
-                      <li>
-                        <a href="javascript:;" *hlMenuItem="let menuItem">Edit</a>
-                      </li>
-                      <li>
-                        <a href="javascript:;" *hlMenuItem="let menuItem">Delete</a>
-                      </li>
-                    </ul>
+                <div class="" x-dropdown >
+                  <svp-task-status-card [status]="task.status" class="cursor-pointer" />
+                
+                  <div x-dropdown-content class="border border-red-900 bg-info rounded-2xl">
+                    <div class="flex flex-col rounded-lg shadow-2xl">
+                      <div class="px-4 py-2">
+                        Hello
+                      </div>
+                      <div class="px-4 py-2">
+                        How are you?
+                      </div>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -191,25 +185,18 @@
               </td>
               <td>
                 <!-- TODO: Finish the dropdown capability to change the status -->
-                <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
+                <div class="cursor-pointer" x-dropdown closeOnFocusOut="false">
                   <a (click)="(false)" class="">
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </a>
-                  <div class="nx-dropdown-content">
-                    <ul>
-                      <li (click)="viewTaskDetails(task.id)">
-                        <a class="dropdown-item custom"> View Details </a>
-                      </li>
-                      <li (click)="deleteTask(task.id)">
-                        <a class="dropdown-item custom"> Delete </a>
-                      </li>
-                      <!-- TODO: implement change or set due date -->
-                      <!-- <li>
-                        <a [classList]="'dropdown-item custom'">
-                          {{ task.dueDate ? 'Change Due Date' : 'Set Due Date' }}
-                        </a>
-                      </li> -->
-                    </ul>
+                  <div x-dropdown-content class="flex flex-col bg-white border border-gray-300">
+                    <div class="border-b border-gray-200 px-4 py-2 hover:bg-primary-300 cursor-pointer" (click)="viewTaskDetails(task.id)">
+                      View Details
+                    </div>
+                    <div class="border-b border-gray-200 px-4 py-2 hover:bg-primary-300 cursor-pointer" (click)="deleteTask(task.id)">
+                      Delete
+                    </div>
+                    <!-- <!- TODO: implement change or set due date -- -->
                   </div>
                 </div>
               </td>

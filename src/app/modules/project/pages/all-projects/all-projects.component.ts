@@ -43,7 +43,6 @@ export class AllProjectsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
-    this.viewProjectDetails(7);  // TODO: remove this line
   }
 
   loadProjects(): void {
@@ -69,6 +68,5 @@ export class AllProjectsComponent implements OnInit {
       inputs: inputs,
       size: 'large'
     });
-    // this.sideViewService.showComponent(ApproveProjectComponent, inputs);
   }
 }

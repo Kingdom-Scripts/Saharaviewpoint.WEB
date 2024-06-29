@@ -14,7 +14,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 import { UtcToLocalDatePipe } from '@svp-pipes';
-import { MenuModule } from 'headlessui-angular';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 
@@ -35,7 +34,6 @@ import { SidePanelService } from 'src/app/shared/components/side-panel/side-pane
     NgSelectModule,
     SvpTaskStatusCardComponent,
     UtcToLocalDatePipe,
-    MenuModule,
   ],
   animations: [
     trigger('toggleAnimation', [
