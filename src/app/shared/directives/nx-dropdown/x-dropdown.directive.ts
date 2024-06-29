@@ -64,7 +64,7 @@ export class XDropdownDirective implements AfterViewInit {
     this.isOpen = false; // Sets isOpen to false, indicating the dropdown should be closed
     setTimeout(() => {
       this.removeFromBody(this.dropdown); // Removes the dropdown from the body, effectively hiding it
-    }, 100);
+    }, 250);
   }
 
   @HostListener('mouseover') // Listens for the hover event on the host element
@@ -82,7 +82,7 @@ export class XDropdownDirective implements AfterViewInit {
     this.isOpen = false; // Sets isOpen to false, indicating the dropdown should be closed
     setTimeout(() => {
       this.removeFromBody(this.dropdown); // Removes the dropdown from the body, effectively hiding it
-    }, 100);
+    }, 250);
   }
 
   @HostListener('window:resize', ['$event']) // Listens for the resize event on the window object

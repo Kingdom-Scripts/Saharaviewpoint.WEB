@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { SideViewComponent, SideViewService, SvpButtonModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
-import { ProjectModel, ProjectSearchModel, ProjectStatusEnum, Result, TaskBoardModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
+import { ProjectModel, ProjectSearchModel, ProjectStatusEnum, Result, TaskBoardModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -216,7 +216,7 @@ export class BoardComponent {
     this.notify.timedInfoMessage('Saving changes...');
     this.notify.showLoader();
     try {
-      const res: Result<string> = await firstValueFrom(this.taskService.moveTask(task.id, param));
+      const res: Result<TaskModel> = await firstValueFrom(this.taskService.changeTaskStatus(task.id, param));
       this.notify.hideLoader();
       if (res.success) {
         return true;

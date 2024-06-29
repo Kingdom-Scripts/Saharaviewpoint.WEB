@@ -156,6 +156,21 @@ export class TasksComponent implements OnDestroy {
     this.sideViewService.showComponent(TaskDetailsComponent, inputs);
   }
 
+  changeTaskStatus(task: TaskModel, status: string): void {
+    const param = { status: status };
+    
+    this.notify.showLoader();
+    this.taskService.changeTaskStatus(task.id, param).subscribe((res: Result<TaskModel>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        task.status = res.content?.status ?? status;
+        task.updatedAt = res.content?.updatedAt ?? task.updatedAt;
+      } else {
+        this.notify.errorMessage('Task Update Failed', res.message);
+      }
+    });
+  }
+
   async deleteTask(taskId: number): Promise<void> {
     const confirmed = await this.notify.confirmAction('Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.', 'Delete Task');
     if (!confirmed) return;

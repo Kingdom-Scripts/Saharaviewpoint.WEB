@@ -81,8 +81,8 @@ export class TaskService {
   }
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  moveTask(taskId: number, param: any): Observable<Result<string>> {
-    return this.http.patch<Result<string>>(`tasks/${taskId}/status`, param);
+  changeTaskStatus(taskId: number, param: any): Observable<Result<TaskModel>> {
+    return this.http.patch<Result<TaskModel>>(`tasks/${taskId}/status`, param);
   }
   
   createTask(param: any): Observable<Result<TaskModel>> {
