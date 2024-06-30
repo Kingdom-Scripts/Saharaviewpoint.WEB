@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent,  SvpTaskStatusCardComponent } from '@svp-components';
+import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SvpTaskStatusCardComponent } from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { TaskDetailsComponent } from '../../components/task-details/task-details
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 
 @Component({
   selector: 'app-tasks',
@@ -67,11 +68,12 @@ export class TasksComponent implements OnDestroy {
   projectLoading = false;
   selectedProjectId!: number;
 
+  taskDetailRef!: SidePanelRef;
+  addTaskRef!: SidePanelRef;
+
   constructor() {
     // set up task search
     this.loadProjects();
-
-    this.viewTaskDetails(12); // TODO: remove this line
 
     this.taskService.allTasks.subscribe((tasks: TaskModel[]) => {
       this.allTasks = tasks;
@@ -95,7 +97,6 @@ export class TasksComponent implements OnDestroy {
           if (!res.success) {
             this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
           }
-          console.log('--> Projects: ', res.content ?? []);
           return of(res.content ?? []);
         }),
       )
@@ -138,8 +139,7 @@ export class TasksComponent implements OnDestroy {
   }
 
   addNewTask(): void {
-    this.sidePanel.open(AddTaskComponent, {
-      title: 'Add New Task',
+    this.addTaskRef = this.sidePanel.open(AddTaskComponent, {
       outputs: {
         addedTask: (task: TaskModel) => {
           this.addNewTaskToAllTasks(task);
@@ -153,16 +153,15 @@ export class TasksComponent implements OnDestroy {
   }
 
   viewTaskDetails(taskId: number): void {
-    // const inputs = { taskId: taskId };
-    // this.sideViewService.showComponent(TaskDetailsComponent, inputs);
-    this.sidePanel.open(TaskDetailsComponent, {
+    this.taskDetailRef = this.sidePanel.open(TaskDetailsComponent, {
       inputs: { taskId: taskId },
-    })
+      size: 'large'
+    });
   }
 
   changeTaskStatus(task: TaskModel, status: string): void {
     const param = { status: status };
-    
+
     this.notify.showLoader();
     this.taskService.changeTaskStatus(task.id, param).subscribe((res: Result<TaskModel>) => {
       this.notify.hideLoader();
@@ -176,7 +175,10 @@ export class TasksComponent implements OnDestroy {
   }
 
   async deleteTask(taskId: number): Promise<void> {
-    const confirmed = await this.notify.confirmAction('Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.', 'Delete Task');
+    const confirmed = await this.notify.confirmAction(
+      'Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.',
+      'Delete Task',
+    );
     if (!confirmed) return;
 
     this.notify.showLoader();
@@ -192,9 +194,7 @@ export class TasksComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // TODO:
-    // this.sideViewService.triggerOutputs$.unsubscribe();
-    // this.sideViewService.closeSideView();
-    return;
+    if (this.taskDetailRef) this.taskDetailRef.close();
+    if (this.addTaskRef) this.addTaskRef.close();
   }
 }

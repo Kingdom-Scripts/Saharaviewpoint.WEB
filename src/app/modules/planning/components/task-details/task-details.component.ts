@@ -9,6 +9,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { UtcToLocalDatePipe, UtcToTimelinePipe } from '@svp-pipes';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 
 @Component({
   selector: 'app-task-details',
@@ -35,8 +36,7 @@ export class TaskDetailsComponent implements OnInit {
   taskService = inject(TaskService);
   notify = inject(NotificationService);
   fb = inject(FormBuilder);
-
-  close!: () => void;
+  sidePanelRef = inject(SidePanelRef);
   
   assetBaseUrl = environment.assetBaseUrl;
 
@@ -83,7 +83,6 @@ export class TaskDetailsComponent implements OnInit {
         }
       },
       error: async (err: Result<TaskModel>) => {
-        console.log('Error loading task: ', err);
         this.notify.hideLoader();
 
         this.errorMessage =
@@ -185,7 +184,6 @@ export class TaskDetailsComponent implements OnInit {
     const target = e.target as HTMLInputElement;
     const files = target.files as File[] | null;
     if (files == null) {
-      console.log('--> Files is null');
       return;
     }
 
@@ -195,9 +193,6 @@ export class TaskDetailsComponent implements OnInit {
       // get file name with extension
       const fileName = file.name;
       const fileType = file.type;
-
-      console.log('==========================');
-      console.log('File Data: ', fileName, fileType);
 
       const newDocument: DocumentModel = {
         id: this.attachments.length + 1,

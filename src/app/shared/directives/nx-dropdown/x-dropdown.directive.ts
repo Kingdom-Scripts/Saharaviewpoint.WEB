@@ -27,12 +27,9 @@ export class XDropdownDirective implements AfterViewInit {
     Object.keys(this.styles).forEach((key: string) => {
       this.renderer.setStyle(this.el.nativeElement, key, this.styles[key]);
     });
-
-    // console.log('XDropdownDirective created: ', el) // TODO: remove this line
   }
 
   ngAfterViewInit(): void {
-    console.log();
     this.contentDirectives.forEach((contentDirective: XDropdownContentDirective) => {
       this.contentElement = contentDirective.el.nativeElement;
       this.renderer.addClass(this.contentElement, 'nx-dropdown-content');
@@ -156,7 +153,6 @@ export class XDropdownDirective implements AfterViewInit {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   appendDropdownToBody() {
-    console.log('---> appendDropdownToBody')
     // Check if the dropdown parameter is truthy
     if (this.contentElement) {
       this.dropdown = this.contentElement; // Assign the dropdown parameter to the class property
@@ -189,7 +185,6 @@ export class XDropdownDirective implements AfterViewInit {
   }
 
   removeFromBody(dropdown: any) {
-    console.log('---> removeFromBody')
     // Remove the CSS class that indicates the dropdown is appended to the body
     this.renderer.removeClass(dropdown, 'show-body');
     // Remove the dropdown from the body of the document

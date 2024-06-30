@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SideViewService } from '@svp-components';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,8 @@ import { ProjectService } from '@svp-api-services';
 import { ApproveProjectComponent } from '../../components/approve-project.component';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
+import { RouterLink } from '@angular/router';
 
 @Component({ 
   selector: 'app-all-projects',
@@ -22,15 +24,16 @@ import { SidePanelService } from 'src/app/shared/components/side-panel/side-pane
     SvpUtilityModule, CommonModule, NxDropdownModule,
     FormsModule,
     SideViewComponent,
-    UtcToLocalDatePipe
+    UtcToLocalDatePipe, RouterLink
   ],
 })
-export class AllProjectsComponent implements OnInit {
+export class AllProjectsComponent implements OnInit, OnDestroy {
   projectStatusEnum = ProjectStatusEnum;
   sideViewService = inject(SideViewService);
   sidePanel = inject(SidePanelService);
 
   allProjects: ProjectModel[] | null = [];
+  approveProjectRef!: SidePanelRef;
   
   constructor(
     public projectService: ProjectService,
@@ -43,6 +46,7 @@ export class AllProjectsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
+    this.viewProjectDetails(12);
   }
 
   loadProjects(): void {
@@ -64,9 +68,13 @@ export class AllProjectsComponent implements OnInit {
 
   viewProjectDetails(id: number): void {
     const inputs = {id: id};
-    this.sidePanel.open(ApproveProjectComponent, {
+    this.approveProjectRef = this.sidePanel.open(ApproveProjectComponent, {
       inputs: inputs,
       size: 'large'
     });
+  }
+
+  ngOnDestroy(): void {
+    if(this.approveProjectRef) this.approveProjectRef.close();
   }
 }

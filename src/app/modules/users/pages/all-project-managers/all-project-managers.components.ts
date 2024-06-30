@@ -23,7 +23,6 @@ export class AllProjectManagersComponent implements OnInit {
   allUsers: ProjectManagerModel[] = [];
 
   ngOnInit(): void {
-    console.log('showing all project managers');
     this.loadProjectManagers();
 
     // TODO: remove the line below

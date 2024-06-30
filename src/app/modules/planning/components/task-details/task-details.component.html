@@ -1,14 +1,14 @@
 <div class="relative h-full w-full bg-gray-100 dark:bg-night-700">
   <div class="bg-gray-100 dark:bg-night-700">
     @if (loadError === false) {
-      <div class="sticky top-0 flex justify-between space-x-12 py-4 bg-info text-white px-4 items-center">
+      <div class="sticky top-0 flex justify-between space-x-12 py-4 bg-secondary text-white px-4 items-center">
         <div class="flex items-center gap-5">
-          <h5>{{ task.summary }}</h5>
-          <svp-status-card [status]="task.status" />
+          <h6>{{ task.summary }}</h6>
+          <svp-task-status-card [status]="task.status" />
         </div>
   
         <button >
-          <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="close()" />
+          <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="sidePanelRef.close()" />
         </button>
       </div>
       }
@@ -22,46 +22,20 @@
       <div *ngIf="loadError === true">
         <div class="flex h-svh flex-col items-center justify-center gap-4">
           <h5 class="text-red-600 text-center">{{ errorMessage }}</h5>
-          <button class="btn btn-outline-danger" (click)="close()">Close</button>
+          <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Close</button>
         </div>
       </div>
 
       <div *ngIf="loadError === false" class="space-y-2 lg:space-y-3 px-4 mt-4">
-        <div class="space-y-1.5">
-          <div>
-            <h2 class="text-xl font-semibold text-gray-700 hover:cursor-text hover:bg-gray-200 dark:text-night-50">
-              {{ task.summary }}
-            </h2>
   
-            <div class="mt-1 flex hidden justify-end space-x-1">
-              <button svp-action>
-                <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-4 w-4'" />
-              </button>
-              <button svp-action>
-                <svg-icon src="assets/icons/heroicons/outline/x.svg" [svgClass]="'h-4 w-4'" />
-              </button>
-            </div>
-          </div>
-  
-          <div class="flex space-x-2">
-            <svp-task-status-card [status]="task.status" />
-  
-            <!-- TODO: Implement child tasks -->
-            <!-- <button svp-action>
-              <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-4 w-4'" />
-              <span class="ml-1">Add a child task</span>
-            </button> -->
-          </div>
-        </div>
-  
-        <div class="space-y-1">
-          <p svp-text medium>Description</p>
+        <div class="pb-4">
+          <p class="smaller font-semibold text-gray-500">Description</p>
           <p>{{ task.description }}</p>
         </div>
   
         <div class="space-y-1.5">
           <div class="flex space-x-3 pb-2">
-            <p svp-text medium>Attachments</p>
+            <p class="smaller font-semibold text-gray-500">Attachments</p>
   
             <label
               class="relative flex cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-2 py-1 text-sm font-medium text-white hover:bg-gray-800"
@@ -115,8 +89,8 @@
           </div>
         </div>
   
-        <div class="w-[75%] space-y-1.5">
-          <p svp-text medium>Activities</p>
+        <div class="w-[75%] space-y-2">
+          <p class="smaller font-semibold text-gray-500">Activities</p>
   
           <div class="flex space-x-2 pb-2">
             <p svp-text>Show:</p>

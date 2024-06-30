@@ -20,6 +20,11 @@ export class UtcToLocalDatePipe implements PipeTransform {
   transform(utcDate: Date, format: string, withTime: WithTime): string;
   // Unified implementation
   transform(utcDate: string | Date, formatOrWithTime?: string | WithTime, withTime?: WithTime): string {
+    // return empty string if utcDate is null or undefined
+    if (!utcDate) {
+      return '';
+    }
+    
     let format = 'MMM dd, yyyy';
     let includeTime = false;
     let localDate: DateTime;

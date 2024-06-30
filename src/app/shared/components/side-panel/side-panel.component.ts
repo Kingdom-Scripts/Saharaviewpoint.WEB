@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
-import { Component, ComponentFactoryResolver, EventEmitter, Injectable, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, EventEmitter, HostListener, Injectable, Injector, Input, ViewChild, ViewContainerRef, inject } from '@angular/core';
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { SidePanelRef } from './side-panel-ref';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -13,18 +14,28 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
   imports: [CommonModule, ComponentOutletInjectorModule, AngularSvgIconModule],
 })
 export class SidePanelComponent {
-  @Input({ required: true }) title!: string | undefined;
   @Input({ required: true }) size: 'small' | 'normal' | 'large' = 'normal';
 
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
-  constructor(private cfr: ComponentFactoryResolver) {}
+  private injector = inject(Injector);
+  private cfr = inject(ComponentFactoryResolver);
+  private sidePanelRef!: SidePanelRef;
+  private backdropClose = true;
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
     // Clear the container before loading the component
     this.container.clear();
     const componentFactory = this.cfr.resolveComponentFactory(component);
-    const componentRef = this.container.createComponent(componentFactory);
+
+    // Create a new injector that includes SidePanelRef
+    this.sidePanelRef = new SidePanelRef(this);
+    const injector = Injector.create({
+      providers: [{ provide: SidePanelRef, useValue: this.sidePanelRef }],
+      parent: this.injector,
+    });
+
+    const componentRef = this.container.createComponent(componentFactory, 0, injector);
 
     // Assign inputs and outputs to the component
     if (inputs) {
@@ -38,18 +49,14 @@ export class SidePanelComponent {
         }
       });
     }
-
-    // Pass the close function to the dynamically loaded component
-    if ((componentRef.instance as any).close !== undefined) {
-      (componentRef.instance as any).close = this.close.bind(this);
-    } else {
-      (componentRef.instance as any).close = () => {
-        this.close();
-      };
-    }
   }
 
-  close() {
-    this.container.clear();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  close(trigger: 'backdrop' | 'esc' | 'manual') {}
+
+  // Listen for esc key press
+  @HostListener('document:keydown.escape')
+  onEscKey() {
+    this.close('esc');
   }
 }

@@ -10,19 +10,11 @@ import { AuthDataModel, Result } from '@svp-models';
 import { SvpAuthInputComponent } from '../../components/auth-input.component';
 
 @Component({
-    selector: 'app-new-password',
-    templateUrl: './new-password.component.html',
-    styleUrls: ['./new-password.component.scss'],
-    standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        RouterLink,
-        AngularSvgIconModule,
-        SvpFormInputModule,
-        SvpButtonModule,
-        SvpAuthInputComponent
-    ],
+  selector: 'app-new-password',
+  templateUrl: './new-password.component.html',
+  styleUrls: ['./new-password.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, SvpFormInputModule, SvpButtonModule, SvpAuthInputComponent],
 })
 export class NewPasswordComponent implements OnInit {
   authService = inject(AuthService);
@@ -31,27 +23,25 @@ export class NewPasswordComponent implements OnInit {
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   notify = inject(NotificationService);
- 
+
   isInvitation = false;
   invitationParam = {
     email: '',
     type: '',
-    token: ''
+    token: '',
   };
 
   formGroup!: FormGroup;
   passwordStrength: number = 0;
-  
+
   constructor() {
     this.invitationParam.email = this.route.snapshot.queryParams['email'];
     this.invitationParam.token = this.route.snapshot.queryParams['token'];
-    
+
     this.isInvitation = this.router.url.includes('accept-invitation');
-    if (this.isInvitation) {      
+    if (this.isInvitation) {
       this.invitationParam.type = this.route.snapshot.queryParams['type'];
     }
-
-    console.log('--> Invitation Params', this.isInvitation);
   }
 
   ngOnInit(): void {
@@ -59,12 +49,15 @@ export class NewPasswordComponent implements OnInit {
   }
 
   initForm(): void {
-    this.formGroup = this.fb.group({
-      password: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])],
-      confirmPassword: ['', Validators.compose([Validators.required])]
-    }, {
-      validators: passwordMatchValidator('password', 'confirmPassword')
-    });
+    this.formGroup = this.fb.group(
+      {
+        password: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(20)])],
+        confirmPassword: ['', Validators.compose([Validators.required])],
+      },
+      {
+        validators: passwordMatchValidator('password', 'confirmPassword'),
+      },
+    );
   }
 
   calculatePasswordStrength(password: string): void {
@@ -79,8 +72,7 @@ export class NewPasswordComponent implements OnInit {
 
     if (this.isInvitation) {
       this.setPassword();
-    } 
-    else {
+    } else {
       this.resetPassword();
     }
   }
@@ -93,43 +85,39 @@ export class NewPasswordComponent implements OnInit {
 
     const params = Object.assign({}, this.invitationParam, this.formGroup.value);
     this.notify.showLoader();
-    this.authService.resetPassword(params)
-      .subscribe(async (res: Result<AuthDataModel>) => {
-        this.notify.hideLoader();
-        
-        if (res.success) {
-          if (res.content) {
-            this.notify.timedSuccessMessage('Password reset successfully.');
+    this.authService.resetPassword(params).subscribe(async (res: Result<AuthDataModel>) => {
+      this.notify.hideLoader();
+
+      if (res.success) {
+        if (res.content) {
+          this.notify.timedSuccessMessage('Password reset successfully.');
 
           this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
           this.router.navigate(['dashboard']);
-          }
-          else {
-            this.notify.timedSuccessMessage('Password reset successfully. Please login with your new password.');
-            this.router.navigate(['/auth/sign-in']);
-          }
         } else {
-          this.notify.errorMessage(res.title, res.message);
+          this.notify.timedSuccessMessage('Password reset successfully. Please login with your new password.');
+          this.router.navigate(['/auth/sign-in']);
         }
-      });
+      } else {
+        this.notify.errorMessage(res.title, res.message);
+      }
+    });
   }
 
-  setPassword(): void { 
+  setPassword(): void {
     const params = Object.assign({}, this.invitationParam, this.formGroup.value);
-    console.log('--> Params: ', params);
     this.notify.showLoader();
-    this.userService.acceptInvitation(params)
-      .subscribe(async (res: Result<AuthDataModel>) => {
-        this.notify.hideLoader();
-        
-        if (res.success) {
-          this.notify.timedSuccessMessage('Password set successfully.');
+    this.userService.acceptInvitation(params).subscribe(async (res: Result<AuthDataModel>) => {
+      this.notify.hideLoader();
 
-          this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
-          this.router.navigate(['dashboard']);
-        } else {
-          this.notify.errorMessage(res.title, res.message);
-        }
-      });
+      if (res.success) {
+        this.notify.timedSuccessMessage('Password set successfully.');
+
+        this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
+        this.router.navigate(['dashboard']);
+      } else {
+        this.notify.errorMessage(res.title, res.message);
+      }
+    });
   }
 }

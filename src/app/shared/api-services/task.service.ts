@@ -2,17 +2,27 @@
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
-import { TaskModel, TaskSearchModel, TaskStatusEnum, Result, DocumentModel, TaskLogModel, PagingRequestModel, TaskCommentModel, TaskBoardModel } from '@svp-models';
+import {
+  TaskModel,
+  TaskSearchModel,
+  TaskStatusEnum,
+  Result,
+  DocumentModel,
+  TaskLogModel,
+  PagingRequestModel,
+  TaskCommentModel,
+  TaskBoardModel,
+} from '@svp-models';
 import { NotificationService } from '@svp-services';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TaskService {  
+export class TaskService {
   projectStatusEnum = TaskStatusEnum;
 
   searchParam = new TaskSearchModel();
-  private _searchParams$ = new Subject<TaskSearchModel>;
+  private _searchParams$ = new Subject<TaskSearchModel>();
   allTasks: Subject<TaskModel[]> = new Subject<TaskModel[]>();
 
   constructor(private http: HttpClient, private notify: NotificationService) {
@@ -23,21 +33,18 @@ export class TaskService {
           // this.searchParams.searchQuery = term;
           this.notify.showLoader();
           return this.listTasks(term);
-        })
+        }),
       )
-      .subscribe(
-        async (res: Result<TaskModel[]>) => {
-          this.notify.hideLoader();
+      .subscribe(async (res: Result<TaskModel[]>) => {
+        this.notify.hideLoader();
 
-          if (res.success) {
-            const data = res.content ?? [];
-            this.allTasks.next(data);
-          }
-          else {
-            this.notify.timedErrorMessage(res.title, res.message);
-          }
+        if (res.success) {
+          const data = res.content ?? [];
+          this.allTasks.next(data);
+        } else {
+          this.notify.timedErrorMessage(res.title, res.message);
         }
-      )
+      });
   }
 
   searchTasks(searchTerm: string): void {
@@ -50,12 +57,14 @@ export class TaskService {
     this.triggerFilterChange();
   }
 
-  triggerFilterChange(): void {    
+  triggerFilterChange(): void {
     this._searchParams$.next(this.searchParam);
   }
-  
+
   listTasks(param: TaskSearchModel): Observable<Result<TaskModel[]>> {
     let query = `projectId=${param.projectId}
+      &pageIndex=${param.pageIndex}
+      &pageSize=${param.pageSize}
       ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}`;
 
     param.types?.forEach(type => {
@@ -68,8 +77,8 @@ export class TaskService {
 
     // remove any extra spaces
     const cleanQuery = query.replace(/\s+/g, ' ').trim();
-    
-    return this.http.get<Result<TaskModel[]>>(`tasks?${cleanQuery}`, );
+
+    return this.http.get<Result<TaskModel[]>>(`tasks?${cleanQuery}`);
   }
 
   deleteTask(taskId: number): Observable<Result<string>> {
@@ -79,12 +88,12 @@ export class TaskService {
   listBoardTasks(projectId: number): Observable<Result<TaskBoardModel[]>> {
     return this.http.get<Result<TaskBoardModel[]>>(`tasks/${projectId}/board`);
   }
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   changeTaskStatus(taskId: number, param: any): Observable<Result<TaskModel>> {
     return this.http.patch<Result<TaskModel>>(`tasks/${taskId}/status`, param);
   }
-  
+
   createTask(param: any): Observable<Result<TaskModel>> {
     return this.http.post<Result<TaskModel>>('tasks', param);
   }
@@ -104,29 +113,30 @@ export class TaskService {
     // const request = new HttpRequest('POST', `tasks/${taskId}/attachments`, formData, {
     //     reportProgress: true, // Enable progress tracking,
     //     responseType: 'json', // Ensure response is parsed as JSON
-        
+
     //   });
-      
-    let count = 1;
-    return this.http.post(`tasks/${taskId}/attachments`, formData, {
-      reportProgress: true, // Enable progress tracking
-      observe: 'events', // Enable event tracking
-      responseType: 'json' // Ensure response is parsed as JSON
-    }).pipe(
-      map((event: HttpEvent<Result<string>>) => {
-        console.log(`--> Event: ${count}`, event);
-        count++;
-          if (event.type === HttpEventType.UploadProgress) {
-              const percentDone = Math.round((100 * event.loaded) / event.total!);
-              return percentDone;
-          } else if (event.type === HttpEventType.Response) {
-              // Handle response from server
-              return 100; // Upload complete
-          } else {
-              return undefined;
-          }
+
+    // let count = 1;
+    return this.http
+      .post(`tasks/${taskId}/attachments`, formData, {
+        reportProgress: true, // Enable progress tracking
+        observe: 'events', // Enable event tracking
+        responseType: 'json', // Ensure response is parsed as JSON
       })
-    );
+      .pipe(
+        map((event: HttpEvent<Result<string>>) => {
+          // count++;
+          if (event.type === HttpEventType.UploadProgress) {
+            const percentDone = Math.round((100 * event.loaded) / event.total!);
+            return percentDone;
+          } else if (event.type === HttpEventType.Response) {
+            // Handle response from server
+            return 100; // Upload complete
+          } else {
+            return undefined;
+          }
+        }),
+      );
 
     // return this.http.request(request).pipe(
     //     map(event => {
@@ -151,7 +161,7 @@ export class TaskService {
 
   listLogs(taskId: number, param: PagingRequestModel): Observable<Result<TaskLogModel[]>> {
     const query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
-    
+
     return this.http.get<Result<TaskLogModel[]>>(`tasks/${taskId}/logs?${query}`);
   }
 
@@ -166,7 +176,7 @@ export class TaskService {
   listComments(taskId: number, param: PagingRequestModel): Observable<Result<TaskCommentModel[]>> {
     let query = `pageIndex=${param.pageIndex}&pageSize=${param.pageSize}`;
     if (param.searchQuery && param.searchQuery != '') query += `&searchQuery=${param.searchQuery}`;
-    
+
     return this.http.get<Result<TaskCommentModel[]>>(`tasks/${taskId}/comments?${query}`);
   }
 }

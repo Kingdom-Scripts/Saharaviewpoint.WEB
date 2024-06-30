@@ -1,6 +1,7 @@
-export class TaskSearchModel {
+import { PagingRequestModel } from "../paging-request.model";
+
+export class TaskSearchModel extends PagingRequestModel {
   projectId: number = 0;
-  searchQuery: string | null = null;
-  statuses: string[] | null = null;
-  types: string[] | null = null;
+  statuses?: string[] | null = null;
+  types?: string[] | null = null;
 }

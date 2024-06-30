@@ -7,19 +7,15 @@ import { TaskStatusEnum } from '@svp-models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <p class="flex items-center space-x-2 rounded-md bg-gray-300 px-3 py-1 text-sm dark:bg-night-500">
-      <span
-        class="rounded-full p-2"
-        [ngClass]="{
-          'bg-[#800080]': status === statusEnum.TODO,
-          'bg-warning': status === statusEnum.IN_PROGRESS,
-          'bg-success': status === statusEnum.COMPLETED
-        }"></span>
-
-      <span class="text-gray-800 dark:text-night-100">
-        {{ status }}
-      </span>
-    </p>
+    <span
+      class="badge text-nowrap text-xs"
+      [ngClass]="{
+        'bg-[#800080]': status === statusEnum.TODO,
+        'bg-warning': status === statusEnum.IN_PROGRESS,
+        'bg-success': status === statusEnum.COMPLETED
+      }"
+      >{{ status }}</span
+    >
   `,
 })
 export class SvpTaskStatusCardComponent {

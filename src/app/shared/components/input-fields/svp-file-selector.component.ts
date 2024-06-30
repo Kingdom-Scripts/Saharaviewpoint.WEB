@@ -1,6 +1,6 @@
-import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, booleanAttribute } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output, booleanAttribute } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'svp-file-selector',
@@ -45,12 +45,12 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class SvpFileSelectorComponent {
-  @Input({required: true}) svpId: string = '';
-  @Input({required: true}) svpForm!: FormGroup;
-  @Input({transform: booleanAttribute}) isMultiple = false;
+  @Input({ required: true }) svpId: string = '';
+  @Input({ required: true }) svpForm!: FormGroup;
+  @Input({ transform: booleanAttribute }) isMultiple = false;
   @Input() height: number | null = null;
 
   @Output() onFileChanged: EventEmitter<File[]> = new EventEmitter<File[]>();
@@ -59,13 +59,11 @@ export class SvpFileSelectorComponent {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleFileInput(e: any): void {
-
     const files = e.target.files as File[];
     if (files == null) {
-      console.log('--> Files is null');
       return;
     }
-    
+
     // Convert FileList to Array and update selectedFiles
     this.selectedFiles.push(...Array.from(files));
 

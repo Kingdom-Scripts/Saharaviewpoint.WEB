@@ -87,31 +87,34 @@ export class BoardComponent {
   }
 
   private loadProjects(): void {
-    const initialParam = {status: ProjectStatusEnum.IN_PROGRESS, priorityOnly: false} as ProjectSearchModel;
-    this.projectService.listProjects(initialParam).pipe(
-      switchMap((res: Result<ProjectModel[]>) => {
-        if (!res.success) {
-          this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
-        }
-        console.log('--> Projects: ', res.content ?? [])
-        return of (res.content ?? []);
-      })
-    ).subscribe((defaultItems: ProjectModel[]) => {
-      this.projects$ = concat(
-        of(defaultItems.map((item) => item)),
-        this.projectInput$.pipe(
-          distinctUntilChanged(),
-          tap(() => this.projectLoading = true),
-          switchMap((term) => this.projectService.listProjects({searchQuery: term, status: ProjectStatusEnum.IN_PROGRESS} as ProjectSearchModel)
-          .pipe(
-            catchError(() => of([])), // empty list on error
-            tap(() => this.projectLoading = false)
-          )),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          map((data: any) => data.content.map((item: any) => item))
-        )
+    const initialParam = { status: ProjectStatusEnum.IN_PROGRESS, priorityOnly: false } as ProjectSearchModel;
+    this.projectService
+      .listProjects(initialParam)
+      .pipe(
+        switchMap((res: Result<ProjectModel[]>) => {
+          if (!res.success) {
+            this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
+          }
+          return of(res.content ?? []);
+        }),
       )
-    })  
+      .subscribe((defaultItems: ProjectModel[]) => {
+        this.projects$ = concat(
+          of(defaultItems.map(item => item)),
+          this.projectInput$.pipe(
+            distinctUntilChanged(),
+            tap(() => (this.projectLoading = true)),
+            switchMap(term =>
+              this.projectService.listProjects({ searchQuery: term, status: ProjectStatusEnum.IN_PROGRESS } as ProjectSearchModel).pipe(
+                catchError(() => of([])), // empty list on error
+                tap(() => (this.projectLoading = false)),
+              ),
+            ),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            map((data: any) => data.content.map((item: any) => item)),
+          ),
+        );
+      });
   }
 
   setProjectId($event: ProjectModel) {
@@ -137,7 +140,6 @@ export class BoardComponent {
   }
 
   async drop(event: CdkDragDrop<TaskBoardModel[]>) {
-    console.log('--> Event:', event);
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
       return;
@@ -150,8 +152,6 @@ export class BoardComponent {
     const currentId = event.container.id;
 
     const newStatus = currentId === 'todoList' ? TaskStatusEnum.TODO : currentId === 'inProgressList' ? TaskStatusEnum.IN_PROGRESS : TaskStatusEnum.COMPLETED;
-
-    console.log('--> Moved Data:', currentId, movedItem, newStatus);
 
     // Move the item to the new status
     const moved = await this.moveTask(movedItem, newStatus);
@@ -198,7 +198,6 @@ export class BoardComponent {
         },
         outputs: {
           onActionConfirmed: async (result: ConfirmActionResult) => {
-            console.log('--> Result:', result);
             if (result.confirmed) {
               const movementResult = await this.effectMovement(task, { status: newStatus, reason: result.reason });
               resolve(movementResult);
@@ -233,7 +232,10 @@ export class BoardComponent {
   }
 
   async deleteTask(task: TaskBoardModel): Promise<void> {
-    const confirmed = await this.notify.confirmAction('Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.', 'Delete Task');
+    const confirmed = await this.notify.confirmAction(
+      'Are you sure you want to delete this task? Every task under this will (if any) be deleted as well.',
+      'Delete Task',
+    );
     if (!confirmed) return;
 
     this.notify.showLoader();
@@ -244,11 +246,9 @@ export class BoardComponent {
         this.allTasks = this.allTasks.filter(task => task.id !== task.id);
         if (task.status === TaskStatusEnum.TODO) {
           this.todoTasks = this.todoTasks.filter(t => t.id !== task.id);
-        }
-        else if (task.status === TaskStatusEnum.IN_PROGRESS) {
+        } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
           this.inProgressTasks = this.inProgressTasks.filter(t => t.id !== task.id);
-        }
-        else {
+        } else {
           this.completedTasks = this.completedTasks.filter(t => t.id !== task.id);
         }
       } else {

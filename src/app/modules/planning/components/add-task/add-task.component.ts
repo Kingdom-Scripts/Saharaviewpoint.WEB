@@ -9,6 +9,7 @@ import { NotificationService } from '@svp-services';
 import { SessionStorageUtility } from '@svp-utilities';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 
 @Component({
   selector: 'app-add-task',
@@ -32,8 +33,7 @@ export class AddTaskComponent implements OnInit {
   taskService = inject(TaskService);
   fb = inject(FormBuilder);
   taskTypeEnum = TaskTypeEnum;
-
-  close!: () => void;
+  sidePanelRef = inject(SidePanelRef);
 
   @Output() addedTask = new EventEmitter<TaskModel>();
 
@@ -137,7 +137,6 @@ export class AddTaskComponent implements OnInit {
           if (!res.success) {
             this.notify.timedErrorMessage('Unable to retrieve projects', res.message);
           }
-          console.log('--> Projects: ', res.content ?? []);
           return of(res.content ?? []);
         }),
       )
@@ -165,7 +164,6 @@ export class AddTaskComponent implements OnInit {
       .listTasks({ projectId: this.globalProjectId } as TaskSearchModel)
       .pipe(
         switchMap((res: Result<TaskModel[]>) => {
-          console.log('--> Tasks: ', res.content ?? []);
           return of(res.content ?? []);
         }),
       )
@@ -217,5 +215,9 @@ export class AddTaskComponent implements OnInit {
     } else {
       this.attachments = null;
     }
+  }
+
+  close(): void {
+    this.sidePanelRef.close();
   }
 }

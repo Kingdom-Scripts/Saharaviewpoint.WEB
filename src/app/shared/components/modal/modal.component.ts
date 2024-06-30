@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
-import { Component, ComponentFactoryResolver, EventEmitter, Injectable, Input, ViewChild, ViewContainerRef, inject } from '@angular/core';
+import { Component, ComponentFactoryResolver, EventEmitter, Injectable, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -9,14 +10,15 @@ import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
   standalone: true,
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
-  imports: [CommonModule, ComponentOutletInjectorModule],
+  imports: [CommonModule, ComponentOutletInjectorModule, AngularSvgIconModule],
 })
 export class ModalComponent {
+  @Input({ required: true }) title = '';
   @Input({ required: true }) size: 'small' | 'normal' | 'large' = 'normal';
 
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
-  cfr = inject(ComponentFactoryResolver);  
+  constructor(private cfr: ComponentFactoryResolver) {}
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
     // Clear the container before loading the component

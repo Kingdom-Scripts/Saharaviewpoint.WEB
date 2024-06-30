@@ -1,13 +1,13 @@
 <div class="relative h-full w-full bg-gray-100 dark:bg-night-700">
   <div class="bg-gray-100 dark:bg-night-700">
     @if (loadError === false) {
-    <div class="sticky top-0 flex justify-between space-x-12 py-4 bg-info text-white px-4 items-center">
+    <div class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
       <div class="flex items-center gap-5">
         <h5>{{ project.title }}</h5>
         <svp-status-card [status]="project.status" />
       </div>
 
-      <button >
+      <button>
         <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="close()" />
       </button>
     </div>
@@ -21,36 +21,36 @@
 
     <div *ngIf="loadError === true">
       <div class="flex h-svh flex-col items-center justify-center gap-4">
-        <h5 class="text-red-600 text-center">{{ errorMessage }}</h5>
+        <h5 class="text-center text-red-600">{{ errorMessage }}</h5>
         <button class="btn btn-outline-danger" (click)="close()">Close</button>
       </div>
     </div>
 
-    <div *ngIf="loadError === false" class="space-y-2 lg:space-y-3 px-4 mt-4">
+    <div *ngIf="loadError === false" class="mt-4 space-y-2 px-4 lg:space-y-3">
       <div class="pb-4">
         <p class="smaller font-semibold text-gray-500">Description</p>
         <p>{{ project.description }}</p>
       </div>
 
-      <div class="rounded-xl bg-white p-4 2xl:p-8 grid grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="grid grid-cols-2 gap-5 rounded-xl bg-white p-4 lg:grid-cols-3 2xl:p-8">
         <div>
-          <p class="smaller font-semibold text-gray-500 text-nowrap">Created On</p>
+          <p class="smaller text-nowrap font-semibold text-gray-500">Created On</p>
           <p class="font-semibold">{{ project.startDate | utcToLocalDate }}</p>
         </div>
-  
+
         <div>
           <p class="smaller font-semibold text-gray-500">Project created</p>
           <!-- TODO: Add created date to API response -->
-          <p class="font-semibold">{{ project.startDate | utcToLocalDate }}</p>
+          <p class="font-semibold">{{ project.createdAt | utcToLocalDate }}</p>
         </div>
-  
+
         <div class="col-span-2 lg:col-span-1">
           <p class="smaller font-semibold text-gray-500">Project Manager</p>
           <p class="font-semibold">{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</p>
         </div>
       </div>
 
-      <div class="rounded-xl bg-white p-4 2xl:p-8 dark:bg-night-500">
+      <div class="rounded-xl bg-white p-4 dark:bg-night-500 2xl:p-8">
         <div class="grid grid-cols-2">
           <div class="space-y-4">
             <!-- TASKS -->
@@ -59,28 +59,15 @@
               <h6>Tasks</h6>
             </div>
 
-            <p italic *ngIf="true">No tasks created yet</p>
+            <p italic *ngIf="allTasks.length === 0">No tasks created yet</p>
 
             <!-- TODO: display the first three active tasks here -->
-            <!-- <div class="flex space-x-2 items-center">      
-              <input type="checkbox" checked disabled>
-              <p>Site Clearing</p>
+            @for(task of allTasks; track task.id) {
+            <div class="flex items-center space-x-2">
+              <input type="checkbox" disabled [checked]="task.status === taskStatuses.COMPLETED" />
+              <p>{{ task.summary }}</p>
             </div>
-
-            <div class="flex space-x-2 items-center">      
-              <input type="checkbox" disabled>
-              <p>Foundation</p>
-            </div>  
-
-            <div class="flex space-x-2 items-center">
-              <input type="checkbox" disabled>
-              <p>Roofing</p>
-            </div>
-
-            <div class="flex space-x-2 items-center">
-              <input type="checkbox" disabled>
-              <p>Finishing</p>
-            </div> -->
+            }
 
             <!-- ATTACHMENTS -->
             <div class="flex items-center space-x-2 pt-10">
@@ -132,9 +119,9 @@
     </div>
 
     <div
-      class="sticky bottom-0 mt-6 flex flex-col justify-between gap-6 border-t-2 border-gray-200 bg-gray-100 dark:bg-night-700 p-4 xl:flex-row xl:items-end"
+      class="sticky bottom-0 mt-6 flex flex-col justify-between gap-6 border-t-2 border-gray-200 bg-gray-100 p-4 dark:bg-night-700 xl:flex-row xl:items-end"
       *ngIf="loadError === false && !project.assignee">
-      <div class="space-y-2 grow">
+      <div class="grow space-y-2">
         <label svp-label>Assign to a Project Manager</label>
         <ng-select
           [items]="projectManagers$ | async"
@@ -152,7 +139,7 @@
         </ng-select>
       </div>
 
-      <div class="flex justify-between sm:justify-end space-x-2">
+      <div class="flex justify-between space-x-2 sm:justify-end">
         <button class="btn btn-outline-danger" (click)="close()">Cancel</button>
         <button class="btn btn-primary">Reject Project</button>
         <button class="btn btn-success" (click)="assignProjectManager()">Approve Project</button>

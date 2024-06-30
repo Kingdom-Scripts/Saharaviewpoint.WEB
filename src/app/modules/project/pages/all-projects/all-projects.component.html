@@ -1,4 +1,4 @@
-<div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+<div class="mx-auto px-4 py-4 lg:container sm:px-8">
   <div class="flex flex-row justify-between">
     <div>
       <!-- <div class="flex space-x-3 my-4">
@@ -23,131 +23,146 @@
       </div> -->
 
       <div>
-        <svp-search-button svpPlaceholder="Search projects" displaySearchButton="true" widthClass="w-80" (onChange)="projectService.searchParam.searchQuery = $event" (onSearch)="projectService.searchProjects($event)" />
+        <svp-search-button
+          svpPlaceholder="Search projects"
+          displaySearchButton="true"
+          widthClass="w-80"
+          (onChange)="projectService.searchParam.searchQuery = $event"
+          (onSearch)="projectService.searchProjects($event)" />
       </div>
-      
-      <div class="flex space-x-3 my-4 mt-4">
-        <div svp-card-selector [isActive]="projectService.searchParam.status === null" 
-          (click)="projectService.filterByStatus(null)">
+
+      <div class="my-4 mt-4 flex space-x-3">
+        <div svp-card-selector [isActive]="projectService.searchParam.status === null" (click)="projectService.filterByStatus(null)">
           <span>All Projects</span>
         </div>
-  
-        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.REQUESTED)" [isActive]="projectService.searchParam.status === projectStatusEnum.REQUESTED">
+
+        <div
+          svp-card-selector
+          (click)="projectService.filterByStatus(projectStatusEnum.REQUESTED)"
+          [isActive]="projectService.searchParam.status === projectStatusEnum.REQUESTED">
           <span>Awaiting Approval</span>
         </div>
-  
-        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.IN_PROGRESS)" [isActive]="projectService.searchParam.status === projectStatusEnum.IN_PROGRESS">
+
+        <div
+          svp-card-selector
+          (click)="projectService.filterByStatus(projectStatusEnum.IN_PROGRESS)"
+          [isActive]="projectService.searchParam.status === projectStatusEnum.IN_PROGRESS">
           <span>In Progress</span>
         </div>
-  
-        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.COMPLETED)" [isActive]="projectService.searchParam.status === projectStatusEnum.COMPLETED">
+
+        <div
+          svp-card-selector
+          (click)="projectService.filterByStatus(projectStatusEnum.COMPLETED)"
+          [isActive]="projectService.searchParam.status === projectStatusEnum.COMPLETED">
           <span>Completed</span>
         </div>
       </div>
     </div>
 
-    <div>      
-      <div class="flex space-x-3 mb-4 mt-6">
-        <svg-icon src="assets/icons/appicons/bi_filter.svg" [svgClass]="'h-6 w-6 text-gray-800 dark:text-night-200'"/>
+    <div>
+      <div class="mb-4 mt-6 flex space-x-3">
+        <svg-icon src="assets/icons/appicons/bi_filter.svg" [svgClass]="'h-6 w-6 text-gray-800 dark:text-night-200'" />
 
         <p svp-text>Filter by date</p>
       </div>
-      
-      <div class="flex space-x-4 my-4 text-gray-800 dark:text-night-700">
+
+      <div class="my-4 flex space-x-4 text-gray-800 dark:text-night-700">
         <div class="flex flex-col space-y-2">
           <p svp-text>Start Date</p>
 
-          <input type="date" [(ngModel)]="projectService.searchParam.startDueDate" (change)="projectService.triggerFilterChange()"/>
+          <input type="date" [(ngModel)]="projectService.searchParam.startDueDate" (change)="projectService.triggerFilterChange()" />
         </div>
-        
+
         <div class="flex flex-col space-y-2">
           <p svp-text>End Date</p>
 
-          <input type="date" [(ngModel)]="projectService.searchParam.endDueDate" (change)="projectService.triggerFilterChange()"/>
+          <input type="date" [(ngModel)]="projectService.searchParam.endDueDate" (change)="projectService.triggerFilterChange()" />
         </div>
       </div>
     </div>
   </div>
 
   @if(allProjects === null) {
-    <div class="mt-6 min-h-80 py-8 px-4 rounded-xl bg-white dark:bg-night-700">
-      <div class="flex flex-col space-y-4 items-center justify-center">
-        <svg-icon src="assets/icons/appicons/empty-project.svg" [svgClass]="'h-64 w-64'"/>
-        
-        <h1 svp-sub-header>
-          No Projects yet.
-        </h1>
+  <div class="mt-6 min-h-80 rounded-xl bg-white px-4 py-8 dark:bg-night-700">
+    <div class="flex flex-col items-center justify-center space-y-4">
+      <svg-icon src="assets/icons/appicons/empty-project.svg" [svgClass]="'h-64 w-64'" />
 
-        <p svp-text>
-          Click here to start a project
-        </p>  
+      <h1 svp-sub-header>No Projects yet.</h1>
 
-        <a svp-neutral type="button" svpRoute="/project/new">Add new project</a>
-      </div>
+      <p svp-text>Click here to start a project</p>
+
+      <a svp-neutral type="button" svpRoute="/project/new">Add new project</a>
     </div>
-  }
-  @else {
-    <div class="mt-6 min-h-80 py-8 px-14 rounded-xl bg-white dark:bg-night-700">
-      <div class="w-full" #sample>
-        <div class="table-container" style="min-height: 320px; max-height: 500px;">
-          <table class="fixed-header header-1 bordered">
-            <thead>
-              <tr>
-                <th width="5%"><span>#</span></th>
-                <th style="max-width: 30%;"><span>Name</span></th>
-                <th><span>Owner</span></th>
-                <th><span>Manager</span></th>
-                <th><span>Status</span></th>
-                <th><span>Start Date</span></th>
-                <th><span>End Date</span></th>
-                <th><span>Actions</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let project of allProjects; let index = index">
-                <td><span>{{ index + 1 }}</span></td>
-                <td class="cursor-pointer clickable" (click)="viewProjectDetails(project.id)"><span>{{ project.title }}</span></td>
-                <td>
-                  <span>
-                    {{project.createdBy?.firstName + ' ' + project.createdBy?.lastName}}
-                  </span>
-                </td>
-                <td><span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span></td>
-                <td>
-                    <svp-status-card [status]="project.status" />
-                </td>
-                <td><span>{{ project.startDate | utcToLocalDate }}</span></td>
-                <td><span>{{ project.dueDate | utcToLocalDate }}</span></td>
-                <td>
-                  <div class="nx-dropdown" x-dropdown container="body" tabindex="0">
-                    <a (click)="(false)">
-                      <i class="bx bx-dots-vertical-rounded"></i>
-                    </a>
-                    <div class="nx-dropdown-content">
-                      <ul>
-                        <li (click)="viewProjectDetails(project.id)">
-                          <a class="dropdown-item custom">
-                            View Details
-                          </a>
-                        </li>
-                        <li *ngIf="project.status !== projectStatusEnum.REQUESTED">
-                          <a [classList]="'dropdown-item custom'" svp-anchor svpRoute="/tasks/all">
-                            View Tasks
-                          </a>
-                        </li>
-                      </ul>
+  </div>
+  } @else {
+  <div class="mt-6 min-h-80 rounded-xl bg-white px-14 py-8 dark:bg-night-700">
+    <div class="w-full" #sample>
+      <div class="table-container" style="min-height: 320px; max-height: 500px">
+        <table class="fixed-header header-1 bordered">
+          <thead>
+            <tr>
+              <th width="5%"><span>#</span></th>
+              <th style="max-width: 30%"><span>Name</span></th>
+              <th><span>Owner</span></th>
+              <th><span>Manager</span></th>
+              <th><span>Status</span></th>
+              <th><span>Start Date</span></th>
+              <th><span>End Date</span></th>
+              <th><span>Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of allProjects; let index = index">
+              <td>
+                <span>{{ index + 1 }}</span>
+              </td>
+              <td class="clickable cursor-pointer" (click)="viewProjectDetails(project.id)">
+                <span>{{ project.title }}</span>
+              </td>
+              <td>
+                <span>
+                  {{ project.createdBy?.firstName + ' ' + project.createdBy?.lastName }}
+                </span>
+              </td>
+              <td>
+                <span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span>
+              </td>
+              <td>
+                <svp-status-card [status]="project.status" />
+              </td>
+              <td>
+                <span>{{ project.startDate | utcToLocalDate }}</span>
+              </td>
+              <td>
+                <span>{{ project.dueDate | utcToLocalDate }}</span>
+              </td>
+              <td>
+                <div x-dropdown class="cursor-pointer">
+                  <a (click)="(false)">
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                  </a>
+                  <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewProjectDetails(project.id)">
+                      View Details
+                    </div>
+                    <div
+                      *ngIf="project.status !== projectStatusEnum.REQUESTED"
+                      class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      routerLink="/tasks/all">
+                      View Tasks
                     </div>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
   }
 </div>
 
 @if(sideViewService.isActive) {
-  <svp-side-view></svp-side-view>
+<svp-side-view></svp-side-view>
 }

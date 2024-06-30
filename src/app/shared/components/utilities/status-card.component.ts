@@ -10,9 +10,9 @@ import { ProjectStatusEnum } from '@svp-models';
     <span
       class="badge text-nowrap"
       [ngClass]="{
-        'bg-[#800080]': status === ProjectStatusEnum.REQUESTED,
-        'bg-[#FFA500]': status === ProjectStatusEnum.IN_PROGRESS,
-        'bg-[#008000]': status === ProjectStatusEnum.COMPLETED
+        'bg-info': status === ProjectStatusEnum.REQUESTED,
+        'bg-warning': status === ProjectStatusEnum.IN_PROGRESS,
+        'bg-success': status === ProjectStatusEnum.COMPLETED
       }"
       >{{ status }}</span
     >
