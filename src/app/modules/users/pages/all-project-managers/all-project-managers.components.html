@@ -60,6 +60,7 @@
         <th width="40%"><span>Name</span></th>
         <th><span>Email Address</span></th>
         <th><span>Projects Managed</span></th>
+        <th>Date Joined</th>
         <th><span>Status</span></th>
         <th><span>Actions</span></th>
       </tr>
@@ -72,6 +73,7 @@
         </td>
         <td><span>{{ user.email }}</span></td>
         <td><span>{{ user.noOfProjects }}</span></td>
+        <td>{{ user.dateJoined | utcToLocalDate }}</td>
         <td>
           <span *ngIf="user.isActive" class="badge bg-success"> Active </span>
           <span *ngIf="!user.isActive" class="badge bg-danger"> Suspended </span>

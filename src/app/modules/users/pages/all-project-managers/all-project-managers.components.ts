@@ -12,6 +12,7 @@ import { ProjectManagerSearchModel } from 'src/app/shared/models/api-input-model
 import { PaginationComponent } from 'src/app/shared/components/pagination/pagination.component';
 import { debounceTime, Subject, switchMap } from 'rxjs';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { UtcToLocalDatePipe } from '@svp-pipes';
 
 @Component({
   selector: 'app-project-managers',
@@ -27,7 +28,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     FormsModule,
     SideViewComponent,
     PaginationComponent,
-    NgSelectModule
+    NgSelectModule,
+    UtcToLocalDatePipe
   ],
 })
 export class AllProjectManagersComponent implements OnInit {

@@ -5,4 +5,5 @@ export interface ProjectManagerModel {
   lastName: string;
   noOfProjects: number;
   isActive: boolean;
+  dateJoined: Date
 }
