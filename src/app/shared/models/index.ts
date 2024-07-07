@@ -4,7 +4,6 @@ export * from './api-input-models/paging-request.model';
 export * from './api-input-models/auth/login.model';
 export * from './api-input-models/project/project-search.model';
 export * from './api-input-models/task/task-search.model';
-export * from './api-input-models/user/project-manager-search.model';
 
 export * from './api-response-models/auth/auth-data.model';
 export * from './api-response-models/paging.model';

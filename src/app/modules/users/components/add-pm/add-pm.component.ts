@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '@svp-api-services';
+import { ProjectManagerService } from '@svp-api-services';
 import { SvpButtonModule, SvpFormInputModule, SvpTypographyModule, mapValidationErrors } from '@svp-components';
 import { Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
@@ -18,7 +18,7 @@ export class AddPmComponent implements OnInit {
 
   notify = inject(NotificationService);
   formBuilder = inject(FormBuilder);
-  userService = inject(UserService);
+  projectManagerService = inject(ProjectManagerService);
 
   newPmForm!: FormGroup;
 
@@ -42,7 +42,7 @@ export class AddPmComponent implements OnInit {
     }
 
     const email = emailControl.value;
-    this.userService.checkEmail(email).subscribe({
+    this.projectManagerService.checkEmail(email).subscribe({
       next: (res: Result<boolean>) => {
         if (res.success && res.content === true) {
           emailControl.setErrors({ emailExists: true });
@@ -62,7 +62,7 @@ export class AddPmComponent implements OnInit {
     const newPm = this.newPmForm.value;
 
     this.notify.showLoader();
-    this.userService.inviteProjectManager(newPm).subscribe({
+    this.projectManagerService.inviteProjectManager(newPm).subscribe({
       next: async (res: Result<string>) => {
         this.notify.hideLoader();
         if (res.success) {

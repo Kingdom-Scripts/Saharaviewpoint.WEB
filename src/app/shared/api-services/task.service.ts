@@ -140,7 +140,6 @@ export class TaskService {
 
     // return this.http.request(request).pipe(
     //     map(event => {
-    //       console.log(`--> Event: ${count}`, event);
     //       count++;
     //         if (event.type === HttpEventType.UploadProgress) {
     //             const percentDone = Math.round((100 * event.loaded) / event.total!);

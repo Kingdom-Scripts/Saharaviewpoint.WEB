@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService, UserService } from '@svp-api-services';
+import { AuthService, ProjectManagerService } from '@svp-api-services';
 import { CommonModule } from '@angular/common';
 import { SvpButtonModule, SvpFormInputModule, passwordMatchValidator } from '@svp-components';
 import { NotificationService } from '@svp-services';
@@ -18,7 +18,7 @@ import { SvpAuthInputComponent } from '../../components/auth-input.component';
 })
 export class NewPasswordComponent implements OnInit {
   authService = inject(AuthService);
-  userService = inject(UserService);
+  projectManagerService = inject(ProjectManagerService);
   router = inject(Router);
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder);
@@ -107,7 +107,7 @@ export class NewPasswordComponent implements OnInit {
   setPassword(): void {
     const params = Object.assign({}, this.invitationParam, this.formGroup.value);
     this.notify.showLoader();
-    this.userService.acceptInvitation(params).subscribe(async (res: Result<AuthDataModel>) => {
+    this.projectManagerService.acceptInvitation(params).subscribe(async (res: Result<AuthDataModel>) => {
       this.notify.hideLoader();
 
       if (res.success) {

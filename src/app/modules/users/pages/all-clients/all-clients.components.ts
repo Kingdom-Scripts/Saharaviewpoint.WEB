@@ -51,13 +51,10 @@ export class AllClientsComponent implements OnInit {
   ngOnInit(): void {
     this.loadClients(true);
     this.configureSearch();
-    return;
   }
 
   // load all project managers
   loadClients(clearCache: boolean): void {
-    console.log('Loading clients: ', this.param);
-
     if (clearCache) this.pageCache.clear();
     
     // Check if the page is already loaded
@@ -74,9 +71,9 @@ export class AllClientsComponent implements OnInit {
       this.notify.hideLoader();
       if (res.success) {
         this.allClients = res.content ?? [];
-        this.paging = res.paging ?? new PagingModel();
 
         // Update the cache with the new data
+        this.paging = res.paging ?? new PagingModel();
         this.pageCache.set(this.param.pageIndex, { data: this.allClients, paging: this.paging });
       } else {
         this.notify.timedErrorMessage(res.title, res.message);

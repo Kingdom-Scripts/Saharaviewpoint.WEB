@@ -4,11 +4,12 @@ import { SvpButtonModule, SvpFormInputModule, SvpTypographyModule, SvpUtilityMod
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProjectManagerModel, ProjectModel, Result, StatusCodes, TaskModel, TaskSearchModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
-import { ProjectService, TaskService, UserService } from '@svp-api-services';
+import { ProjectService, TaskService, ProjectManagerService } from '@svp-api-services';
 import { NotificationService } from '@svp-services';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { UtcToLocalDatePipe } from '@svp-pipes';
+import { ProjectManagerSearchModel } from 'src/app/shared/models/api-input-models/project-managers/project-manager-search.model';
 
 @Component({
   selector: 'svp-approve-project',
@@ -32,14 +33,14 @@ export class ApproveProjectComponent implements OnInit {
   close!: () => void;
 
   projectService = inject(ProjectService);
-  userService = inject(UserService);
+  projectManagerService = inject(ProjectManagerService);
   taskService = inject(TaskService);
   notify = inject(NotificationService);
 
   loadError: boolean | undefined = undefined;
   errorMessage!: string;
   taskStatuses = TaskStatusEnum;
-  
+
   project!: ProjectModel;
   allTasks: TaskModel[] = [];
 
@@ -87,7 +88,7 @@ export class ApproveProjectComponent implements OnInit {
       pageSize: 4,
       pageIndex: 1,
       types: [TaskTypeEnum.TASK, TaskTypeEnum.SUBTASK],
-    }
+    };
     this.taskService.listTasks(param as TaskSearchModel).subscribe((res: Result<TaskModel[]>) => {
       if (res.success) {
         this.allTasks = res.content ?? [];
@@ -98,7 +99,7 @@ export class ApproveProjectComponent implements OnInit {
   }
 
   loadProjectManagers(): void {
-    this.userService
+    this.projectManagerService
       .listProjectManagers()
       .pipe(
         switchMap((res: Result<ProjectManagerModel[]>) => {
@@ -122,12 +123,14 @@ export class ApproveProjectComponent implements OnInit {
           this.projectManagerInput$.pipe(
             distinctUntilChanged(),
             tap(() => (this.projectManagersLoading = true)),
-            switchMap(term =>
-              this.userService.listProjectManagers({ searchQuery: term }).pipe(
+            switchMap(term => {
+              const param = new ProjectManagerSearchModel();
+              param.searchQuery = term;
+              return this.projectManagerService.listProjectManagers(param).pipe(
                 catchError(() => of([])), // empty list on error
                 tap(() => (this.projectManagersLoading = false)),
-              ),
-            ),
+              );
+            }),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             map((data: any) =>
               // eslint-disable-next-line @typescript-eslint/no-explicit-any

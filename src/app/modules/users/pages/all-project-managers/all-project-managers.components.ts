@@ -5,46 +5,143 @@ import { SideViewComponent, SideViewService, SvpButtonModule, SvpTypographyModul
 import { NxDropdownModule } from '@svp-directives';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AddPmComponent } from '../../components/add-pm/add-pm.component';
-import { UserService } from '@svp-api-services';
-import { ProjectManagerModel, Result } from '@svp-models';
+import { ProjectManagerService } from '@svp-api-services';
+import { PagingModel, ProjectManagerModel, Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
+import { ProjectManagerSearchModel } from 'src/app/shared/models/api-input-models/project-managers/project-manager-search.model';
+import { PaginationComponent } from 'src/app/shared/components/pagination/pagination.component';
+import { debounceTime, Subject, switchMap } from 'rxjs';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-project-managers',
   templateUrl: './all-project-managers.components.html',
   standalone: true,
-  imports: [AngularSvgIconModule, SvpButtonModule, SvpTypographyModule, SvpUtilityModule, CommonModule, NxDropdownModule, FormsModule, SideViewComponent],
+  imports: [
+    AngularSvgIconModule,
+    SvpButtonModule,
+    SvpTypographyModule,
+    SvpUtilityModule,
+    CommonModule,
+    NxDropdownModule,
+    FormsModule,
+    SideViewComponent,
+    PaginationComponent,
+    NgSelectModule
+  ],
 })
 export class AllProjectManagersComponent implements OnInit {
   sideViewService = inject(SideViewService);
-  userService = inject(UserService);
+  projectManagerService = inject(ProjectManagerService);
   notify = inject(NotificationService);
+  param: ProjectManagerSearchModel = new ProjectManagerSearchModel();
+  paging: PagingModel = new PagingModel();
 
   allUsers: ProjectManagerModel[] = [];
 
-  ngOnInit(): void {
-    this.loadProjectManagers();
+  searchTerm = '';
+  private $searchTerms = new Subject<string>();
+  isSearching = false;
+  activeOptions = ['All', 'Active Only', 'Inactive Only'];
+  selectedActiveState = 'All';
+  // Define a cache for storing loaded pages
+  pageCache: Map<number, { data: ProjectManagerModel[]; paging: PagingModel }> = new Map();
 
-    // TODO: remove the line below
-    // this.sideViewService.showComponent(AddPmComponent);
+  ngOnInit(): void {
+    this.loadProjectManagers(true);
+    this.configureSearch();
   }
 
   // load all project managers
-  loadProjectManagers(): void {
-    this.notify.showLoader();
+  loadProjectManagers(clearCache: boolean): void {
+    if (clearCache) this.pageCache.clear();
 
-    this.userService.listProjectManagers().subscribe((res: Result<ProjectManagerModel[]>) => {
+    // Check if the page is already loaded
+    if (this.pageCache.has(this.param.pageIndex)) {
+      const cachedPage = this.pageCache.get(this.param.pageIndex);
+      if (!cachedPage) return;
+      this.allUsers = cachedPage.data;
+      this.paging = cachedPage.paging;
+      return;
+    }
+
+    this.notify.showLoader();
+    this.projectManagerService.listProjectManagers(this.param).subscribe((res: Result<ProjectManagerModel[]>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.allUsers = res.content ?? [];
+
+        // Update the cache with the new data
+        this.paging = res.paging ?? new PagingModel();
+        this.pageCache.set(this.param.pageIndex, { data: this.allUsers, paging: this.paging });
       } else {
         this.notify.timedErrorMessage('Unable to retrieve project managers', res.message);
       }
     });
   }
 
+  goToPage(pageIndex: number): void {
+    this.param.pageIndex = pageIndex;
+    this.loadProjectManagers(false);
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.param.pageIndex = 1;
+    this.param.pageSize = itemsPerPage;
+    this.loadProjectManagers(true);
+  }
+
   viewUserDetails(uid: string) {
     console.log('Viewing user details', uid);
+  }
+
+  searchChanged(): void {
+    this.$searchTerms.next(this.searchTerm);
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.searchChanged();
+  }
+
+  configureSearch(): void {
+    this.$searchTerms .pipe(
+      debounceTime(250),
+      switchMap((term: string) => {
+        this.param.pageIndex = 1;
+        this.param.searchQuery = term;
+        this.pageCache.clear();
+        this.isSearching = true;
+        return this.projectManagerService.listProjectManagers(this.param);
+      })
+    ).subscribe((res: Result<ProjectManagerModel[]>) => {
+      if (res.success) {
+        this.allUsers = res.content ?? [];
+        this.paging = res.paging ?? new PagingModel();
+        this.pageCache.set(this.param.pageIndex, { data: this.allUsers, paging: this.paging });
+        this.isSearching = false;
+      } else {
+        this.notify.timedErrorMessage(res.title, res.message);
+      }
+    });
+  }
+
+  filterByActiveState(): void {
+    this.param.pageIndex = 1;
+    if (this.selectedActiveState === 'All') {
+      this.param.isActiveOnly = false;
+      this.param.isInactiveOnly = false;
+    }
+    this.param.isActiveOnly = this.selectedActiveState === 'Active Only';
+    this.param.isInactiveOnly = this.selectedActiveState === 'Inactive Only';
+    this.loadProjectManagers(true);
+  }
+
+  clearAllFilters(): void {
+    this.searchTerm = '';
+    this.selectedActiveState = 'All';
+    this.param = new ProjectManagerSearchModel();
+    this.loadProjectManagers(true);
   }
 
   addNewPM(): void {
@@ -56,7 +153,7 @@ export class AllProjectManagersComponent implements OnInit {
     if (!confirmed) return;
 
     this.notify.showLoader();
-    this.userService.suspendUser(user.uid).subscribe((res: Result<string>) => {
+    this.projectManagerService.suspendUser(user.uid).subscribe((res: Result<string>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.notify.timedSuccessMessage('User suspended successfully');
@@ -72,7 +169,7 @@ export class AllProjectManagersComponent implements OnInit {
     if (!confirmed) return;
 
     this.notify.showLoader();
-    this.userService.activateUser(user.uid).subscribe((res: Result<string>) => {
+    this.projectManagerService.activateUser(user.uid).subscribe((res: Result<string>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.notify.timedSuccessMessage('User activated successfully');
