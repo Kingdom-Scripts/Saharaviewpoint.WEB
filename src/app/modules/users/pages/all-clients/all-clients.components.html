@@ -63,20 +63,20 @@
         </tr>
       </thead>
       <tbody>
-        @for(item of allClients; track item.uid) {
+        @for(client of allClients; track client.uid) {
         <tr>
           <td>{{ $index + 1 }}</td>
-          <td>{{ item.fullName }}</td>
-          <td>{{ item.email }}</td>
-          <td>{{ item.noOfProjects }}</td>
-          <td>{{ item.joinedOn | utcToLocalDate }}</td>
+          <td>{{ client.fullName }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.noOfProjects }}</td>
+          <td>{{ client.joinedOn | utcToLocalDate }}</td>
           <td>
-            <span *ngIf="item.isActive" class="badge bg-success"> Active </span>
-            <span *ngIf="!item.isActive" class="badge bg-danger"> Suspended </span>
+            <span *ngIf="client.isActive" class="badge bg-success"> Active </span>
+            <span *ngIf="!client.isActive" class="badge bg-danger"> Deactivated </span>
           </td>
           <td>
-            <button *ngIf="!item.isActive" type="button" class="btn btn-success btn-sm">Restore Access</button>
-            <button *ngIf="item.isActive" type="button" class="btn btn-outline-danger btn-sm">Deactivate User</button>
+            <button *ngIf="!client.isActive" type="button" class="btn btn-success btn-sm" (click)="activateClient(client)">Restore Access</button>
+            <button *ngIf="client.isActive" type="button" class="btn btn-outline-danger btn-sm" (click)="deactivateClient(client)">Deactivate User</button>
           </td>
         </tr>
         }

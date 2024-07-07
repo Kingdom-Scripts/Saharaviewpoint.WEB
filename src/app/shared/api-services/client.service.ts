@@ -20,4 +20,12 @@ export class ClientService {
     
     return this.http.get<Result<ClientModel[]>>(`clients?${query}`);
   }
+
+  deactivateClient(uid: string): Observable<Result<string>> {
+    return this.http.patch<Result<string>>(`clients/${uid}/deactivate`, {});
+  }
+
+  activateClient(uid: string): Observable<Result<string>> {
+    return this.http.patch<Result<string>>(`clients/${uid}/activate`, {});
+  }
 }
