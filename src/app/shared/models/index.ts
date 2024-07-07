@@ -7,7 +7,7 @@ export * from './api-input-models/task/task-search.model';
 export * from './api-input-models/user/project-manager-search.model';
 
 export * from './api-response-models/auth/auth-data.model';
-export * from './api-response-models/Paging';
+export * from './api-response-models/paging.model';
 export * from './api-response-models/Result';
 export * from './api-response-models/user/user.model';
 export * from './api-response-models/project/project.model';

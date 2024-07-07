@@ -7,7 +7,7 @@ export class Menu {
       separator: false,
       items: [
         {
-          icon: 'assets/icons/heroicons/outline/chart-pie.svg',
+          icon: 'assets/icons/dashboard.svg',
           label: 'Dashboard',
           route: '/dashboard'
         },
@@ -36,7 +36,8 @@ export class Menu {
           label: 'User Management',
           route: '/users',
           children: [
-            { label: 'Project Managers', route: '/users/project-managers' }
+            { label: 'Project Managers', route: '/users/project-managers' },
+            { label: 'Clients', route: '/users/clients' }
           ]
         },
         // {

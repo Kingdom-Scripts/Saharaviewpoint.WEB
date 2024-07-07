@@ -71,16 +71,41 @@
   [multiple],
   input textarea,
   select {
-    @apply w-full rounded-md border border-gray-300 text-xs placeholder-gray-400 focus:z-10  focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-night-500 dark:bg-night-700 dark:text-night-200 dark:placeholder-night-200;
+    @apply w-full rounded-md border border-gray-300  placeholder-gray-400 focus:z-10  focus:border-primary-500 focus:outline-none focus:ring-primary-500 dark:border-night-400 dark:bg-night-700 dark:text-night-200 dark:placeholder-night-200;
   }
 
   [type='checkbox'],
   [type='radio'] {
     @apply h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-night-600 dark:bg-night-700 dark:ring-offset-night-800 dark:focus:ring-primary-600;
   }
+
+  label {
+    @apply text-gray-800 dark:text-night-50;
+  }
 }
 
 @layer components {
+  /* Breadcrumb */
+  .breadcrumb {
+    @apply mb-5;
+  }
+
+  .breadcrumb ol {
+    @apply flex items-center font-semibold text-gray-500 dark:text-night-100;
+  }
+
+  .breadcrumb li:not(:first-child) {
+    @apply before:px-1.5 before:content-['/'];
+  }
+
+  .breadcrumb li.active a {
+    @apply text-primary-500 dark:text-primary-500;
+  }
+
+  .breadcrumb li.link a {
+    @apply hover:text-black/90 dark:hover:text-white;
+  }
+
   .dropdown-content {
     @apply pointer-events-none scale-95 opacity-0 duration-100 ease-in;
   }
@@ -95,7 +120,7 @@
 
   /* Buttons */
   .btn {
-    @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-xs font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none xl:text-sm text-nowrap;
+    @apply relative flex items-center justify-center text-nowrap rounded-md border px-5 py-2 text-xs font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none xl:text-sm;
   }
   .btn-lg {
     @apply px-7 py-2.5 text-base;
@@ -196,6 +221,90 @@
 
   .dropdown ul li > button {
     @apply w-full;
+  }
+
+  /* Typography */
+  .header {
+    @apply text-3xl font-semibold text-gray-800 dark:text-night-50;
+  }
+
+  .sub-header {
+    @apply text-xl font-semibold text-gray-700 dark:text-night-50;
+  }
+
+  /* Panel */
+  .panel {
+    @apply relative overflow-auto rounded-md bg-white p-5 shadow dark:bg-night-700;
+  }
+
+  /* tables */
+  table {
+    @apply w-full text-gray-700 dark:text-night-100;
+    border-collapse: collapse !important;
+  }
+  table thead tr,
+  table tfoot tr {
+    @apply border-b-0 bg-gray-200  dark:bg-night-900;
+  }
+  table thead tr th,
+  table tfoot tr th,
+  table tbody tr td {
+    @apply px-4 py-4 text-left;
+  }
+  table thead tr th,
+  table tfoot tr th {
+    @apply font-semibold;
+  }
+  table tbody tr {
+    @apply border-b border-gray-200 dark:border-night-800;
+  }
+  table.table-responsive {
+    @apply overflow-auto;
+  }
+  table.table-hover tbody tr {
+    @apply hover:bg-gray-50 dark:hover:bg-night-800/70;
+  }
+  table.table-striped tbody tr:nth-child(odd) {
+    @apply bg-gray-50 dark:bg-night-800/70;
+  }
+  table.table-secondary thead tr {
+    @apply bg-gray-800 text-white dark:bg-night-900;
+  }
+
+  .search-input {
+    @apply relative;
+  }
+
+  .search-input input {
+    @apply pr-9;
+  }
+
+  .search-input .icon {
+    @apply absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 dark:text-night-100;
+  }
+
+  .search-input input:focus + .icon {
+    @apply text-primary;
+  }
+
+  .custom-switch {
+    @apply relative h-6 w-12;
+  }
+
+  .custom-switch input {
+    @apply absolute z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed;
+  }
+
+  .custom-switch span {
+    @apply block h-full rounded-full border-2 border-gray-400 before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-gray-400 before:transition-all before:duration-300;
+  }
+
+  .custom-switch input:checked + span {
+    @apply border-primary before:left-7 before:bg-primary;
+  }
+
+  .custom-switch input:disabled + span {
+    @apply border-gray-200 bg-[#eee] before:bg-gray-300;
   }
 }
 

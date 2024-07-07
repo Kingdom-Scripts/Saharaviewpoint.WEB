@@ -1,4 +1,4 @@
-import { Paging } from "./Paging";
+import { PagingModel } from "./paging.model";
 
 export class Result<T> {
   content?: T;
@@ -11,7 +11,7 @@ export class Result<T> {
   title?: string;
   type?: number;
   validationErrors?: { [key: string]: string[] };
-  paging?: Paging;
+  paging?: PagingModel;
 }
 
 export class ValidationResult {

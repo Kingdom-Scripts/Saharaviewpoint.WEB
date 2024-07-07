@@ -1,0 +1,90 @@
+<div class="breadcrumb">
+  <ol>
+    <li>
+      <a href="javascript:;">
+        <svg-icon src="assets/icons/dashboard.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+      </a>
+    </li>
+    <li class="link"><a href="javascript:;">User Management</a></li>
+    <li class="active">
+      <a href="javascript:;">All users</a>
+    </li>
+  </ol>
+</div>
+
+<div class="panel space-y-6">
+  <h1 class="header">All Clients</h1>
+
+  <div>
+    <div class="mt-4 border-b border-t border-[#e0e6ed] py-3 dark:border-[#1b2e4b]">
+      <div class="flex items-end gap-10">
+        <div>
+          <div class="search-input">
+            <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" (keyup)="searchChanged()" />
+            <div class="icon">
+              <svg-icon src="assets/icons/search.svg" *ngIf="!isSearching && !searchTerm"></svg-icon>
+              <img src="assets/images/loading.gif" alt="Loading" *ngIf="isSearching" />
+              <svg-icon src="assets/icons/x.svg" [svgClass]="'h-4 w-4 cursor-pointer hover:text-primary'" *ngIf="!isSearching && searchTerm" (click)="clearSearch()"></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Joined After</label>
+          <input type="date" [(ngModel)]="param.dateJoinedStart" (change)="loadClients(true)"/>
+        </div>
+
+        <div>
+          <label>Joined Before</label>
+          <input type="date" [(ngModel)]="param.dateJoinedEnd" (change)="loadClients(true)"  />
+        </div>
+
+        <div>
+          <label>Filter By User State</label>
+          <ng-select [items]="activeOptions" [(ngModel)]="selectedActiveState" class="w-52" (change)="filterByActiveState()" />
+        </div>
+
+        <div class="mb-3">
+          <p class="hover:text-primary hover:underline cursor-pointer" (click)="clearAllFilters()">Clear All Filters</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="table-responsive table-striped table-hover table-secondary">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email Address</th>
+          <th>Total Projects</th>
+          <th>Joined</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(item of allClients; track item.uid) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ item.fullName }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.noOfProjects }}</td>
+          <td>{{ item.joinedOn | utcToLocalDate }}</td>
+          <td>
+            <span *ngIf="item.isActive" class="badge bg-success"> Active </span>
+            <span *ngIf="!item.isActive" class="badge bg-danger"> Suspended </span>
+          </td>
+          <td>
+            <button *ngIf="!item.isActive" type="button" class="btn btn-success btn-sm">Restore Access</button>
+            <button *ngIf="item.isActive" type="button" class="btn btn-outline-danger btn-sm">Deactivate User</button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <div>
+      <app-pagination [paging]="paging" (pageChange)="goToPage($event)" (itemsPerPageChange)="onItemsPerPageChange($event)" />
+    </div>
+  </div>
+</div>
