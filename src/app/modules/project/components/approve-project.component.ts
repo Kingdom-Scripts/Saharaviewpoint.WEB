@@ -3,13 +3,14 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { SvpButtonModule, SvpFormInputModule, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ProjectManagerModel, ProjectModel, Result, StatusCodes, TaskModel, TaskSearchModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
+import { PagingRequestModel, ProjectManagerModel, ProjectModel, Result, StatusCodes, TaskModel, TaskSearchModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { ProjectService, TaskService, ProjectManagerService } from '@svp-api-services';
 import { NotificationService } from '@svp-services';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { ProjectManagerSearchModel } from 'src/app/shared/models/api-input-models/project-managers/project-manager-search.model';
+import { ProjectLogModel } from 'src/app/shared/models/api-response-models/project/project-log.model';
 
 @Component({
   selector: 'svp-approve-project',
@@ -43,6 +44,7 @@ export class ApproveProjectComponent implements OnInit {
 
   project!: ProjectModel;
   allTasks: TaskModel[] = [];
+  activities: ProjectLogModel[]  = [];
 
   selectedProjectManagerUid: string | null = null;
   projectManagersLoading = false;
@@ -67,6 +69,7 @@ export class ApproveProjectComponent implements OnInit {
           // load other data
           this.loadProjectManagers();
           this.loadTasks();
+          this.loadProjectLogs();
         } else {
           this.notify.timedErrorMessage('Failed to load project from inner', res.message);
           this.loadError = true;
@@ -92,6 +95,20 @@ export class ApproveProjectComponent implements OnInit {
     this.taskService.listTasks(param as TaskSearchModel).subscribe((res: Result<TaskModel[]>) => {
       if (res.success) {
         this.allTasks = res.content ?? [];
+      } else {
+        this.notify.timedErrorMessage(res.title, res.message);
+      }
+    });
+  }
+
+  loadProjectLogs(): void {
+  const param = {
+      pageIndex: 1,
+      pageSize: 4,
+    } as PagingRequestModel
+    this.projectService.listProjectLogs(this.id, param).subscribe((res: Result<ProjectLogModel[]>) => {
+      if (res.success) {
+        this.activities = res.content ?? [];
       } else {
         this.notify.timedErrorMessage(res.title, res.message);
       }

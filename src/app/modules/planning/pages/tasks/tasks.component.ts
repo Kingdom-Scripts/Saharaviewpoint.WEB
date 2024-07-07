@@ -1,9 +1,16 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { SvpTypographyModule, SvpButtonModule, SvpUtilityModule, SideViewComponent, SvpTaskStatusCardComponent } from '@svp-components';
+import {
+  SvpTypographyModule,
+  SvpButtonModule,
+  SvpUtilityModule,
+  SideViewComponent,
+  SvpTaskStatusCardComponent,
+  MaxInputLengthComponent,
+} from '@svp-components';
 import { CommonModule } from '@angular/common';
 import { NxDropdownModule } from '@svp-directives';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, TaskSearchModel, ProjectStatusEnum } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { ProjectService, TaskService } from '@svp-api-services';
@@ -17,6 +24,7 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
+import { SvpValidationErrorsComponent } from 'src/app/shared/components/input-fields/svp-validation-errors.component';
 
 @Component({
   selector: 'app-tasks',
@@ -35,11 +43,14 @@ import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-re
     NgSelectModule,
     SvpTaskStatusCardComponent,
     UtcToLocalDatePipe,
+    ReactiveFormsModule,
+    SvpValidationErrorsComponent,
+    MaxInputLengthComponent,
   ],
   animations: [
     trigger('toggleAnimation', [
       transition(':enter', [style({ opacity: 0, transform: 'scale(0.95)' }), animate('100ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))]),
-      transition(':leave', [animate('75ms', style({ opacity: 0, transform: 'scale(0.95)' }))]),
+      transition(':leave', [animate('-75ms', style({ opacity: 0, transform: 'scale(0.95)' }))]),
     ]),
   ],
 })
@@ -50,6 +61,7 @@ export class TasksComponent implements OnDestroy {
   sidePanel = inject(SidePanelService);
   projectService = inject(ProjectService);
   router = inject(Router);
+  fb = inject(FormBuilder);
 
   showSideView = false;
 
@@ -66,10 +78,17 @@ export class TasksComponent implements OnDestroy {
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
   projectLoading = false;
-  selectedProjectId!: number;
+  selectedProject!: ProjectModel;
 
   taskDetailRef!: SidePanelRef;
   addTaskRef!: SidePanelRef;
+
+  selectedTask!: TaskModel;
+  dueDateFormIsOpen = false;
+  dueDateForm: FormGroup = this.fb.group({
+    reason: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(5000)])],
+    dueDate: ['', Validators.required],
+  });
 
   constructor() {
     // set up task search
@@ -82,7 +101,7 @@ export class TasksComponent implements OnDestroy {
     // get the globalProjectId from session storage
     const project = this.sessionStorage.getProject();
     if (project) {
-      this.selectedProjectId = project.id;
+      this.selectedProject = project;
       this.projects$ = of([project]);
       this.loadTasks();
     }
@@ -120,7 +139,7 @@ export class TasksComponent implements OnDestroy {
   }
 
   loadTasks(): void {
-    this.taskSearchParams.projectId = this.selectedProjectId;
+    this.taskSearchParams.projectId = this.selectedProject.id;
     this.notify.showLoader();
     this.taskService.listTasks(this.taskSearchParams).subscribe((res: Result<TaskModel[]>) => {
       this.notify.hideLoader();
@@ -134,7 +153,7 @@ export class TasksComponent implements OnDestroy {
 
   setProject($event: ProjectModel) {
     this.sessionStorage.setProject($event);
-    this.selectedProjectId = $event.id;
+    this.selectedProject = $event;
     this.loadTasks();
   }
 
@@ -155,7 +174,7 @@ export class TasksComponent implements OnDestroy {
   viewTaskDetails(taskId: number): void {
     this.taskDetailRef = this.sidePanel.open(TaskDetailsComponent, {
       inputs: { taskId: taskId },
-      size: 'large'
+      size: 'large',
     });
   }
 
@@ -189,6 +208,46 @@ export class TasksComponent implements OnDestroy {
         this.allTasks = this.allTasks.filter(task => task.id !== taskId);
       } else {
         this.notify.timedErrorMessage('Task Deletion Failed', res.message);
+      }
+    });
+  }
+
+  changeDueDate(task: TaskModel): void {
+    this.selectedTask = task;
+
+    // convert task due to fit html input date format
+    const dueDate = new Date(task.dueDate);
+    const formattedDueDate = `${dueDate.getFullYear()}-${(dueDate.getMonth() + 1).toString().padStart(2, '0')}-${dueDate
+      .getDate()
+      .toString()
+      .padStart(2, '0')}`;
+    this.dueDateForm.controls['dueDate'].setValue(formattedDueDate);
+
+    this.dueDateForm.controls['reason'].setValue('');
+    this.dueDateFormIsOpen = true;
+  }
+
+  saveNewDueDate(): void {
+    if (!this.dueDateForm.valid) {
+      this.dueDateForm.markAllAsTouched();
+      return;
+    }
+
+    const param = {
+      dueDate: this.dueDateForm.value.dueDate,
+      reason: this.dueDateForm.value.reason,
+    };
+
+    this.notify.showLoader();
+    this.taskService.changeDueDate(this.selectedTask.id, param).subscribe((res: Result<TaskModel>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('Due Date Updated', 'Due date has been updated successfully');
+        this.selectedTask.dueDate = res.content?.dueDate ?? this.selectedTask.dueDate;
+        this.selectedTask.updatedAt = res.content?.updatedAt ?? this.selectedTask.updatedAt;
+        this.dueDateFormIsOpen = false;
+      } else {
+        this.notify.timedErrorMessage('Due Date Update Failed', res.message);
       }
     });
   }

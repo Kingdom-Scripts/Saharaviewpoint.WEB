@@ -2,8 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, switchMap } from 'rxjs';
-import { ProjectModel, ProjectSearchModel, ProjectStatusEnum, ProjectTypeModel, Result } from '@svp-models';
+import { PagingRequestModel, ProjectModel, ProjectSearchModel, ProjectStatusEnum, ProjectTypeModel, Result } from '@svp-models';
 import { NotificationService } from '@svp-services';
+import { ProjectLogModel } from '../models/api-response-models/project/project-log.model';
 
 @Injectable({
   providedIn: 'root',
@@ -95,6 +96,10 @@ export class ProjectService {
 
   countProjects(): Observable<Result<number>> {
     return this.http.get<Result<number>>(`projects/count`);
+  }
+
+  listProjectLogs(id: number, request: PagingRequestModel): Observable<Result<ProjectLogModel[]>> {
+    return this.http.get<Result<ProjectLogModel[]>>(`projects/${id}/logs?pageIndex=${request.pageIndex}&pageSize=${request.pageSize}`);
   }
   // #endregion
 

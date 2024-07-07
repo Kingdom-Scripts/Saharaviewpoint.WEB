@@ -102,6 +102,10 @@ export class TaskService {
     return this.http.get<Result<TaskModel>>(`tasks/${taskId}`);
   }
 
+  changeDueDate(taskId: number, param: any): Observable<Result<TaskModel>> {
+    return this.http.patch<Result<TaskModel>>(`tasks/${taskId}/due-date`, param);
+  }
+
   listAttachments(taskId: number): Observable<Result<DocumentModel[]>> {
     return this.http.get<Result<DocumentModel[]>>(`tasks/${taskId}/attachments`);
   }

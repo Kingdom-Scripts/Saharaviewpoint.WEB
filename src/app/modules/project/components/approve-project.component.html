@@ -76,8 +76,11 @@
             </div>
 
             <div class="flex items-center space-x-2" *ngIf="project.design">
-              <svg-icon src="assets/icons/appicons/chart.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" />
+              <svg-icon src="assets/icons/file-alt.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" />
               <p>{{ project.design!.name }}</p>
+
+              <!-- TODO: implement download -->
+              <!-- <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" /> -->
             </div>
           </div>
 
@@ -85,34 +88,20 @@
             <!-- RECENT ACTIVITIES -->
             <div class="ml-6">
               <h6>Recent Activities</h6>
-              <p italic *ngIf="true" class="mt-2">No recent activities</p>
+              <p italic class="mt-2" *ngIf="activities.length === 0">No recent activities</p>
             </div>
 
-            <!-- TODO: implement project activities to include creating tasks, assigning tasks, updating tasks, assigning project to PM, etc. -->
-
-            <!-- <ol class="relative border-s border-gray-200 dark:border-gray-700">                  
+            <ol class="relative border-s border-gray-200 dark:border-gray-700">                  
+              @for(item of activities; track $index){
               <li class="ms-6">            
                   <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                     <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
                   </span>
-                  <h6>Admin assigned task to James Sylvester</h1>
-                  <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">January 13th, 2024</time>
+                  <p class="text-xs lg:text-sm">{{item.description}}</p>
+                  <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{item.createdAt | utcToLocalDate}}</time>
               </li>
-              <li class="mt-10 ms-6">
-                <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                  <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
-                </span>
-                <h6>Task Created - Ground breaking</h1>
-                <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">February 13th, 2024</time>
-              </li>
-              <li class="mt-10 ms-6">
-                <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                  <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
-                </span>
-                <h6>Ground breaking assigned to James Sylvester</h1>
-                <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 13th, 2024</time>
-              </li>
-            </ol> -->
+            } 
+            </ol>
           </div>
         </div>
       </div>

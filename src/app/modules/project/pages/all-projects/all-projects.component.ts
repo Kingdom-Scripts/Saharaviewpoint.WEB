@@ -46,7 +46,6 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadProjects();
-    this.viewProjectDetails(12);
   }
 
   loadProjects(): void {

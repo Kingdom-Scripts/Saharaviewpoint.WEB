@@ -1,130 +1,122 @@
-<div class="mx-auto px-4 py-4 lg:container sm:px-8">
-  <div class="mb-4 flex flex-row justify-between">
-    <div>
-      <!-- <div class="flex space-x-2">
-        <a routerLink="/project" class="text-gray-500 dark:text-night-200">Projects</a>
-        <p>/</p>
-        <a routerLink="/project/{{globalProjectId}}" class="text-gray-500 dark:text-night-200">
-          My very fist Project
-        </a>
-      </div> -->
+<div class="breadcrumb">
+  <ol>
+    <li>
+      <a href="javascript:;">
+        <svg-icon src="assets/icons/dashboard.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+      </a>
+    </li>
+    <li class="">
+      <a href="javascript:;">{{ selectedProject !== null ? selectedProject.title : '' }}</a>
+    </li>
+    <li class="active">
+      <a href="javascript:;">All Tasks</a>
+    </li>
+  </ol>
+</div>
 
-      <h4>Tasks</h4>
-    </div>
-
-    <!-- <div class="flex space-x-3 my-4">
-      <div svp-card-selector>
-        <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'"/>
-        <span>LIST VIEW</span>
-      </div>
-
-      <div svp-card-selector>
-        <svg-icon src="assets/icons/appicons/grid-view-outline.svg" [svgClass]="'h-4 h-4'"/>
-        <span>DETAIL VIEW</span>
-      </div>
-    </div> -->
-  </div>
+<div class="panel space-y-6">
+  <h1 class="header">All Tasks</h1>
 
   <div>
-    <div class="mb-4">
-      <button class="btn btn-primary" type="button" (click)="addNewTask()">Create task</button>
+    <button class="btn btn-primary" type="button" (click)="addNewTask()">Create task</button>
+  </div>
+
+  <div class="mt-4 border-b border-t border-[#e0e6ed] py-3 dark:border-[#1b2e4b]">
+    <div class="flex items-end gap-10">
+      <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
+
+      <ng-select
+        [items]="projects$ | async"
+        [addTag]="false"
+        [multiple]="false"
+        bindValue="id"
+        bindLabel="title"
+        [closeOnSelect]="true"
+        placeholder="Select a project"
+        [(ngModel)]="selectedProject"
+        (change)="setProject($event)"
+        class="w-80">
+        <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+          <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
+            <span class="ng-value-label"><strong>Project:</strong> {{ items[0].title }}</span>
+            <!-- <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> -->
+          </div>
+          <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{ items.length - 1 }} more...</span>
+          </div>
+        </ng-template>
+
+        <ng-template ng-header-tmp>
+          <input style="width: 100%" type="text" placeholder="Search projects" />
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <div class="flex space-x-1.5">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5" />
+
+            <div>
+              <strong>{{ item.title }}</strong> <br />
+              <small>Owner: {{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</small>
+            </div>
+          </div>
+        </ng-template>
+      </ng-select>
+
+      <ng-select
+        [items]="taskTypes"
+        [addTag]="true"
+        [multiple]="true"
+        [hideSelected]="false"
+        placeholder="Type"
+        [(ngModel)]="taskSearchParams.types"
+        (change)="loadTasks()"
+        typeToSearchText="Please enter 2 or more characters"
+        class="max-w-72">
+        <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+          <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
+            <span class="ng-value-label"><strong>Type:</strong> {{ item }}</span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </div>
+          <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{ items.length - 1 }} more...</span>
+          </div>
+        </ng-template>
+      </ng-select>
+
+      <ng-select
+        [items]="statuses"
+        [addTag]="true"
+        [multiple]="true"
+        [hideSelected]="false"
+        placeholder="Status"
+        [(ngModel)]="taskSearchParams.statuses"
+        (change)="loadTasks()"
+        typeToSearchText="Please enter 2 or more characters"
+        class="max-w-80">
+        <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+          <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
+            <span class="ng-value-label"><strong>Status:</strong> {{ item }}</span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </div>
+          <div class="ng-value" *ngIf="items.length > 1">
+            <span class="ng-value-label">{{ items.length - 1 }} more...</span>
+          </div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <div class="flex space-x-1.5">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5" />
+
+            <div>
+              <strong>{{ item }}</strong> <br />
+            </div>
+          </div>
+        </ng-template>
+      </ng-select>
     </div>
   </div>
 
-  <div class="mb-4 flex space-x-3">
-    <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
-
-    <ng-select
-      [items]="projects$ | async"
-      [addTag]="false"
-      [multiple]="false"
-      bindValue="id"
-      bindLabel="title"
-      [closeOnSelect]="true"
-      placeholder="Select a project"
-      [(ngModel)]="selectedProjectId"
-      (change)="setProject($event)"
-      class="w-80">
-      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-        <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
-          <span class="ng-value-label"><strong>Project:</strong> {{ items[0].title }}</span>
-          <!-- <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> -->
-        </div>
-        <div class="ng-value" *ngIf="items.length > 1">
-          <span class="ng-value-label">{{ items.length - 1 }} more...</span>
-        </div>
-      </ng-template>
-
-      <ng-template ng-header-tmp>
-        <input style="width: 100%" type="text" placeholder="Search projects" />
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-        <div class="flex space-x-1.5">
-          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5" />
-
-          <div>
-            <strong>{{ item.title }}</strong> <br />
-            <small>Owner: {{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</small>
-          </div>
-        </div>
-      </ng-template>
-    </ng-select>
-
-    <ng-select
-      [items]="taskTypes"
-      [addTag]="true"
-      [multiple]="true"
-      [hideSelected]="false"
-      placeholder="Type"
-      [(ngModel)]="taskSearchParams.types"
-      (change)="loadTasks()"
-      typeToSearchText="Please enter 2 or more characters"
-      class="max-w-72">
-      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-        <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
-          <span class="ng-value-label"><strong>Type:</strong> {{ item }}</span>
-          <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-        </div>
-        <div class="ng-value" *ngIf="items.length > 1">
-          <span class="ng-value-label">{{ items.length - 1 }} more...</span>
-        </div>
-      </ng-template>
-    </ng-select>
-
-    <ng-select
-      [items]="statuses"
-      [addTag]="true"
-      [multiple]="true"
-      [hideSelected]="false"
-      placeholder="Status"
-      [(ngModel)]="taskSearchParams.statuses"
-      (change)="loadTasks()"
-      typeToSearchText="Please enter 2 or more characters"
-      class="max-w-80">
-      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-        <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
-          <span class="ng-value-label"><strong>Status:</strong> {{ item }}</span>
-          <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-        </div>
-        <div class="ng-value" *ngIf="items.length > 1">
-          <span class="ng-value-label">{{ items.length - 1 }} more...</span>
-        </div>
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-        <div class="flex space-x-1.5">
-          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" class="mt-1.5" />
-
-          <div>
-            <strong>{{ item }}</strong> <br />
-          </div>
-        </div>
-      </ng-template>
-    </ng-select>
-  </div>
-
-  <div class="bgwhite rounded-xl dark:bg-night-700">
+  <div class="bgwhite !mt-0 rounded-xl dark:bg-night-700">
     <div class="w-full">
       <div class="table-container max-h-[calc(100vh-324px)]">
         <table class="fixed-header header-1 bordered">
@@ -140,11 +132,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngIf="!selectedProjectId || allTasks.length === 0">
+            <tr *ngIf="!selectedProject || allTasks.length === 0">
               <td colspan="7" class="bg-transparent hover:bg-transparent">
                 <div class="flex h-56 items-center justify-center">
-                  <h6 *ngIf="!selectedProjectId">Select a project to view tasks.</h6>
-                  <div *ngIf="selectedProjectId && allTasks.length === 0" class="flex flex-col items-center gap-6">
+                  <h6 *ngIf="!selectedProject">Select a project to view tasks.</h6>
+                  <div *ngIf="selectedProject && allTasks.length === 0" class="flex flex-col items-center gap-6">
                     <h6>No tasks found.</h6>
                     <button class="btn btn-primary" type="button" (click)="addNewTask()">Create task</button>
                   </div>
@@ -160,29 +152,37 @@
               </td>
               <td>
                 <div x-dropdown>
-                  <svp-task-status-card [status]="task.status" [ngClass]="{
-                    'cursor-pointer': task.status !== taskStatusEnum.COMPLETED
-                  }" />
-                
-                  <div x-dropdown-content class="border border-gray-400 rounded-sm bg-white">
+                  <svp-task-status-card
+                    [status]="task.status"
+                    [ngClass]="{
+                      'cursor-pointer': task.status !== taskStatusEnum.COMPLETED
+                    }" />
+
+                  <div x-dropdown-content class="rounded-sm border border-gray-400 bg-white">
                     <div class="flex flex-col">
-                      <div class="flex bg-gray-200 hover:bg-gray-100" *ngIf="task.status === taskStatusEnum.TODO" (click)="changeTaskStatus(task, taskStatusEnum.IN_PROGRESS)">
+                      <div
+                        class="flex bg-gray-200 hover:bg-gray-100"
+                        *ngIf="task.status === taskStatusEnum.TODO"
+                        (click)="changeTaskStatus(task, taskStatusEnum.IN_PROGRESS)">
                         <div class="w-1 bg-info"></div>
-                        <div class="px-2 py-1 flex gap-5 items-center cursor-pointer">
+                        <div class="flex cursor-pointer items-center gap-5 px-2 py-1">
                           <span class="text-sm">start work</span>
                           <!-- arrow right svg -->
                           <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-4 h-4'" />
-                          <span class="text-xs font-semibold text-white bg-warning px-1 -ml-4 rounded-sm">IN PROGRESS</span>
+                          <span class="-ml-4 rounded-sm bg-warning px-1 text-xs font-semibold text-white">IN PROGRESS</span>
                         </div>
                       </div>
-                      
-                      <div class="flex bg-gray-200 hover:bg-gray-100" *ngIf="task.status === taskStatusEnum.IN_PROGRESS" (click)="changeTaskStatus(task, taskStatusEnum.COMPLETED)">
+
+                      <div
+                        class="flex bg-gray-200 hover:bg-gray-100"
+                        *ngIf="task.status === taskStatusEnum.IN_PROGRESS"
+                        (click)="changeTaskStatus(task, taskStatusEnum.COMPLETED)">
                         <div class="w-1 bg-info"></div>
-                        <div class="px-2 py-1 flex gap-5 items-center cursor-pointer">
+                        <div class="flex cursor-pointer items-center gap-5 px-2 py-1">
                           <span class="text-sm">complete work</span>
                           <!-- arrow right svg -->
                           <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-4 h-4'" />
-                          <span class="text-xs font-semibold bg-success px-1 -ml-4 text-white rounded-sm">COMPLETED</span>
+                          <span class="-ml-4 rounded-sm bg-success px-1 text-xs font-semibold text-white">COMPLETED</span>
                         </div>
                       </div>
                     </div>
@@ -200,24 +200,62 @@
               </td>
               <td>
                 <!-- TODO: Finish the dropdown capability to change the status -->
-                <div class="cursor-pointer" x-dropdown >
+                <div class="cursor-pointer" x-dropdown>
                   <a (click)="(false)">
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </a>
-                  <div x-dropdown-content class="flex flex-col bg-white border border-gray-300">
-                    <div class="border-b border-gray-200 px-4 py-2 hover:bg-primary-300 cursor-pointer" (click)="viewTaskDetails(task.id)">
-                      View Details
-                    </div>
-                    <div class="border-b border-gray-200 px-4 py-2 hover:bg-primary-300 cursor-pointer" (click)="deleteTask(task.id)">
-                      Delete
-                    </div>
-                    <!-- <!- TODO: implement change or set due date -- -->
+                  <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewTaskDetails(task.id)">View Details</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="deleteTask(task.id)">Delete</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="changeDueDate(task)">Change Due Date</div>
                   </div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fixed inset-0 z-50 flex h-full items-center justify-center overflow-hidden" *ngIf="dueDateFormIsOpen">
+  <div class="fixed inset-0 transition-opacity" (click)="dueDateFormIsOpen = false">
+    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+  </div>
+
+  <div class="overflow-hidde w-[95%] transform rounded-lg bg-white text-left transition-all sm:w-[calc(100vw/4)]" style="max-height: 90%; overflow-y: auto">
+    <!-- Content -->
+    <div>
+      <div class="bg-primary p-4">
+        <h2 class="text-lg font-bold text-white">Change Due Date of {{ selectedTask.summary }}</h2>
+      </div>
+
+      <div class="bg-white p-4">
+        <form [formGroup]="dueDateForm" class="space-y-6">
+          <div>
+            <label>New Due Date</label>
+            <input type="date" formControlName="dueDate" class="mb-1 w-full rounded border border-gray-300 p-2" />
+          </div>
+
+          <div>
+            <label>Why do you want to change this date?</label>
+            <textarea formControlName="reason" class="mb-1 min-h-36 w-full rounded border border-gray-300 p-2" placeholder="Reason or remark"></textarea>
+
+            <div class="text-red-700">
+              <svp-validation-errors [control]="dueDateForm.get('reason')" />
+            </div>
+
+            <div>
+              <svp-max-input-length [count]="dueDateForm.get('reason')?.value.length" [total]="5000" [minThreshold]="5" />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="flex justify-end gap-2 bg-white p-4">
+        <button class="rounded border border-primary px-4 py-2 text-primary" (click)="dueDateFormIsOpen = false">Cancel</button>
+        <button class="rounded bg-primary px-4 py-2 text-white" (click)="saveNewDueDate()">Change Date</button>
       </div>
     </div>
   </div>

@@ -56,7 +56,7 @@ export class AllClientsComponent implements OnInit {
   // load all project managers
   loadClients(clearCache: boolean): void {
     if (clearCache) this.pageCache.clear();
-    
+
     // Check if the page is already loaded
     if (this.pageCache.has(this.param.pageIndex)) {
       const cachedPage = this.pageCache.get(this.param.pageIndex);
@@ -102,26 +102,27 @@ export class AllClientsComponent implements OnInit {
   }
 
   configureSearch(): void {
-    this.$searchTerms .pipe(
-      debounceTime(250),
-      switchMap((term: string) => {
-        console.log('Search term: ', term);
-        this.param.pageIndex = 1;
-        this.param.searchQuery = term;
-        this.pageCache.clear();
-        this.isSearching = true;
-        return this.clientService.listClients(this.param);
-      })
-    ).subscribe((res: Result<ClientModel[]>) => {
-      if (res.success) {
-        this.allClients = res.content ?? [];
-        this.paging = res.paging ?? new PagingModel();
-        this.pageCache.set(this.param.pageIndex, { data: this.allClients, paging: this.paging });
-        this.isSearching = false;
-      } else {
-        this.notify.timedErrorMessage(res.title, res.message);
-      }
-    });
+    this.$searchTerms
+      .pipe(
+        debounceTime(250),
+        switchMap((term: string) => {
+          this.param.pageIndex = 1;
+          this.param.searchQuery = term;
+          this.pageCache.clear();
+          this.isSearching = true;
+          return this.clientService.listClients(this.param);
+        }),
+      )
+      .subscribe((res: Result<ClientModel[]>) => {
+        if (res.success) {
+          this.allClients = res.content ?? [];
+          this.paging = res.paging ?? new PagingModel();
+          this.pageCache.set(this.param.pageIndex, { data: this.allClients, paging: this.paging });
+          this.isSearching = false;
+        } else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
   }
 
   filterByActiveState(): void {
