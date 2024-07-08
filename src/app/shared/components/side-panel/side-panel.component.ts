@@ -4,6 +4,7 @@ import { Component, ComponentFactoryResolver, EventEmitter, HostListener, Inject
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { SidePanelRef } from './side-panel-ref';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -12,16 +13,24 @@ import { SidePanelRef } from './side-panel-ref';
   templateUrl: './side-panel.component.html',
   styleUrls: ['./side-panel.component.scss'],
   imports: [CommonModule, ComponentOutletInjectorModule, AngularSvgIconModule],
+  animations: [
+    trigger('slideInOut', [
+      state('in', style({ transform: 'translateX(0%)' })),
+      transition('void => *', [style({ transform: 'translateX(100%)' }), animate(250)]),
+    ]),
+    trigger('fade', [state('in', style({ opacity: 1 })), transition('void => *', [style({ opacity: 0 }), animate(250)])]),
+  ],
 })
 export class SidePanelComponent {
   @Input({ required: true }) size: 'small' | 'normal' | 'large' = 'normal';
 
+  @ViewChild('panel', { read: ViewContainerRef, static: true }) panel!: ViewContainerRef;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  @ViewChild('backdrop', { read: ViewContainerRef, static: true }) backdrop!: ViewContainerRef;
 
   private injector = inject(Injector);
   private cfr = inject(ComponentFactoryResolver);
   private sidePanelRef!: SidePanelRef;
-  private backdropClose = true;
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
     // Clear the container before loading the component

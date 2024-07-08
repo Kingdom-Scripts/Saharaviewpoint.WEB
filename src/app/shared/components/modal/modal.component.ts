@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentFactoryResolver, EventEmitter, Injectable, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -11,12 +12,21 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
   imports: [CommonModule, ComponentOutletInjectorModule, AngularSvgIconModule],
+  animations: [
+    trigger('fade', [
+      state('in', style({ opacity: 1 })),
+      transition('void => *', [style({ opacity: 0 }), animate(150)]),
+      transition('* => void', [animate(300, style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class ModalComponent {
   @Input({ required: true }) title = '';
   @Input({ required: true }) size: 'small' | 'normal' | 'large' = 'normal';
 
+  @ViewChild('modal', { read: ViewContainerRef, static: true }) modal!: ViewContainerRef;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  @ViewChild('backdrop', { read: ViewContainerRef, static: true }) backdrop!: ViewContainerRef;
 
   constructor(private cfr: ComponentFactoryResolver) {}
 

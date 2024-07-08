@@ -1,5 +1,7 @@
 <div
-  class="base relative bg-white shadow-[rgba(0,0,15,0.5)_10px_5px_4px_0px] dark:bg-dark"
+  @slideInOut
+  #panel
+  class="base dark:bg-dark relative bg-white shadow-[rgba(0,0,15,0.5)_10px_5px_4px_0px]"
   [ngClass]="{
     'w-[calc(100vw/5)]': size === 'small',
     'w-[calc(100vw/3)]': size === 'normal',
@@ -9,4 +11,4 @@
   <div #container></div>
 </div>
 
-<div class="overlay active" (click)="close('backdrop')"></div>
+<div class="overlay active" (click)="close('backdrop')" @fade #backdrop></div>

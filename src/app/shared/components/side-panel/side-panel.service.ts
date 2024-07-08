@@ -3,12 +3,14 @@
 import { ApplicationRef, ComponentFactoryResolver, ComponentRef, EmbeddedViewRef, Injectable, Injector, Type, inject } from '@angular/core';
 import { SidePanelComponent } from './side-panel.component';
 import { SidePanelRef } from './side-panel-ref';
+import { AnimationBuilder, style, animate } from '@angular/animations';
 
 @Injectable({ providedIn: 'root' })
 export class SidePanelService {
   private componentFactoryResolver = inject(ComponentFactoryResolver);
   private appRef = inject(ApplicationRef);
   private injector = inject(Injector);
+  private animationBuilder = inject(AnimationBuilder);
 
   private sidePanelInstance!: ComponentRef<SidePanelComponent>;
 
@@ -58,11 +60,29 @@ export class SidePanelService {
 
   // Close function to detach the view and remove the component
   close(): void {
-    this.appRef.detachView(this.sidePanelInstance.hostView);
-    this.sidePanelInstance.destroy();
+    // Play the animations
+    this.animateSlideOut();
 
-    // Remove class from body to enable scrolling
-    document.body.classList.remove('overflow-hidden');
+    // Remove the component
+    setTimeout(() => {
+      this.sidePanelInstance.destroy();
+      this.appRef.detachView(this.sidePanelInstance.hostView);
+
+      // Remove class from body to enable scrolling
+      document.body.classList.remove('overflow-hidden');
+    }, 300);
+  }
+
+  animateSlideOut(): void {
+    const panelSlideOut = this.animationBuilder.build([style({ transform: 'translateX(0%)' }), animate(300, style({ transform: 'translateX(100%)' }))]);
+    const player = panelSlideOut.create(this.sidePanelInstance.instance.panel.element.nativeElement);
+
+    const backdropFadeOut = this.animationBuilder.build([style({ opacity: 1 }), animate(300, style({ opacity: 0 }))]);
+    const backdropPlayer = backdropFadeOut.create(this.sidePanelInstance.instance.backdrop.element.nativeElement);
+
+    // Play the animations
+    player.play();
+    backdropPlayer.play();
   }
 }
 
