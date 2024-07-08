@@ -207,7 +207,7 @@
                   <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
                     <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewTaskDetails(task.id)">View Details</div>
                     <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="deleteTask(task.id)">Delete</div>
-                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="changeDueDate(task)">Change Due Date</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="changeDueDate(task)" *ngIf="task.status !== taskStatusEnum.COMPLETED">Change Due Date</div>
                   </div>
                 </div>
               </td>
