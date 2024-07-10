@@ -28,6 +28,17 @@ export class Menu {
       ],
     },
     {
+      group: 'Approval Management',
+      separator: false,
+      items: [
+        {
+          icon: 'assets/icons/approve-invoice.svg',
+          label: 'Task Setup Approvals',
+          route: '/approvals/project-task-setup'
+        },
+      ],
+    },
+    {
       group: 'Management',
       separator: false,
       items: [

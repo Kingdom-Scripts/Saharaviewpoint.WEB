@@ -15,7 +15,7 @@ import { TaskModel, TaskStatusEnum, Result, ProjectModel, ProjectSearchModel, Ta
 import { NotificationService } from '@svp-services';
 import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AddTaskComponent } from '../../components/add-task/add-task.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
@@ -25,6 +25,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 import { SvpValidationErrorsComponent } from 'src/app/shared/components/input-fields/svp-validation-errors.component';
+import { ApprovalService } from 'src/app/shared/api-services/approval.service';
+import { ProjectTaskApprovalModel } from 'src/app/shared/models/api-response-models/approvals/project-task-approval.model';
 
 @Component({
   selector: 'app-tasks',
@@ -56,10 +58,12 @@ import { SvpValidationErrorsComponent } from 'src/app/shared/components/input-fi
 })
 export class TasksComponent implements OnDestroy {
   taskService = inject(TaskService);
+  approvalService = inject(ApprovalService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
   sidePanel = inject(SidePanelService);
   projectService = inject(ProjectService);
+  activatedRouter = inject(ActivatedRoute);
   router = inject(Router);
   fb = inject(FormBuilder);
 
@@ -78,6 +82,7 @@ export class TasksComponent implements OnDestroy {
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
   projectLoading = false;
+  selectedProjectId = 0;
   selectedProject!: ProjectModel;
 
   taskDetailRef!: SidePanelRef;
@@ -90,6 +95,9 @@ export class TasksComponent implements OnDestroy {
     dueDate: ['', Validators.required],
   });
 
+  approvalLoading = true;
+  approval!: ProjectTaskApprovalModel | undefined;
+
   constructor() {
     // set up task search
     this.loadProjects();
@@ -98,13 +106,34 @@ export class TasksComponent implements OnDestroy {
       this.allTasks = tasks;
     });
 
-    // get the globalProjectId from session storage
-    const project = this.sessionStorage.getProject();
-    if (project) {
-      this.selectedProject = project;
-      this.projects$ = of([project]);
-      this.loadTasks();
-    }
+    this.activatedRouter.queryParams.subscribe(params => {
+      // check if a specific project was requested
+      const id = params['projectId'];
+      if (id) {
+        this.projectService.getProject(id).subscribe((res: Result<ProjectModel>) => {
+          if (res.success) {
+            this.selectedProject = res.content ?? ({} as ProjectModel);
+            this.projects$ = of([this.selectedProject]);
+            this.selectedProjectId = this.selectedProject.id;
+            this.loadTasks();
+          } else {
+            this.notify.timedErrorMessage('Project Not Found', res.message);
+
+            // navigate back
+            this.router.navigate(['../'], { relativeTo: this.activatedRouter });
+          }
+        });
+      } else {
+        // get the globalProjectId from session storage
+        const project = this.sessionStorage.getProject();
+        if (project) {
+          this.selectedProject = project;
+          this.selectedProjectId = this.selectedProject.id;
+          this.projects$ = of([project]);
+          this.loadTasks();
+        }
+      }
+    });
   }
 
   private loadProjects(): void {
@@ -139,12 +168,15 @@ export class TasksComponent implements OnDestroy {
   }
 
   loadTasks(): void {
-    this.taskSearchParams.projectId = this.selectedProject.id;
+    this.taskSearchParams.projectId = this.selectedProjectId;
     this.notify.showLoader();
     this.taskService.listTasks(this.taskSearchParams).subscribe((res: Result<TaskModel[]>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.allTasks = res.content ?? [];
+
+        // load task approval
+        this.loadTaskApproval();
       } else {
         this.notify.timedErrorMessage(res.title, res.message);
       }
@@ -154,7 +186,33 @@ export class TasksComponent implements OnDestroy {
   setProject($event: ProjectModel) {
     this.sessionStorage.setProject($event);
     this.selectedProject = $event;
+    this.selectedProjectId = this.selectedProject.id;
     this.loadTasks();
+  }
+
+  loadTaskApproval(): void {
+    this.approvalLoading = true;
+    this.approval = undefined;
+
+    this.approvalService.getProjectTaskApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
+      this.approvalLoading = false;
+      if (res.success && res.status === 200) {
+        this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
+      }
+    });
+  }
+
+  sendTaskSetupsForApproval(): void {
+    this.notify.showLoader();
+    this.approvalService.sendProjectTasksForApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('Approval Request Sent', 'Approval request has been sent successfully');
+        this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
+      } else {
+        this.notify.timedErrorMessage('Approval Request Failed', res.message);
+      }
+    });
   }
 
   addNewTask(): void {

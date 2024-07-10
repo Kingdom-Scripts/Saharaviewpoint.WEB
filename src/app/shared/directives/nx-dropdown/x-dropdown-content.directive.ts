@@ -66,9 +66,10 @@ export class XDropdownContentDirective implements OnInit {
 
   .nx-dropdown-content ul {
   border: 1px solid #d1cdcd;
+  background-color: #fff;
   }
 
-  .dropdown-item {
+  .dropdown-item, .nx-dropdown-content ul li {
   display: block;
   width: 100%;
   padding: 0.25rem 1.5rem;
@@ -85,10 +86,12 @@ export class XDropdownContentDirective implements OnInit {
 }
 
 .dropdown-item:hover,
-.dropdown-item:focus {
-  color: #101221;
+.dropdown-item:focus,
+.nx-dropdown-content ul li:hover,
+.nx-dropdown-content ul li:focus {
+  color: #fff;
   text-decoration: none;
-  background-color: #ebedf3;
+  background-color: #d67e2a;
   cursor: pointer;
 }
     `;

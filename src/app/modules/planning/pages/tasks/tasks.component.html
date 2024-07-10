@@ -6,7 +6,7 @@
       </a>
     </li>
     <li class="">
-      <a href="javascript:;">{{ selectedProject !== null ? selectedProject.title : '' }}</a>
+      <a href="javascript:;">{{ selectedProject ? selectedProject.title : '' }}</a>
     </li>
     <li class="active">
       <a href="javascript:;">All Tasks</a>
@@ -17,14 +17,24 @@
 <div class="panel space-y-6">
   <h1 class="header">All Tasks</h1>
 
-  <div>
+  <div class="flex gap-4 items-center">
     <button class="btn btn-primary" type="button" (click)="addNewTask()">Create task</button>
+
+    <div class="flex gap-4 items-center" *ngIf="selectedProject && allTasks.length > 0">
+      <div class="flex gap-2" *ngIf="approvalLoading">
+        <img src="assets/images/loading.gif" class="h-5 w-auto" alt="Loading" />
+        <span>Loading task setup approval status</span>
+      </div>
+      <button class="btn btn-info" *ngIf="!approvalLoading && (!approval || (approval.isFulfilled === true && approval.status === false))" (click)="sendTaskSetupsForApproval()">Send Task Setup For Approval</button>
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null">Send Reminder To Approve Task Setup</button>
+    </div>
   </div>
 
   <div class="mt-4 border-b border-t border-[#e0e6ed] py-3 dark:border-[#1b2e4b]">
     <div class="flex items-end gap-10">
+      <!-- TODO: implement search -->
       <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
-
+      
       <ng-select
         [items]="projects$ | async"
         [addTag]="false"
@@ -33,17 +43,11 @@
         bindLabel="title"
         [closeOnSelect]="true"
         placeholder="Select a project"
-        [(ngModel)]="selectedProject"
+        [(ngModel)]="selectedProjectId"
         (change)="setProject($event)"
         class="w-80">
-        <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-          <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
-            <span class="ng-value-label"><strong>Project:</strong> {{ items[0].title }}</span>
-            <!-- <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span> -->
-          </div>
-          <div class="ng-value" *ngIf="items.length > 1">
-            <span class="ng-value-label">{{ items.length - 1 }} more...</span>
-          </div>
+        <ng-template ng-label-tmp let-item="item">
+          {{ item.title }}
         </ng-template>
 
         <ng-template ng-header-tmp>
