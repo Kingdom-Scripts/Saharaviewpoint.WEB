@@ -1,25 +1,25 @@
-<div class="mx-auto px-4 py-4 sm:px-8">
-  <div class="mt-4 flex flex-row justify-between">
-    <div>
-      <div>
-        <h6>My Very First Project</h6>
-      </div>
-    </div>
+<div class="breadcrumb">
+  <ol>
+    <li>
+      <a href="javascript:;">
+        <svg-icon src="assets/icons/dashboard.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+      </a>
+    </li>
+    <li class="">
+      <a href="javascript:;">{{ selectedProject ? selectedProject.title : '' }}</a>
+    </li>
+    <li class="active">
+      <a href="javascript:;">Task Board</a>
+    </li>
+  </ol>
+</div>
 
-    <!-- <div class="flex space-x-3">
-      <div svp-card-selector>
-        <svg-icon src="assets/icons/appicons/table.svg" [svgClass]="'h-4 h-4'" />
-        <span>LIST VIEW</span>
-      </div>
-
-      <div svp-card-selector>
-        <svg-icon src="assets/icons/appicons/grid-view-outline.svg" [svgClass]="'h-4 h-4'" />
-        <span>DETAIL VIEW</span>
-      </div>
-    </div> -->
+<div class="">
+  <div class="mt-8">
+    <h6>{{ selectedProject ? selectedProject.title : 'Select A Project' }}</h6>
   </div>
 
-  <div class="mt-4 flex space-x-3">
+  <div class="mt-4 flex gap-4 items-center">
     <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
 
     <ng-select
@@ -29,9 +29,10 @@
       bindValue="id"
       bindLabel="title"
       [closeOnSelect]="true"
+      [clearable]="false"
       placeholder="Select a project"
       [(ngModel)]="selectedProjectId"
-      (change)="setProjectId($event)"
+      (change)="setProject($event)"
       class="w-80">
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
         <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
@@ -58,6 +59,15 @@
         </div>
       </ng-template>
     </ng-select>
+
+    <div class="flex gap-4 items-center" *ngIf="selectedProject && allTasks.length > 0">
+      <div class="flex gap-2" *ngIf="approvalLoading">
+        <img src="assets/images/loading.gif" class="h-5 w-auto" alt="Loading" />
+        <span>Loading task setup approval status</span>
+      </div>
+      <button class="btn btn-info" *ngIf="!approvalLoading && (!approval || (approval.isFulfilled === true && approval.status === false))" (click)="sendTaskSetupsForApproval()">Send Task Setup For Approval</button>
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null">Send Reminder To Approve Task Setup</button>
+    </div>
   </div>
 
   <div class="grid grid-cols-6 gap-x-4">
@@ -91,6 +101,7 @@
               class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
+              [cdkDropListDisabled]="approval === undefined || approval.status === false"
               [cdkDropListData]="todoTasks"
               [cdkDropListConnectedTo]="['inProgressList']"
               (cdkDropListDropped)="drop($event)">
@@ -104,6 +115,7 @@
                 class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
                 cdkDrag
                 [cdkDragData]="task"
+                
                 (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
@@ -141,6 +153,7 @@
               class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
+              [cdkDropListDisabled]="approval === undefined || approval.status === false"
               [cdkDropListData]="inProgressTasks"
               [cdkDropListConnectedTo]="['todoList', 'completedList']"
               (cdkDropListDropped)="drop($event)">
@@ -151,13 +164,16 @@
 
               <!-- No tasks currently in progress -->
               <ng-container *ngIf="selectedProjectId && inProgressTasks.length === 0">
-                <p class="my-10 text-center text-gray-500">No tasks in progress.</p>
+                <p class="my-10 text-center text-gray-500">
+                  {{ approval?.status === true ? 'No task is currently in progress. Drag and drop tasks from the TO DO list to get started.' : 'Task setup is not approved yet, click the button above to send for approval.'}}
+                </p>
               </ng-container>
               @for (task of inProgressTasks; track task.id) {
               <div
                 class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
                 cdkDrag
                 [cdkDragData]="task"
+                
                 (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
@@ -189,6 +205,7 @@
               class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
+              [cdkDropListDisabled]="approval === undefined || approval.status === false"
               [cdkDropListData]="completedTasks"
               [cdkDropListConnectedTo]="['inProgressList']"
               (cdkDropListDropped)="drop($event)">
@@ -199,13 +216,16 @@
 
               <!-- No tasks currently completed -->
               <ng-container *ngIf="selectedProjectId && completedTasks.length === 0">
-                <p class="my-10 text-center text-gray-500">No task is completed.</p>
+                <p class="my-10 text-center text-gray-500">
+                  {{ approval?.status === true ? 'No task is currently completed. Drag and drop tasks from the IN PROGRESS list to get started.' : 'Task setup is not approved yet, click the button above to send for approval.'}}
+                </p>
               </ng-container>
               @for (task of completedTasks; track task.id) {
               <div
                 class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
                 cdkDrag
                 [cdkDragData]="task"
+                
                 (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="mb-3 group-hover:underline">{{ task.summary }}</p>

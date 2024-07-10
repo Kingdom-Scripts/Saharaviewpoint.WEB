@@ -18,6 +18,8 @@ import { ModalService } from 'src/app/shared/components/modal/modal.service';
 import { ConfirmActionComponent, ConfirmActionResult } from 'src/app/shared/components/confirm-action/confirm-action.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
+import { ApprovalService } from 'src/app/shared/api-services/approval.service';
+import { ProjectTaskApprovalModel } from 'src/app/shared/models/api-response-models/approvals/project-task-approval.model';
 
 @Component({
   selector: 'app-board',
@@ -41,6 +43,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class BoardComponent {
   taskService = inject(TaskService);
+  approvalService = inject(ApprovalService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
   sideViewService = inject(SideViewService);
@@ -52,6 +55,7 @@ export class BoardComponent {
   projectInput$ = new Subject<string>();
   projectLoading = false;
   selectedProjectId!: number;
+  selectedProject!: ProjectModel;
 
   allTypes = TaskTypeEnum.asArray;
   allTasks: TaskBoardModel[] = [];
@@ -59,13 +63,17 @@ export class BoardComponent {
   inProgressTasks: TaskBoardModel[] = [];
   completedTasks: TaskBoardModel[] = [];
 
+  approvalLoading = true;
+  approval!: ProjectTaskApprovalModel | undefined;
+
   constructor() {
     this.loadProjects();
 
     // get the globalProjectId from session storage
     const project = this.sessionStorage.getProject();
     if (project) {
-      this.selectedProjectId = project.id;
+          this.selectedProject = project;
+          this.selectedProjectId = project.id;
       this.projects$ = of([project]);
       this.loadTasks();
     }
@@ -80,8 +88,36 @@ export class BoardComponent {
         this.todoTasks = this.allTasks.filter(task => task.status === TaskStatusEnum.TODO);
         this.inProgressTasks = this.allTasks.filter(task => task.status === TaskStatusEnum.IN_PROGRESS);
         this.completedTasks = this.allTasks.filter(task => task.status === TaskStatusEnum.COMPLETED);
+
+          // load task approval
+          this.loadTaskApproval();
       } else {
         this.notify.timedErrorMessage(res.title, res.message);
+      }
+    });
+  }
+
+  loadTaskApproval(): void {
+    this.approvalLoading = true;
+    this.approval = undefined;
+
+    this.approvalService.getProjectTaskApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
+      this.approvalLoading = false;
+      if (res.success && res.status === 200) {
+        this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
+      }
+    });
+  }
+
+  sendTaskSetupsForApproval(): void {
+    this.notify.showLoader();
+    this.approvalService.sendProjectTasksForApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('Approval Request Sent', 'Approval request has been sent successfully');
+        this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
+      } else {
+        this.notify.timedErrorMessage('Approval Request Failed', res.message);
       }
     });
   }
@@ -117,8 +153,10 @@ export class BoardComponent {
       });
   }
 
-  setProjectId($event: ProjectModel) {
+  setProject($event: ProjectModel) {
     this.sessionStorage.setProject($event);
+    this.selectedProject = $event;
+    this.selectedProjectId = this.selectedProject.id;
     this.loadTasks();
   }
 
@@ -134,6 +172,7 @@ export class BoardComponent {
     });
   }
 
+  // TODO: review this function
   viewTaskDetails(taskId: number): void {
     const inputs = { taskId: taskId };
     this.sideViewService.showComponent(TaskDetailsComponent, inputs);
