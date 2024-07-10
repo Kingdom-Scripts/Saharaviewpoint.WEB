@@ -155,7 +155,7 @@
                 <span>{{ task.summary }}</span>
               </td>
               <td>
-                <div x-dropdown>
+                <div x-dropdown [active]="approval?.status === true">
                   <svp-task-status-card
                     [status]="task.status"
                     [ngClass]="{
@@ -209,6 +209,8 @@
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </a>
                   <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" *ngIf="approval?.status === true && task.status === taskStatusEnum.TODO" (click)="changeTaskStatus(task, taskStatusEnum.IN_PROGRESS)">Move To IN PROGRESS</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" *ngIf="approval?.status === true && task.status === taskStatusEnum.IN_PROGRESS" (click)="changeTaskStatus(task, taskStatusEnum.COMPLETED)">Move To COMPLETED</div>
                     <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewTaskDetails(task.id)">View Details</div>
                     <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="deleteTask(task.id)">Delete</div>
                     <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="changeDueDate(task)" *ngIf="task.status !== taskStatusEnum.COMPLETED">Change Due Date</div>

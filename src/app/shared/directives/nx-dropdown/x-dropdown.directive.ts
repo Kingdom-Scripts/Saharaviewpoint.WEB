@@ -10,6 +10,8 @@ export class XDropdownDirective implements AfterViewInit {
   @Input({ transform: booleanAttribute }) closeOnFocusOut = true;
   @Input() position: 'auto' | 'top' | 'bottom' | 'left' | 'right' = 'auto';
   @Input() trigger: 'click' | 'hover' = 'click';
+  @Input() active = true;
+
   @ContentChildren(XDropdownContentDirective) contentDirectives!: QueryList<XDropdownContentDirective>;
 
   dropdown: any;
@@ -40,6 +42,7 @@ export class XDropdownDirective implements AfterViewInit {
 
   @HostListener('click') // Listens for click events on the host element
   toggleOpen() {
+    if (!this.active) return; // Return immediately if the active property is set to false
     if (this.trigger === 'hover') return; // Return immediately if the trigger property is set to 'hover'
 
     this.isOpen = !this.isOpen;
