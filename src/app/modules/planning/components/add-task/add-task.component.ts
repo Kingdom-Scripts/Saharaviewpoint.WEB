@@ -67,20 +67,28 @@ export class AddTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
-    this.loadTasks();
     this.initForm();
   }
 
   initForm(): void {
+    // TODO: remove the defaults
     this.formGroup = this.fb.group({
       projectId: [this.globalProjectId, Validators.compose([Validators.required])],
-      type: [null, Validators.compose([Validators.required])],
+      type: ['Epic', Validators.compose([Validators.required])],
       parentId: [null],
-      summary: ['', Validators.compose([Validators.required, Validators.maxLength(255)])],
-      description: ['', Validators.compose([Validators.maxLength(5000)])],
+      summary: ['An Epic', Validators.compose([Validators.required, Validators.maxLength(255)])],
+      description: ['Once upon a time, that is how you start!', Validators.compose([Validators.maxLength(5000)])],
       expectedStartDate: ['', Validators.compose([Validators.required])],
       dueDate: ['', Validators.compose([Validators.required])],
       attachments: [''],
+    });
+
+    // Set dummy date for expectedStartDate and  TODO: remove
+    const today = new Date();
+    const dummyDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    this.formGroup.patchValue({
+      expectedStartDate: dummyDate.toISOString().substring(0, 10),
+      dueDate: dummyDate.toISOString().substring(0, 10),
     });
   }
 
@@ -120,7 +128,9 @@ export class AddTaskComponent implements OnInit {
     formData.append('description', this.formGroup.get('description')?.value);
     formData.append('expectedStartDate', this.formGroup.get('expectedStartDate')?.value);
     formData.append('dueDate', this.formGroup.get('dueDate')?.value);
-    formData.append('parentId', this.formGroup.get('parentId')?.value);
+    if (this.formGroup.get('parentId')?.value) {
+      formData.append('parentId', this.formGroup.get('parentId')?.value);
+    }
     if (this.attachments) {
       this.attachments.forEach((file: File) => {
         formData.append('attachments', file as Blob, file?.name ?? '');
@@ -159,9 +169,9 @@ export class AddTaskComponent implements OnInit {
       });
   }
 
-  private loadTasks(): void {
+  private loadTasks(type: string): void {
     this.taskService
-      .listTasks({ projectId: this.globalProjectId } as TaskSearchModel)
+      .listTasks({ projectId: this.globalProjectId, types: [type], pageIndex: 1, pageSize: 15 } as TaskSearchModel)
       .pipe(
         switchMap((res: Result<TaskModel[]>) => {
           return of(res.content ?? []);
@@ -193,14 +203,14 @@ export class AddTaskComponent implements OnInit {
 
       // load only tasks
       this.taskSearchModel.types = [TaskTypeEnum.TASK];
-      this.loadTasks();
+      this.loadTasks(TaskTypeEnum.TASK);
     } else if ($event === TaskTypeEnum.TASK) {
       this.parentLabel = 'Assign To A Epic';
       this.formGroup.get('parentId')?.clearValidators();
 
       // load only Epics
       this.taskSearchModel.types = [TaskTypeEnum.EPIC];
-      this.loadTasks();
+      this.loadTasks(TaskTypeEnum.EPIC);
     } else {
       this.parentLabel = undefined;
       this.formGroup.get('parentId')?.clearValidators();

@@ -215,6 +215,23 @@ export class TasksComponent implements OnDestroy {
     });
   }
 
+  sendTaskApprovalReminder(): void {
+    if (!this.approval) {
+      this.notify.timedErrorMessage('Approval Not Found', 'Approval request has not been sent for the selected project.');
+      return;
+    }
+    
+    this.notify.showLoader();
+    this.approvalService.sendProjectTaskApprovalReminder(this.selectedProjectId, this.approval?.id).subscribe((res: Result<string>) => {
+      this.notify.hideLoader();
+      if (res.success) {
+        this.notify.timedSuccessMessage('Reminder Sent', 'Approval reminder has been sent successfully');
+      } else {
+        this.notify.timedErrorMessage('Reminder Failed', res.message);
+      }
+    });
+  }
+
   addNewTask(): void {
     this.addTaskRef = this.sidePanel.open(AddTaskComponent, {
       outputs: {

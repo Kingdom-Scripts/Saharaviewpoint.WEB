@@ -85,6 +85,10 @@
 }
 
 @layer components {
+  .title {
+    @apply text-sm sm:text-lg font-bold;
+  }
+  
   /* Breadcrumb */
   .breadcrumb {
     @apply mb-5;

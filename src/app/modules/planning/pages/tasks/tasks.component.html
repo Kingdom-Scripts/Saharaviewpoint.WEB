@@ -31,7 +31,7 @@
         (click)="sendTaskSetupsForApproval()">
         Send Task Setup For Approval
       </button>
-      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null">Send Reminder To Approve Task Setup</button>
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null" (click)="sendTaskApprovalReminder()">Send Reminder To Approve Task Setup</button>
     </div>
   </div>
 
@@ -43,10 +43,8 @@
       <ng-select
         [items]="projects$ | async"
         [addTag]="false"
-        [multiple]="false"
         bindValue="id"
         bindLabel="title"
-        [closeOnSelect]="true"
         [clearable]="false"
         placeholder="Select a project"
         [(ngModel)]="selectedProjectId"
@@ -77,6 +75,7 @@
         [addTag]="true"
         [multiple]="true"
         [hideSelected]="false"
+        [closeOnSelect]="false"
         placeholder="Type"
         [(ngModel)]="taskSearchParams.types"
         (change)="loadTasks()"
@@ -98,6 +97,7 @@
         [addTag]="true"
         [multiple]="true"
         [hideSelected]="false"
+        [closeOnSelect]="false"
         placeholder="Status"
         [(ngModel)]="taskSearchParams.statuses"
         (change)="loadTasks()"

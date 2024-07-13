@@ -1,4 +1,14 @@
-<div class="w-full h-full bg-gray-100 dark:bg-night-700 pt-4">
+<div class="w-full h-full bg-gray-100 dark:bg-night-700">
+  <div class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary mb-4 px-4 py-4 text-white z-[999999]">
+    <div class="flex items-center gap-5">
+      <h6>Create New Task</h6>
+    </div>
+
+    <button>
+      <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="close()" />
+    </button>
+  </div>
+  
   <div class="px-8 bg-gray-100 dark:bg-night-700">
 
     <div class="space-y-6" [formGroup]="formGroup">
