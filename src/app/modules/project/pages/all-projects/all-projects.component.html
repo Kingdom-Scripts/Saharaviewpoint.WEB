@@ -106,8 +106,9 @@
               <th><span>Owner</span></th>
               <th><span>Manager</span></th>
               <th><span>Status</span></th>
-              <th><span>Start Date</span></th>
-              <th><span>End Date</span></th>
+              <th><span>Project Period</span></th>
+              <th><span>Last Updated</span></th>
+              <th><span>Completed On</span></th>
               <th><span>Actions</span></th>
             </tr>
           </thead>
@@ -127,14 +128,17 @@
               <td>
                 <span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span>
               </td>
-              <td>
+              <td class="text-nowrap">
                 <svp-status-card [status]="project.status" />
               </td>
               <td>
-                <span>{{ project.startDate | utcToLocalDate }}</span>
+                <span>{{ project.startDate | utcToLocalDate }} - {{ project.dueDate | utcToLocalDate }}</span>
               </td>
               <td>
-                <span>{{ project.dueDate | utcToLocalDate }}</span>
+                {{ project.updatedOn === null ? '-' : (project.updatedOn! | utcToLocalDate) }}
+              </td>
+              <td>
+                {{ project.completedOn === null ? '-' : (project.completedOn! | utcToLocalDate) }}
               </td>
               <td>
                 <div x-dropdown class="cursor-pointer">
@@ -150,6 +154,12 @@
                       class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
                       routerLink="/tasks/all">
                       View Tasks
+                    </div>
+                    <div
+                      *ngIf="project.status !== projectStatusEnum.COMPLETED"
+                      class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      (click)="completeProject(project)">
+                      Complete Project
                     </div>
                   </div>
                 </div>

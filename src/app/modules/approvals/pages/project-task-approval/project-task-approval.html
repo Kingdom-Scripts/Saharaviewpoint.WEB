@@ -75,9 +75,9 @@
 
               <div x-dropdown-content class="nx-dropdown-content">
                 <ul>
-                  <li (click)="approveProjectTask(item)">Approve</li>
+                  <li (click)="approveProjectTask(item)" *ngIf="item.status === null">Approve</li>
 
-                  <li (click)="promptDeclinationModal(item)">Decline</li>
+                  <li (click)="promptDeclinationModal(item)" *ngIf="item.status === null">Decline</li>
 
                   <li (click)="viewProjectDetails(item.projectId)">View Project</li>
 

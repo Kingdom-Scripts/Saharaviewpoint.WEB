@@ -73,6 +73,28 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
+  async completeProject(project: ProjectModel): Promise<void> {
+    const confirmed = await this.notify.confirmAction('Are you sure you want to complete this project?');
+    if (!confirmed) return;
+    
+    this.notify.showLoader();
+    this.projectService.completeProject(project.id).subscribe(
+      async (res: Result<ProjectModel>) => {
+        this.notify.hideLoader();
+
+        if (res.success) {
+          this.notify.timedSuccessMessage(res.message);
+          project.status = ProjectStatusEnum.COMPLETED;
+          project.completedOn = res.content?.completedOn ?? new Date();
+          project.updatedOn = res.content?.updatedOn ?? new Date();
+        } 
+        else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      }
+    );
+  }
+
   ngOnDestroy(): void {
     if(this.approveProjectRef) this.approveProjectRef.close();
   }

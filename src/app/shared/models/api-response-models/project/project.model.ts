@@ -16,4 +16,6 @@ export interface ProjectModel {
   design?: DocumentModel;
   assignee?: ReferenceUserModel;
   createdBy?: ReferenceUserModel;
+  updatedOn: Date,
+  completedOn: Date,
 }

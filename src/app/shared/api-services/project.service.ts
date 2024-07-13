@@ -101,6 +101,10 @@ export class ProjectService {
   listProjectLogs(id: number, request: PagingRequestModel): Observable<Result<ProjectLogModel[]>> {
     return this.http.get<Result<ProjectLogModel[]>>(`projects/${id}/logs?pageIndex=${request.pageIndex}&pageSize=${request.pageSize}`);
   }
+
+  completeProject(id: number): Observable<Result<ProjectModel>> {
+    return this.http.patch<Result<ProjectModel>>(`projects/${id}/complete`, null);
+  }
   // #endregion
 
   // #region TYPES
