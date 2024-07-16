@@ -31,7 +31,9 @@
         (click)="sendTaskSetupsForApproval()">
         Send Task Setup For Approval
       </button>
-      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null" (click)="sendTaskApprovalReminder()">Send Reminder To Approve Task Setup</button>
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null" (click)="sendTaskApprovalReminder()">
+        Send Reminder To Approve Task Setup
+      </button>
     </div>
   </div>
 
@@ -76,7 +78,7 @@
         [multiple]="true"
         [hideSelected]="false"
         [closeOnSelect]="false"
-        placeholder="Type"
+        placeholder="Filter by types"
         [(ngModel)]="taskSearchParams.types"
         (change)="loadTasks()"
         typeToSearchText="Please enter 2 or more characters"
@@ -98,7 +100,7 @@
         [multiple]="true"
         [hideSelected]="false"
         [closeOnSelect]="false"
-        placeholder="Status"
+        placeholder="Filter by status"
         [(ngModel)]="taskSearchParams.statuses"
         (change)="loadTasks()"
         typeToSearchText="Please enter 2 or more characters"

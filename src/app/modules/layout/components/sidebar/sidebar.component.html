@@ -5,9 +5,9 @@
     <!-- Logo -->
     <div class="relative h-10">
       @if (menuService.showSideBar) {
-        <a>
-          <svg-icon src="assets/images/logo.svg" [svgClass]="'w-auto h-20 -ml-9 -mt-2'"> </svg-icon>
-        </a>
+      <a>
+        <svg-icon src="assets/images/logo.svg" [svgClass]="'w-auto h-20 -ml-9 -mt-2'"> </svg-icon>
+      </a>
       }
       <button
         (click)="toggleSidebar()"
@@ -62,12 +62,12 @@
       }
     </div>
     <!-- Version -->
-    <div class="group flex h-9 cursor-pointer items-center justify-start rounded p-2 hover:bg-gray-100 dark:hover:bg-night-600">
+    <div class="group flex h-9 cursor-pointer items-center justify-start rounded p-2">
       <svg-icon src="assets/icons/heroicons/outline/information-circle.svg" [svgClass]="'h-5 w-5 text-gray-400 dark:text-night-400'"> </svg-icon>
 
-      <a target="_blank" href="#" class="ml-3 truncate text-[10px] font-semibold tracking-wide text-gray-600 focus:outline-none dark:text-night-100">
+      <p class="ml-3 truncate text-[10px] font-semibold tracking-wide text-gray-600 focus:outline-none dark:text-night-100">
         <span class="rounded-lg bg-yellow-400/10 px-2 font-semibold text-yellow-500">v1.0.0</span>
-      </a>
+      </p>
 
       @if(!menuService.showSideBar) {
       <div class="fixed w-full">
