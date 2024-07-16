@@ -16,7 +16,7 @@
 
 <div class="">
   <div class="mt-8">
-    <h6>{{ selectedProject ? selectedProject.title : 'Select A Project' }}</h6>
+    <h1 class="header">{{ selectedProject ? selectedProject.title : 'Select A Project' }}</h1>
   </div>
 
   <div class="mt-4 flex gap-4 items-center">
@@ -74,8 +74,8 @@
     <div class="col-span-5">
       <div class="mt-6 grid grid-cols-3 gap-x-4">
         <!-- TO DO -->
-        <div class="bg-gray-200">
-          <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3">
+        <div class="bg-gray-200 rounded-t-md">
+          <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-600 dark:text-white">
             <p class="font-medium">TO DO</p>
             <p>{{ todoTasks.length }} items</p>
           </div>
@@ -95,10 +95,9 @@
       <ng-scrollbar class="h-[calc(100vh-330px)]" [visibility]="'hover'" [appearance]="'compact'">
         <div class="mb-3 grid grid-cols-3 gap-x-4">
           <!-- TO DO -->
-          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+          <div class="stage">
             <div
               id="todoList"
-              class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
               [cdkDropListDisabled]="approval === undefined || approval.status === false"
@@ -112,26 +111,24 @@
 
               @for (task of todoTasks; track task.id) {
               <div
-                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
                 cdkDrag
-                [cdkDragData]="task"
-                
+                [cdkDragData]="task"                
                 (click)="viewTaskDetails(task.id)">
                 <div>
-                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
-                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
+                  <p class="summary">{{ task.summary }}</p>
+                  <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
                 </div>
 
-                <div class="flex justify-between">
-                  <p class="text-sm text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                <div class="footer">
+                  <p class="date">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
-                  <div class="flex space-x-2">
+                  <div class="actions">
                     <!-- TODO: implement edit task -->
-                    <!-- <button type="button" class="text-info hover:text-info-800">
-                      <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
+                    <!-- <button type="button" class="edit">
+                      <svg-icon src="assets/icons/pen.svg" />
                     </button> -->
-                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
-                      <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
+                    <button type="button" class="delete" (click)="deleteTask(task); $event.stopPropagation()">
+                      <svg-icon src="assets/icons/trash.svg" />
                     </button>
                   </div>
                 </div>
@@ -147,10 +144,9 @@
           </div>
 
           <!-- IN PROGRESS -->
-          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+          <div class="stage">
             <div
               id="inProgressList"
-              class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
               [cdkDropListDisabled]="approval === undefined || approval.status === false"
@@ -169,27 +165,26 @@
                 </p>
               </ng-container>
               @for (task of inProgressTasks; track task.id) {
-              <div
-                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
+                <div
                 cdkDrag
                 [cdkDragData]="task"
                 
                 (click)="viewTaskDetails(task.id)">
                 <div>
-                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
-                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
+                  <p class="summary">{{ task.summary }}</p>
+                  <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
                 </div>
 
-                <div class="flex justify-between">
-                  <p class="text-sm text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                <div class="footer">
+                  <p class="date">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
-                  <div class="flex space-x-2">
+                  <div class="actions">
                     <!-- TODO: implement edit -->
-                    <!-- <button type="button" class="text-info hover:text-info-800">
-                      <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
+                    <!-- <button type="button" class="edit">
+                      <svg-icon src="assets/icons/pen.svg" />
                     </button> -->
-                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
-                      <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
+                    <button type="button" class="delete" (click)="deleteTask(task); $event.stopPropagation()">
+                      <svg-icon src="assets/icons/trash.svg" />
                     </button>
                   </div>
                 </div>
@@ -199,10 +194,9 @@
           </div>
 
           <!-- COMPLETED -->
-          <div class="space-y-2 rounded-b-md bg-gray-200 p-2">
+          <div class="stage">
             <div
               id="completedList"
-              class="task-list h-full space-y-2"
               cdkDropList
               cdkDropListSortingDisabled
               [cdkDropListDisabled]="approval === undefined || approval.status === false"
@@ -222,26 +216,25 @@
               </ng-container>
               @for (task of completedTasks; track task.id) {
               <div
-                class="task-box group cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100"
                 cdkDrag
                 [cdkDragData]="task"
                 
                 (click)="viewTaskDetails(task.id)">
                 <div>
-                  <p class="mb-3 group-hover:underline">{{ task.summary }}</p>
-                  <span class="badge bg-info text-sm" *ngIf="task.epic">{{ task.epic }}</span>
+                  <p class="summary">{{ task.summary }}</p>
+                  <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
                 </div>
 
-                <div class="flex justify-between">
-                  <p class="text-sm text-gray-400">{{ task.dueDate | utcToLocalDate }}</p>
+                <div class="footer">
+                  <p class="date">{{ task.dueDate | utcToLocalDate }}</p>
                   <!-- TODO: children icon -->
-                  <div class="flex space-x-2">
+                  <div class="actions">
                     <!-- TODO: implement edit -->
-                    <!-- <button type="button" class="text-info hover:text-info-800">
-                      <svg-icon src="assets/icons/pen.svg" [svgClass]="'h-5 h-5'" />
+                    <!-- <button type="button" class="edit">
+                      <svg-icon src="assets/icons/pen.svg" />
                     </button> -->
-                    <button type="button" class="text-danger hover:text-danger-800" (click)="deleteTask(task); $event.stopPropagation()">
-                      <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-5 h-5'" />
+                    <button type="button" class="delete" (click)="deleteTask(task); $event.stopPropagation()">
+                      <svg-icon src="assets/icons/trash.svg" />
                     </button>
                   </div>
                 </div>

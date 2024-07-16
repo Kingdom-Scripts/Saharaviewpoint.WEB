@@ -1,19 +1,67 @@
-.cdk-drag-preview {
-  box-sizing: border-box;
-  border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-              0 8px 10px 1px rgba(0, 0, 0, 0.14),
-              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+.stage {
+  @apply space-y-2 rounded-b-md bg-gray-200 p-2  dark:bg-night-700;
+}
+
+.cdk-drop-list {
+  @apply h-full space-y-2;
+}
+
+.cdk-drag {
+  @apply cursor-pointer space-y-3 border border-gray-300 bg-white px-3 py-2 hover:border-white hover:bg-gray-100 dark:border-night-500 dark:bg-night-500 dark:hover:bg-night-600;
+}
+
+.cdk-drag .summary {
+  @apply mb-3 dark:text-night-50;
+}
+
+.cdk-drag:hover .summary {
+  @apply underline;
+}
+
+.cdk-drag .epic {
+  @apply badge bg-info text-sm;
+}
+
+.cdk-drag .footer {
+  @apply flex justify-between;
+}
+
+.cdk-drag .footer .date {
+  @apply text-sm text-gray-400;
+}
+
+.cdk-drag .footer .actions {
+  @apply flex space-x-2;
+}
+
+.cdk-drag .footer .actions button svg {
+  @apply w-5 h-5;
+}
+
+.cdk-drag .footer .actions .edit {
+  @apply text-info hover:text-info-800;
+}
+
+.cdk-drag .footer .actions .delete {
+  @apply text-danger hover:text-danger-800;
 }
 
 .cdk-drag-placeholder {
   opacity: 0;
 }
 
+.cdk-drag-preview {
+  background-color: #302a62 !important;
+  color: #e4e4eb !important;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.task-list.cdk-drop-list-dragging .task-box:not(.cdk-drag-placeholder) {
+.cdk-drop-list.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
