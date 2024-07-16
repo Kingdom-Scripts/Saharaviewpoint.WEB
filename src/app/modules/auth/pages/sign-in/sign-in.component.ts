@@ -32,6 +32,7 @@ export class SignInComponent implements OnInit {
   loginForm!: FormGroup;
   userLogin!: LoginModel;
   returnUrl!: string;
+  loginError: string | undefined = undefined;
 
   constructor(private readonly fb: FormBuilder,
     private route: ActivatedRoute,
@@ -68,21 +69,30 @@ export class SignInComponent implements OnInit {
       return;
     }
 
+    this.loginError = undefined;
     this.userLogin = Object.assign({}, this.loginForm.value);
 
     this.notify.showLoader();
     this.authService.login(this.userLogin)
-      .subscribe(async (res: Result<AuthDataModel>) => {
-        this.notify.hideLoader();
-        
-        if (res.success) {
-          this.notify.timedSuccessMessage(`Welcome back ${res.content?.user.firstName}`);
-
-          this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, this.userLogin.rememberMe);
-          this.router.navigate(['dashboard']);
-        } else {
-          this.notify.errorMessage(res.title, res.message);
+      .subscribe({
+        next: async (res: Result<AuthDataModel>) => {
+          this.notify.hideLoader();
+          
+          if (res.success) {
+            this.notify.timedSuccessMessage(`Welcome back ${res.content?.user.firstName}`);
+  
+            this.authService.maskUserAsAuthenticated(res.content as AuthDataModel, this.userLogin.rememberMe);
+            this.router.navigate(['dashboard']);
+          } else {
+            this.notify.errorMessage(res.title, res.message);
+          }
+        },
+        error: (err: Result<AuthDataModel>) => {
+          this.notify.hideLoader();
+          console.error(err);
+          this.loginError = err.message;
         }
-      });
+      }
+      );
   }
 }

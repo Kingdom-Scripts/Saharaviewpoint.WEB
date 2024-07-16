@@ -17,6 +17,10 @@
       <auth-input svpType="password" svpId="password" [svpForm]="loginForm" svpLabel="Password" />
       <svp-validation-errors [control]="loginForm.get('password')" />
     </div>
+
+    <div>
+      <p class="text-danger-500 text-sm" *ngIf="loginError">{{ loginError }}</p>
+    </div>
   </div>
 
   

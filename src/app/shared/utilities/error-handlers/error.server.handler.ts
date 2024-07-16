@@ -33,7 +33,7 @@ export class ErrorService {
             
             // only display error pop-up when it is not a validation error
             if (error.error.title !== 'Validation Errors') {
-              this.notify.errorMessage(msg400.title, msg400.message);
+              // this.notify.errorMessage(msg400.title, msg400.message);
             }
             else {
               msg400.validationErrors = error?.error.validationErrors;
