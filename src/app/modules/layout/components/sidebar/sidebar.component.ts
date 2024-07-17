@@ -71,7 +71,7 @@ export class SidebarComponent implements OnInit {
             route: '/tasks',
             children: [
               {
-                isAccessible: false,
+                isAccessible: true,
                 label: 'All Tasks',
                 route: '/tasks/all',
               },
