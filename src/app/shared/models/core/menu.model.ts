@@ -1,4 +1,5 @@
 export interface MenuItem {
+  isAccessible: boolean;
   group: string;
   separator?: boolean;
   selected?: boolean;
@@ -8,6 +9,7 @@ export interface MenuItem {
 }
 
 export interface SubMenuItem {
+  isAccessible: boolean;
   icon?: string;
   label?: string;
   route?: string | null;

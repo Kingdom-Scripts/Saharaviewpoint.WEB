@@ -80,6 +80,7 @@ export class AuthService {
 
   userIsInRole(roles: string[]): boolean {
     const userRoles = this.storageService.getUserRoles() as AuthRoleData;
+    console.log('Roles:', userRoles);
 
     // Check if any of the roles in the provided array is present in userRoles
     return roles.some(role => userRoles[role]);

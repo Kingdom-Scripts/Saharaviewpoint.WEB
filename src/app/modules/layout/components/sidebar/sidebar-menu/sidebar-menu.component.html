@@ -1,5 +1,5 @@
 @for (menu of menuService.pagesMenu; track $index) {
-  <div class="pt-4">
+  <div class="pt-4"  [hidden]="!menu.isAccessible">
     <div class="mx-1 mb-2 flex items-center justify-between">
       <small
         [ngClass]="{ hidden: !menuService.showSideBar }"
@@ -10,7 +10,7 @@
     <ul class="flex flex-col space-y-1">
       <!-- List items -->
       @for (item of menu.items; track $index) {
-        <li>
+        <li [hidden]="!item.isAccessible">
           <!-- Menu List -->
           <div class="group relative text-gray-400 dark:text-night-400">
             <!-- Icon -->

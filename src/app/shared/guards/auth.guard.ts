@@ -18,16 +18,17 @@ export const AuthGuard: CanActivateFn = (
   
     const isAuthenticated = authService.IsAuthenticated();
     const roles = route.data['roles'] as Array<string>;
-
+    
     let userIsInRole = true;
     if(roles != null && roles != undefined) {
+      console.log('Auth Guard: ', roles, authService.userIsInRole(roles));
       userIsInRole = authService.userIsInRole(roles);
     }
     
     if (!isAuthenticated) {
       return router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url }});
     } else if(!userIsInRole) {
-      return router.navigate(['/auth/unauthorized']);
+      return router.navigate(['/unauthorized']);
     }
 
     return isAuthenticated;
