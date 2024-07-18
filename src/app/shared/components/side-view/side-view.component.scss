@@ -12,7 +12,7 @@
   &.active {
     width: calc(100vw / 2);
     // set width to 100% if screen size is less than 768px otherwise set to 50%
-    @media (max-width: 768px) { // TODO: continue here, trying to set a dynamic width for the side view
+    @media (max-width: 768px) { 
       width: 100%;
     }
 
