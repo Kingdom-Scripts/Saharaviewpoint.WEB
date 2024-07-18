@@ -74,9 +74,9 @@ export class AddTaskComponent implements OnInit {
     // TODO: remove the defaults
     this.formGroup = this.fb.group({
       projectId: [this.globalProjectId, Validators.compose([Validators.required])],
-      type: ['Epic', Validators.compose([Validators.required])],
+      type: ['', Validators.compose([Validators.required])],
       parentId: [null],
-      summary: ['An Epic', Validators.compose([Validators.required, Validators.maxLength(255)])],
+      summary: ['', Validators.compose([Validators.required, Validators.maxLength(255)])],
       description: ['Once upon a time, that is how you start!', Validators.compose([Validators.maxLength(5000)])],
       expectedStartDate: ['', Validators.compose([Validators.required])],
       dueDate: ['', Validators.compose([Validators.required])],

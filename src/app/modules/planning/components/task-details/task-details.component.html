@@ -1,142 +1,145 @@
 <div class="relative h-full w-full bg-gray-100 dark:bg-night-700">
   <div class="bg-gray-100 dark:bg-night-700">
     @if (loadError === false) {
-      <div class="sticky top-0 flex justify-between space-x-12 py-4 bg-secondary text-white px-4 items-center">
-        <div class="flex items-center gap-5">
-          <h6>{{ task.summary }}</h6>
-          <svp-task-status-card [status]="task.status" />
-        </div>
-  
-        <button >
-          <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="sidePanelRef.close()" />
-        </button>
-      </div>
-      }
-
-      <div *ngIf="loadError === undefined">
-        <div class="flex h-svh flex-col justify-center text-center">
-          <h5>Loading...</h5>
-        </div>
-      </div>
-  
-      <div *ngIf="loadError === true">
-        <div class="flex h-svh flex-col items-center justify-center gap-4">
-          <h5 class="text-red-600 text-center">{{ errorMessage }}</h5>
-          <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Close</button>
-        </div>
+    <div class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
+      <div class="flex items-center gap-5">
+        <h6>{{ task.summary }}</h6>
+        <svp-task-status-card [status]="task.status" />
       </div>
 
-      <div *ngIf="loadError === false" class="space-y-2 lg:space-y-3 px-4 mt-4">
-  
-        <div class="pb-4">
-          <p class="smaller font-semibold text-gray-500">Description</p>
-          <p>{{ task.description }}</p>
+      <button>
+        <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="sidePanelRef.close()" />
+      </button>
+    </div>
+    }
+
+    <div *ngIf="loadError === undefined">
+      <div class="flex h-svh flex-col justify-center text-center">
+        <h5>Loading...</h5>
+      </div>
+    </div>
+
+    <div *ngIf="loadError === true">
+      <div class="flex h-svh flex-col items-center justify-center gap-4">
+        <h5 class="text-center text-red-600">{{ errorMessage }}</h5>
+        <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Close</button>
+      </div>
+    </div>
+
+    <div *ngIf="loadError === false" class="mt-4 space-y-2 px-4 lg:space-y-3">
+      <div class="pb-4">
+        <p class="smaller font-semibold text-gray-500">Description</p>
+        <p>{{ task.description }}</p>
+      </div>
+
+      <div class="space-y-1.5">
+        <div class="flex space-x-3 pb-2">
+          <p class="smaller font-semibold text-gray-500">Attachments</p>
+
+          <label
+            class="relative flex cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-2 py-1 text-sm font-medium text-white hover:bg-gray-800"
+            for="attachmentFile">
+            <svg-icon src="assets/icons/add-file.svg" [svgClass]="'h-4 w-4'" />
+          </label>
+          <input type="file" id="attachmentFile" class="hidden" multiple (change)="uploadAttachments($event)" />
         </div>
-  
-        <div class="space-y-1.5">
-          <div class="flex space-x-3 pb-2">
-            <p class="smaller font-semibold text-gray-500">Attachments</p>
-  
-            <label
-              class="relative flex cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-2 py-1 text-sm font-medium text-white hover:bg-gray-800"
-              for="attachmentFile">
-              <svg-icon src="assets/icons/add-file.svg" [svgClass]="'h-4 w-4'" />
-            </label>
-            <input type="file" id="attachmentFile" class="hidden" multiple (change)="uploadAttachments($event)" />
-          </div>
-  
-          <div class="flex flex-wrap">
-            <ng-container *ngIf="attachments && attachments.length === 0">
-              <p svp-text>No attachments</p>
-            </ng-container>
-  
-            <div
-              *ngFor="let attachment of attachments"
-              class="group relative mb-2 mr-2 w-full max-w-44 cursor-pointer items-center overflow-hidden rounded-lg bg-white shadow-md">
-              <div class="absolute hidden h-24 w-full bg-gray-200/50 group-hover:block"></div>
-  
-              <!-- Delete and Download button --->
-              <div class="absolute right-0 top-0 mr-1 mt-1 hidden space-x-1 text-center text-sm group-hover:flex">
-                <button
-                  class="flex items-center rounded-md bg-slate-900 p-2 text-center text-sm font-medium text-white hover:bg-gray-700"
-                  (click)="downloadAttachment(attachment.url)">
-                  <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-4 w-4'" />
-                </button>
-  
-                <button
-                  class="flex items-center rounded-md bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-900"
-                  (click)="deleteAttachment(attachment.id)">
-                  <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-4 w-4'" />
-                </button>
-              </div>
-  
-              <!-- Attachment thumbnail -->
-              <img class="mx-auto h-24 rounded-t-lg object-cover" src="{{ assetBaseUrl }}{{ attachment.thumbnailUrl }}" alt="{{ attachment.name }}" loading="lazy" />
-  
-              <!-- Attachment metadata -->
-              <div class="bg-gray-100 p-1">
-                <a href="#">
-                  <p class="text-sm tracking-tight text-slate-900">{{ trimFileName(attachment.name) }}</p>
-                </a>
-  
-                <div class="flex items-center justify-between">
-                  <p>
-                    <span class="text-sm text-slate-900">{{ attachment.createdAt | utcToLocalDate }}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="w-[75%] space-y-2">
-          <p class="smaller font-semibold text-gray-500">Activities</p>
-  
-          <div class="flex space-x-2 pb-2">
-            <p svp-text>Show:</p>
-            <button svp-action [isActive]="displayLogs" (click)="displayLogs = true">History</button>
-            <button svp-action [isActive]="!displayLogs" (click)="displayLogs = false">Comments</button>
-          </div>
-  
-          <ng-container *ngIf="displayLogs">
-            <div *ngFor="let item of taskLogs; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
-              <div class="flex space-x-2">
-                <p svp-text>{{ item.description }}</p>
-                <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
-              </div>
-  
-              <div class="flex space-x-2" *ngIf="item.previousState || item.currentState">
-                <p svp-text>{{ item.previousState }}</p>
-                <div class="before:text-gray-600 before:content-['→']"></div>
-                <p svp-text>{{ item.currentState }}</p>
-              </div>
-            </div>
+
+        <div class="flex flex-wrap">
+          <ng-container *ngIf="attachments && attachments.length === 0">
+            <p svp-text>No attachments</p>
           </ng-container>
-  
-          <ng-container *ngIf="!displayLogs">
-            <div class="my-2">
-              <textarea class="h-24 w-full rounded-lg border border-gray-200 p-2" placeholder="Add a comment..." [(ngModel)]="commentMessage"></textarea>
-              <div class="flex justify-end">
-                <button svp-primary [isDisabled]="commentMessage === ''" (click)="addComment()">Add Comment</button>
+
+          <div
+            *ngFor="let attachment of attachments"
+            class="group relative mb-2 mr-2 w-full max-w-44 cursor-pointer items-center overflow-hidden rounded-lg bg-white shadow-md">
+            <div class="absolute hidden h-24 w-full bg-gray-200/50 group-hover:block"></div>
+
+            <!-- Delete and Download button --->
+            <div class="absolute right-0 top-0 mr-1 mt-1 hidden space-x-1 text-center text-sm group-hover:flex">
+              <button
+                class="flex items-center rounded-md bg-slate-900 p-2 text-center text-sm font-medium text-white hover:bg-gray-700"
+                (click)="downloadAttachment(attachment.url)">
+                <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-4 w-4'" />
+              </button>
+
+              <button
+                class="flex items-center rounded-md bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-900"
+                (click)="deleteAttachment(attachment.id)">
+                <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-4 w-4'" />
+              </button>
+            </div>
+
+            <!-- Attachment thumbnail -->
+            <img
+              class="mx-auto h-24 rounded-t-lg object-cover"
+              src="{{ assetBaseUrl }}{{ attachment.thumbnailUrl }}"
+              alt="{{ attachment.name }}"
+              loading="lazy" />
+
+            <!-- Attachment metadata -->
+            <div class="bg-gray-100 p-1">
+              <a href="#">
+                <p class="text-sm tracking-tight text-slate-900">{{ trimFileName(attachment.name) }}</p>
+              </a>
+
+              <div class="flex items-center justify-between">
+                <p>
+                  <span class="text-sm text-slate-900">{{ attachment.createdAt | utcToLocalDate }}</span>
+                </p>
               </div>
             </div>
-  
-            <div *ngFor="let item of taskComments; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
-              <div class="flex space-x-2">
-                <small svp-text medium>{{ item.fullName }}</small>
-                <small>-</small>
-                <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
-              </div>
-  
-              <p svp-text>{{ item.message }}</p>
-  
-              <div>
-                <a class="cursor-pointer text-sm font-medium text-red-600 hover:text-red-800" (click)="deleteComment(item.id)"><small>Delete Comment</small></a>
-              </div>
-            </div>
-          </ng-container>
+          </div>
         </div>
       </div>
+
+      <div class="w-[75%] space-y-2">
+        <p class="smaller font-semibold text-gray-500">Activities</p>
+
+        <div class="flex space-x-2 pb-2">
+          <p svp-text>Show:</p>
+          <button svp-action [isActive]="displayLogs" (click)="displayLogs = true">History</button>
+          <button svp-action [isActive]="!displayLogs" (click)="displayLogs = false">Comments</button>
+        </div>
+
+        <ng-container *ngIf="displayLogs">
+          <div *ngFor="let item of taskLogs; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
+            <div class="flex space-x-2">
+              <p svp-text>{{ item.description }}</p>
+              <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
+            </div>
+
+            <div class="flex space-x-2" *ngIf="item.previousState || item.currentState">
+              <p svp-text>{{ item.previousState }}</p>
+              <div class="before:text-gray-600 before:content-['→']"></div>
+              <p svp-text>{{ item.currentState }}</p>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="!displayLogs">
+          <div class="my-2">
+            <textarea class="h-24 w-full rounded-lg border border-gray-200 p-2" placeholder="Add a comment..." [(ngModel)]="commentMessage"></textarea>
+            <div class="flex justify-end">
+              <button svp-primary [isDisabled]="commentMessage === ''" (click)="addComment()">Add Comment</button>
+            </div>
+          </div>
+
+          <div *ngFor="let item of taskComments; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
+            <div class="flex space-x-2">
+              <small svp-text medium>{{ item.fullName }}</small>
+              <small>-</small>
+              <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
+            </div>
+
+            <p svp-text>{{ item.message }}</p>
+
+            <div>
+              <a class="cursor-pointer text-sm font-medium text-red-600 hover:text-red-800" (click)="deleteComment(item.id)"><small>Delete Comment</small></a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
 </div>
 

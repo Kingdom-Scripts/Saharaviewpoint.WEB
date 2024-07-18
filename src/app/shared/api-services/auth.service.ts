@@ -1,30 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Router } from "@angular/router";
-import { AuthDataModel, AuthRoleData, LoginModel, Result } from "@svp-models";
-import { NotificationService, StorageService } from "@svp-services";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { AuthDataModel, AuthRoleData, LoginModel, Result } from '@svp-models';
+import { NotificationService, StorageService } from '@svp-services';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private authState = new BehaviorSubject(false);  
-  
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private storageService: StorageService,
-    private notify: NotificationService
-  ) {
+  private authState = new BehaviorSubject(false);
+
+  constructor(private http: HttpClient, private router: Router, private storageService: StorageService, private notify: NotificationService) {
     this.checkUserData();
   }
 
   getUser() {
     return this.storageService.getUser();
   }
-  
+
   checkUserData() {
     const user = this.getUser();
     if (user === undefined || user === null) {
@@ -39,7 +34,7 @@ export class AuthService {
   }
 
   OnAuthStatusChange() {
-    return this.authState.asObservable(); 
+    return this.authState.asObservable();
   }
 
   async logUserOut() {
@@ -63,7 +58,7 @@ export class AuthService {
 
   maskUserAsAuthenticated(authData: AuthDataModel, rememberMe: boolean) {
     this.maskUserAsLoggedOut();
-    
+
     this.storageService.storeToken(authData.token, rememberMe);
     this.storageService.storeUser(authData.user, rememberMe);
     this.storageService.storeRefreshToken(authData.refreshToken, rememberMe);
@@ -74,13 +69,12 @@ export class AuthService {
   maskUserAsLoggedOut() {
     this.storageService.clearAuthData();
     this.storageService.clearUserData();
-    
+
     this.authState.next(false);
   }
 
   userIsInRole(roles: string[]): boolean {
     const userRoles = this.storageService.getUserRoles() as AuthRoleData;
-    console.log('Roles:', userRoles);
 
     // Check if any of the roles in the provided array is present in userRoles
     return roles.some(role => userRoles[role]);
@@ -125,11 +119,11 @@ export class AuthService {
     return this.http.post<Result<AuthDataModel>>(`auth/sign-up`, param);
   }
 
-  refreshToken() {    
+  refreshToken() {
     const param = {
-      refreshToken: this.storageService.getRefreshToken()
+      refreshToken: this.storageService.getRefreshToken(),
     };
-    
+
     return this.http.post<Result<AuthDataModel>>(`auth/refresh-token`, param);
   }
 

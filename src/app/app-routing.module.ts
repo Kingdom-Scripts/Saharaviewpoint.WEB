@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { LayoutComponent } from './modules/layout/layout.component';
-import { RoleEnum } from '@svp-models';
 import { UnauthorizedComponent } from './utilitiy-pages/unauthorized/unauthorized.component';
 import { NotFoundComponent } from './utilitiy-pages/not-found/not-found.component';
 
@@ -27,7 +26,6 @@ const routes: Routes = [
         path: '',
         loadChildren: () => import('./modules/users/users.module').then((m) => m.UsersModule),
         canActivate: [AuthGuard],
-        data: {roles: [RoleEnum.SVP_ADMIN]}
       },
       {
         path: '',

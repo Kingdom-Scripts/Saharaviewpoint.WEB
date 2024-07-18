@@ -3,118 +3,114 @@ import { Observable, of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { NotificationService } from '@svp-services';
-import { NavigationUtility } from '../navigation.utility';
 import { Result, StatusCodes } from '@svp-models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ErrorService {
-  constructor(
-    private notify: NotificationService,
-    private nav: NavigationUtility,
-    private router: Router
-  ) {}
+  constructor(private notify: NotificationService, private router: Router) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public handleError<T>() {
-    return (error: unknown): Observable<Result<never>> => {      
+    return (error: unknown): Observable<Result<never>> => {
       this.notify.hideLoader();
 
+      const result: Result<never> = new Result();
+      result.success = false;
+
       if (error instanceof HttpErrorResponse) {
-          switch (error.status) {
-          case StatusCodes.BAD_REQUEST: //Bad Request
-          {
-            const msg400: Result<never> = new Result();            
-            msg400.success = false;
-            msg400.title = 'Bad Request';
-            msg400.message = error?.error.message ?? 'An error from the server';
-            msg400.path = error.url?.toString();
-            
+        switch (error.status) {
+          //Bad Request
+          case StatusCodes.BAD_REQUEST: {
+            result.title = 'Bad Request';
+            result.message = error?.error.message ?? 'An error from the server';
+
             // only display error pop-up when it is not a validation error
             if (error.error.title !== 'Validation Errors') {
-              // this.notify.errorMessage(msg400.title, msg400.message);
-            }
-            else {
-              msg400.validationErrors = error?.error.validationErrors;
+              this.notify.timedErrorMessage(result.message ?? 'An error occurred.');
+            } else {
+              result.validationErrors = error?.error.validationErrors;
             }
 
-            return throwError(msg400 as Result<never>);
+            break;
           }
-          case StatusCodes.UNAUTHORIZED: //Authentication error
-          {
-            const msg401: Result<never> = new Result();
-            msg401.success = false;
-            msg401.title = 'Authentication Required';
-            msg401.message =
-              'Unable to authenticate with the server! Please sign in.';
-            msg401.path = error.url?.toString();
 
-            this.notify.errorMessage(msg401.title, msg401.message);
+          // Not Found
+          case StatusCodes.NOT_FOUND: {
+            result.title = 'Not Found';
 
+            // a specific error was returned from the API
+            // return to calling component
+            if (error.error) {
+              result.message = error.error.message ?? 'The resource you are looking for was not found.';
+
+              break;
+            }
+
+            result.message = error?.error ?? 'The resource you are looking for was not found.';
+            this.notify.errorMessage(result.title, result.message);
+            return of(result);
+          }
+
+          //Authentication error
+          case StatusCodes.UNAUTHORIZED: {
+            result.title = 'Authentication Required';
+            result.message = 'Unable to authenticate with the server! Please sign in.';
+            this.notify.errorMessage(result.title, result.message);
             this.router.navigate(['auth/sign-in'], {
               state: { clearToken: true },
             });
 
-            return throwError(msg401);
+            break;
           }
 
-          case StatusCodes.FORBIDDEN: //Authorization error
-          {
-            const msg403: Result<never> = error.error;
+          //Authorization error
+          case StatusCodes.FORBIDDEN: {
+            result.title = 'Forbidden';
+            result.message = error?.error.message ?? 'You do not have permission to access this resource';
 
-            return throwError(msg403);
+            break;
           }
-          case StatusCodes.INTERNAL_SERVER_ERROR: //Authentication error
-          {
-            const msg500: Result<never> = new Result();
-            msg500.success = false;
-            msg500.title = 'Internal Server Error';
-            msg500.message = error?.error?.message ?? error.message;
-            msg500.path = error.url?.toString();
 
-            this.notify.errorMessage(msg500.title, msg500.message);
+          // Internal Server Error
+          case StatusCodes.INTERNAL_SERVER_ERROR: {
+            result.title = 'Internal Server Error';
+            result.message = error?.error?.message ?? error.message;
+            this.notify.errorMessage(result.title, result.message);
 
-            return of(msg500);
+            return of(result);
           }
-          case 0:
-          {
-            // possibly network error. Show toast
-            const msg0: Result<never> = new Result();
-            msg0.success = false;
-            msg0.title = 'Unknown Server Error';
-            msg0.message =
-              'Something went wrong! Please check your internet connection';
-            msg0.path = error.url?.toString();
 
-            this.notify.errorMessage(msg0.title, msg0.message);
+          // possibly network error. Show toast
+          case 0: {
+            result.title = 'Unknown Server Error';
+            result.message = 'Something went wrong! Please check your internet connection';
+            this.notify.errorMessage(result.title, result.message);
 
-            return of(msg0);
+            return of(result);
           }
           default: {
-            const msg: Result<never> = new Result();
-            msg.success = false;
-            msg.title = 'Unknown Server Error';
-            msg.message = `Unknown Server Error: ${error.message}`;
-            msg.path = error.url?.toString();
+            result.title = 'Unknown Server Error';
+            result.message = `Unknown Server Error: ${error.message}`;
+            this.notify.errorMessage(result.title, result.message);
 
-            this.notify.errorMessage(msg.title, msg.message);
-
-            return of(msg);
+            return of(result);
           }
         }
+
+        // Throw other errors to the calling component
+        return throwError(result);
       } else {
-        const msg: Result<never> = new Result();
-        msg.success = false;
-        msg.title = 'Client Side Error';
+        result.success = false;
+        result.title = 'Client Side Error';
         if (error instanceof HttpErrorResponse) {
-          msg.message = `Error: ${error.error.message}`;
-          msg.path = error.url?.toString();
+          result.message = `Error: ${error.error.message}`;
         }
 
-        this.notify.errorMessage(msg.title, msg.message);
+        this.notify.errorMessage(result.title, result.message);
 
-        return of(msg);
+        return of(result);
       }
     };
   }

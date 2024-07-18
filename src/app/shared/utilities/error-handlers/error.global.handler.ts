@@ -9,7 +9,7 @@ import {
 import { Result } from '@svp-models';
 
 @Injectable()
-export class GlobalErrorHandler implements ErrorHandler {
+export class GlobalErrorHandles implements ErrorHandler {
   constructor(
     @Inject(Injector) private readonly injector: Injector,
     private zone: NgZone

@@ -3,7 +3,17 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { SvpButtonModule, SvpFormInputModule, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { PagingRequestModel, ProjectManagerModel, ProjectModel, Result, StatusCodes, TaskModel, TaskSearchModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
+import {
+  PagingRequestModel,
+  ProjectManagerModel,
+  ProjectModel,
+  Result,
+  StatusCodes,
+  TaskModel,
+  TaskSearchModel,
+  TaskStatusEnum,
+  TaskTypeEnum,
+} from '@svp-models';
 import { ProjectService, TaskService, ProjectManagerService } from '@svp-api-services';
 import { NotificationService } from '@svp-services';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
@@ -44,7 +54,7 @@ export class ApproveProjectComponent implements OnInit {
 
   project!: ProjectModel;
   allTasks: TaskModel[] = [];
-  activities: ProjectLogModel[]  = [];
+  activities: ProjectLogModel[] = [];
 
   selectedProjectManagerUid: string | null = null;
   projectManagersLoading = false;
@@ -102,10 +112,10 @@ export class ApproveProjectComponent implements OnInit {
   }
 
   loadProjectLogs(): void {
-  const param = {
+    const param = {
       pageIndex: 1,
       pageSize: 4,
-    } as PagingRequestModel
+    } as PagingRequestModel;
     this.projectService.listProjectLogs(this.id, param).subscribe((res: Result<ProjectLogModel[]>) => {
       if (res.success) {
         this.activities = res.content ?? [];

@@ -11,7 +11,7 @@ const routes: Routes = [
     component: ProjectTaskApprovalComponent,
     title: 'Project Task Setup Approvals',
     canActivate: [AuthGuard],
-    data: { roles: [RoleEnum.SVP_ADMIN] },
+    data: { roles: [RoleEnum.SVP_ADMIN, RoleEnum.SUPER_ADMIN] },
   },
 ];
 

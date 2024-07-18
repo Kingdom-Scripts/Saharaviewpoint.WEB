@@ -10,13 +10,13 @@ const routes: Routes = [
     path: 'users/project-managers',
     component: AllProjectManagersComponent,
     canActivate: [AuthGuard],
-    data: { roles: [RoleEnum.SVP_ADMIN] },
+    data: { roles: [RoleEnum.SVP_ADMIN, RoleEnum.SUPER_ADMIN] },
   },
   {
     path: 'users/clients',
     component: AllClientsComponent,
     canActivate: [AuthGuard],
-    data: { roles: [RoleEnum.SVP_ADMIN] },
+    data: { roles: [RoleEnum.SVP_ADMIN, RoleEnum.SUPER_ADMIN] },
   },
 ];
 

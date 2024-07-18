@@ -9,15 +9,10 @@ import { AuthService } from '@svp-api-services';
 import { AuthRoleData, MenuItem } from '@svp-models';
 
 @Component({
-    selector: 'app-sidebar',
-    templateUrl: './sidebar.component.html',
-    standalone: true,
-    imports: [
-        NgClass,
-        AngularSvgIconModule,
-        SidebarMenuComponent,
-        RouterLink,
-    ],
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  standalone: true,
+  imports: [NgClass, AngularSvgIconModule, SidebarMenuComponent, RouterLink],
 })
 export class SidebarComponent implements OnInit {
   menuService = inject(MenuService);
@@ -26,7 +21,7 @@ export class SidebarComponent implements OnInit {
   storageService = inject(StorageService);
 
   userRoles!: AuthRoleData;
-  
+
   ngOnInit(): void {
     this.userRoles = this.storageService.getUserRoles() as AuthRoleData;
     this.setMenuItems();
@@ -85,12 +80,12 @@ export class SidebarComponent implements OnInit {
         ],
       },
       {
-        isAccessible: this.userRoles.SvpAdmin,
+        isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
         group: 'Approval Management',
         separator: false,
         items: [
           {
-            isAccessible: this.userRoles.SvpAdmin,
+            isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
             icon: 'assets/icons/approve-invoice.svg',
             label: 'Task Setup Approvals',
             route: '/approvals/project-task-setup',
@@ -98,23 +93,23 @@ export class SidebarComponent implements OnInit {
         ],
       },
       {
-        isAccessible: this.userRoles.SvpAdmin,
+        isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
         group: 'Management',
         separator: false,
         items: [
           {
-            isAccessible: this.userRoles.SvpAdmin,
+            isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
             icon: 'assets/icons/users.svg',
             label: 'User Management',
             route: '/users',
             children: [
               {
-                isAccessible: this.userRoles.SvpAdmin,
+                isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
                 label: 'Project Managers',
                 route: '/users/project-managers',
               },
               {
-                isAccessible: this.userRoles.SvpAdmin,
+                isAccessible: this.userRoles.SvpAdmin || this.userRoles.SuperAdmin,
                 label: 'Clients',
                 route: '/users/clients',
               },

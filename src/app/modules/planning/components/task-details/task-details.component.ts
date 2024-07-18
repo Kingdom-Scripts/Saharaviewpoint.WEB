@@ -37,7 +37,7 @@ export class TaskDetailsComponent implements OnInit {
   notify = inject(NotificationService);
   fb = inject(FormBuilder);
   sidePanelRef = inject(SidePanelRef);
-  
+
   assetBaseUrl = environment.assetBaseUrl;
 
   taskTypeEnum = TaskTypeEnum;
@@ -116,7 +116,6 @@ export class TaskDetailsComponent implements OnInit {
     this.taskService.listComments(this.task.id, this.commentPaging).subscribe((res: Result<TaskCommentModel[]>) => {
       if (res.success) {
         this.taskComments = res.content ?? [];
-        console.table(this.taskComments);
       } else {
         this.notify.timedErrorMessage(res.title, res.message);
       }

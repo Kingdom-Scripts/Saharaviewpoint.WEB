@@ -1,7 +1,7 @@
-import { FormGroup } from "@angular/forms";
-import { ValidationErrorModel } from "@svp-models";
+import { FormGroup } from '@angular/forms';
+import { ValidationErrorModel } from '@svp-models';
 
-export function mapValidationErrors(form: FormGroup, errors: { [key: string]: string[]} | undefined) {
+export function mapValidationErrors(form: FormGroup, errors: { [key: string]: string[] } | undefined) {
   if (!errors) {
     return;
   }
@@ -9,22 +9,23 @@ export function mapValidationErrors(form: FormGroup, errors: { [key: string]: st
   Object.entries(errors).forEach(([key, errorMessages]) => {
     const modelError: ValidationErrorModel = {
       valid: false,
-      messages: errorMessages
+      messages: errorMessages,
     };
 
     const control = form.get(camelizeKey(key));
 
-    if (control) {    
-      control.setErrors({apiError: modelError});
+    if (control) {
+      control.setErrors({ apiError: modelError });
+    } else {
+      form.setErrors({ apiError: modelError });
     }
-    else {
-      form.setErrors({apiError: modelError});
-    }
-  })
+  });
 }
 
 function camelizeKey(key: string): string {
-  return key.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
-    return index === 0 ? word.toLowerCase() : word.toUpperCase();
-  }).replace(/\s+/g, '');
+  return key
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    })
+    .replace(/\s+/g, '');
 }

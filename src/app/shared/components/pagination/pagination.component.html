@@ -1,7 +1,7 @@
 <!-- Items Count and Pagination -->
 <div class="mt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
   <div class="flex items-center space-x-3 align-middle">
-    <span class="dark:text-white text-gray-500">Showing {{showingText}} entries</span>
+    <span class="text-gray-500 dark:text-white">Showing {{ showingText }} entries</span>
 
     <!-- Dropdown to change items per page -->
     <ng-select [(ngModel)]="itemsPerPage" (change)="setItemsPerPage()" [clearable]="false">
@@ -12,7 +12,9 @@
     <ul class="m-auto mb-4 inline-flex items-center space-x-1 text-xs lg:text-sm">
       <li>
         <button
-          type="button" [disabled]="paging?.pageIndex === 1" (click)="goToFirstPage()"
+          type="button"
+          [disabled]="paging?.pageIndex === 1"
+          (click)="goToFirstPage()"
           class="flex justify-center rounded border border-gray-400 px-3 py-1.5 font-semibold text-gray-500 transition disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-300 hover:border-primary hover:bg-primary hover:text-gray-50 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-300 dark:border-night-200 dark:text-night-200 disabled:dark:border-night-400 disabled:dark:text-night-400 dark:hover:border-primary dark:hover:text-night-50 disabled:dark:hover:border-night-400 disabled:dark:hover:text-night-400 lg:px-3.5 lg:py-2">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" [ngClass]="'h-4 w-4 rotate-90 lg:h-5 lg:w-5'">
             <path d="M19 11L12 17L5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -22,7 +24,9 @@
       </li>
       <li>
         <button
-          type="button" [disabled]="!paging?.hasPreviousPage" (click)="goToNextPage()"
+          type="button"
+          [disabled]="!paging?.hasPreviousPage"
+          (click)="goToPreviousPage()"
           class="flex justify-center rounded border border-gray-400 px-3 py-1.5 font-semibold text-gray-500 transition disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-300 hover:border-primary hover:bg-primary hover:text-gray-50 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-300 dark:border-night-200 dark:text-night-200 disabled:dark:border-night-400 disabled:dark:text-night-400 dark:hover:border-primary dark:hover:text-night-50 disabled:dark:hover:border-night-400 disabled:dark:hover:text-night-400 lg:px-3.5 lg:py-2">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" [ngClass]="'h-4 w-4  rotate-90 lg:h-5 lg:w-5'">
             <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -32,7 +36,8 @@
       @for(item of pagesDisplay; track item) {
       <li>
         <button
-          type="button" (click)="setPage(item)"
+          type="button"
+          (click)="setPage(item)"
           class="flex justify-center rounded border border-gray-400 px-3 py-1.5 font-semibold text-gray-500 transition disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-300 hover:border-primary hover:bg-primary hover:text-gray-50 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-300 dark:border-night-200 dark:text-night-200 disabled:dark:border-night-400 disabled:dark:text-night-400 dark:hover:border-primary dark:hover:text-night-50 disabled:dark:hover:border-night-400 disabled:dark:hover:text-night-400 lg:px-3.5 lg:py-2"
           [ngClass]="{
             '!border-primary !bg-primary !text-gray-50 dark:!bg-primary dark:!text-gray-50': item === paging?.pageIndex
@@ -43,7 +48,9 @@
       }
       <li>
         <button
-          type="button" [disabled]="!paging?.hasNextPage" (click)="goToPreviousPage()"
+          type="button"
+          [disabled]="!paging?.hasNextPage"
+          (click)="goToNextPage()"
           class="flex justify-center rounded border border-gray-400 px-3 py-1.5 font-semibold text-gray-500 transition disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-300 hover:border-primary hover:bg-primary hover:text-gray-50 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-300 dark:border-night-200 dark:text-night-200 disabled:dark:border-night-400 disabled:dark:text-night-400 dark:hover:border-primary dark:hover:text-night-50 disabled:dark:hover:border-night-400 disabled:dark:hover:text-night-400 lg:px-3.5 lg:py-2">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" [ngClass]="'h-4 w-4  -rotate-90 lg:h-5 lg:w-5'">
             <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -52,7 +59,9 @@
       </li>
       <li>
         <button
-          type="button" [disabled]="paging?.totalPages === 0 || paging?.pageIndex === paging?.totalPages" (click)="goToLastPage()"
+          type="button"
+          [disabled]="paging?.totalPages === 0 || paging?.pageIndex === paging?.totalPages"
+          (click)="goToLastPage()"
           class="flex justify-center rounded border border-gray-400 px-3 py-1.5 font-semibold text-gray-500 transition disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-300 hover:border-primary hover:bg-primary hover:text-gray-50 disabled:hover:border-gray-300 disabled:hover:bg-transparent disabled:hover:text-gray-300 dark:border-night-200 dark:text-night-200 disabled:dark:border-night-400 disabled:dark:text-night-400 dark:hover:border-primary dark:hover:text-night-50 disabled:dark:hover:border-night-400 disabled:dark:hover:text-night-400 lg:px-3.5 lg:py-2">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" [ngClass]="'h-4 w-4 -rotate-90 lg:h-5 lg:w-5'">
             <path d="M19 11L12 17L5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
