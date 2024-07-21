@@ -57,7 +57,7 @@ export class SidebarComponent implements OnInit {
             isAccessible: true,
             icon: 'assets/icons/project.svg',
             label: 'Projects',
-            route: '/project',
+            route: '/projects',
           },
           {
             isAccessible: true,

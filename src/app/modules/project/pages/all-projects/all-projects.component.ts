@@ -11,7 +11,7 @@ import { ApproveProjectComponent } from '../../components/approve-project.compon
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({ 
   selector: 'app-all-projects',
@@ -31,16 +31,26 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
   projectStatusEnum = ProjectStatusEnum;
   sideViewService = inject(SideViewService);
   sidePanel = inject(SidePanelService);
+  projectService = inject(ProjectService);
+  notify = inject(NotificationService);
+  activatedRoute = inject(ActivatedRoute);
 
   allProjects: ProjectModel[] | null = [];
   approveProjectRef!: SidePanelRef;
   
-  constructor(
-    public projectService: ProjectService,
-    private notify: NotificationService) {
+  constructor() {
     // set up project search
     this.projectService.allProjects.subscribe((projects: ProjectModel[]) => {
       this.allProjects = projects;
+    });
+
+    // check if there is an approve query
+    this.activatedRoute.queryParams.subscribe(async (params) => {
+      console.log(params);
+      if (params['approve']) {
+        const projectId = Number(params['approve']);
+        this.viewProjectDetails(projectId);
+      }
     });
   }
 
