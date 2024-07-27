@@ -79,7 +79,8 @@ export class ErrorService {
             result.message = error?.error?.message ?? error.message;
             this.notify.errorMessage(result.title, result.message);
 
-            return of(result);
+            break;
+            // return of(result);
           }
 
           // possibly network error. Show toast

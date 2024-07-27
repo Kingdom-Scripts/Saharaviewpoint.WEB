@@ -44,51 +44,14 @@
           <input type="file" id="attachmentFile" class="hidden" multiple (change)="uploadAttachments($event)" />
         </div>
 
-        <div class="flex flex-wrap">
+        <div class="flex flex-wrap gap-3">
           <ng-container *ngIf="attachments && attachments.length === 0">
             <p svp-text>No attachments</p>
           </ng-container>
 
-          <div
-            *ngFor="let attachment of attachments"
-            class="group relative mb-2 mr-2 w-full max-w-44 cursor-pointer items-center overflow-hidden rounded-lg bg-white shadow-md">
-            <div class="absolute hidden h-24 w-full bg-gray-200/50 group-hover:block"></div>
-
-            <!-- Delete and Download button --->
-            <div class="absolute right-0 top-0 mr-1 mt-1 hidden space-x-1 text-center text-sm group-hover:flex">
-              <button
-                class="flex items-center rounded-md bg-slate-900 p-2 text-center text-sm font-medium text-white hover:bg-gray-700"
-                (click)="downloadAttachment(attachment.url)">
-                <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-4 w-4'" />
-              </button>
-
-              <button
-                class="flex items-center rounded-md bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-900"
-                (click)="deleteAttachment(attachment.id)">
-                <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-4 w-4'" />
-              </button>
-            </div>
-
-            <!-- Attachment thumbnail -->
-            <img
-              class="mx-auto h-24 rounded-t-lg object-cover"
-              src="{{ assetBaseUrl }}{{ attachment.thumbnailUrl }}"
-              alt="{{ attachment.name }}"
-              loading="lazy" />
-
-            <!-- Attachment metadata -->
-            <div class="bg-gray-100 p-1">
-              <a href="#">
-                <p class="text-sm tracking-tight text-slate-900">{{ trimFileName(attachment.name) }}</p>
-              </a>
-
-              <div class="flex items-center justify-between">
-                <p>
-                  <span class="text-sm text-slate-900">{{ attachment.createdAt | utcToLocalDate }}</span>
-                </p>
-              </div>
-            </div>
-          </div>
+          @for (attachment of attachments; track $index) {
+            <app-task-attachment [taskId]="taskId" [file]="attachment" (requestDelete)="deleteAttachment($event, $index)" />
+          }
         </div>
       </div>
 

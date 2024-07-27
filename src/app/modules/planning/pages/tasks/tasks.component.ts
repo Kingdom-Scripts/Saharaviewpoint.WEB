@@ -99,6 +99,7 @@ export class TasksComponent implements OnDestroy {
   approval!: ProjectTaskApprovalModel | undefined;
 
   constructor() {
+    this.viewTaskDetails(29); // TODO: remove this line
     // set up task search
     this.loadProjects();
 

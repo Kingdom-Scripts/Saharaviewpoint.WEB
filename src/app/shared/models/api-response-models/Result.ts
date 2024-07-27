@@ -13,7 +13,3 @@ export class Result<T> {
   validationErrors?: { [key: string]: string[] };
   paging?: PagingModel;
 }
-
-export class ValidationResult {
-
-}

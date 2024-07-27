@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, map, switchMap } from 'rxjs';
 import {
@@ -14,6 +14,7 @@ import {
   TaskBoardModel,
 } from '@svp-models';
 import { NotificationService } from '@svp-services';
+import { UploadProgressModel } from '../models/api-response-models/upload-progress.model';
 
 @Injectable({
   providedIn: 'root',
@@ -110,52 +111,36 @@ export class TaskService {
     return this.http.get<Result<DocumentModel[]>>(`tasks/${taskId}/attachments`);
   }
 
-  uploadFile(taskId: number, file: File): Observable<number | undefined> {
+  uploadFile(taskId: number, file: File): Observable<UploadProgressModel | Result<DocumentModel>> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file, file.name);
 
-    // const request = new HttpRequest('POST', `tasks/${taskId}/attachments`, formData, {
-    //     reportProgress: true, // Enable progress tracking,
-    //     responseType: 'json', // Ensure response is parsed as JSON
-
-    //   });
-
-    // let count = 1;
     return this.http
       .post(`tasks/${taskId}/attachments`, formData, {
-        reportProgress: true, // Enable progress tracking
-        observe: 'events', // Enable event tracking
-        responseType: 'json', // Ensure response is parsed as JSON
+        reportProgress: true,
+        observe: 'events',
       })
-      .pipe(
-        map((event: HttpEvent<Result<string>>) => {
-          // count++;
-          if (event.type === HttpEventType.UploadProgress) {
-            const percentDone = Math.round((100 * event.loaded) / event.total!);
-            return percentDone;
-          } else if (event.type === HttpEventType.Response) {
-            // Handle response from server
-            return 100; // Upload complete
-          } else {
-            return undefined;
-          }
-        }),
-      );
+      .pipe(map(event => this.getEventMessage(event)));
+  }
 
-    // return this.http.request(request).pipe(
-    //     map(event => {
-    //       count++;
-    //         if (event.type === HttpEventType.UploadProgress) {
-    //             const percentDone = Math.round((100 * event.loaded) / event.total!);
-    //             return percentDone;
-    //         } else if (event.type === HttpEventType.Response) {
-    //             // Handle response from server
-    //             return 100; // Upload complete
-    //         } else {
-    //             return undefined;
-    //         }
-    //     })
-    // );
+  private getEventMessage(event: any): UploadProgressModel | Result<DocumentModel> {
+    switch (event.type) {
+      case HttpEventType.UploadProgress: {
+        const percentDone = Math.round((100 * event.loaded) / event.total);
+        console.log('Returning Progress')
+        return { progress: percentDone };
+      }
+
+      case HttpEventType.Response: {
+        console.log('Returning Body')
+        return event.body as Result<DocumentModel>;
+      }
+
+      default: {
+        console.log('Returning Default')
+        return { progress: 0 };
+      }
+    }
   }
 
   deleteAttachment(taskId: number, documentId: number): Observable<Result<string>> {

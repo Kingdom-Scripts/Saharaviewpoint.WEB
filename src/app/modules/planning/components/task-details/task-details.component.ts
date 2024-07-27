@@ -10,6 +10,7 @@ import { UtcToLocalDatePipe, UtcToTimelinePipe } from '@svp-pipes';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
+import { TaskAttachmentComponent } from '../task-attachment/task-attachment.component';
 
 @Component({
   selector: 'app-task-details',
@@ -27,6 +28,7 @@ import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-re
     SvpUtilityModule,
     SvpFormInputModule,
     SvpTaskStatusCardComponent,
+    TaskAttachmentComponent,
   ],
 })
 export class TaskDetailsComponent implements OnInit {
@@ -49,18 +51,20 @@ export class TaskDetailsComponent implements OnInit {
   errorMessage!: string;
   task!: TaskModel;
 
-  attachments!: DocumentModel[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  attachments!: any[];
+  private deleteQueue: (() => Promise<void>)[] = [];
+  private isProcessingQueue = false;
+
   displayLogs = true;
   logPaging: PagingRequestModel = new PagingRequestModel();
   taskLogs: TaskLogModel[] = [];
 
   taskComments: TaskCommentModel[] = [];
   commentPaging: PagingRequestModel = new PagingRequestModel();
-
   commentMessage = '';
 
   ngOnInit(): void {
-    console.clear();
     this.getTask();
   }
 
@@ -158,23 +162,52 @@ export class TaskDetailsComponent implements OnInit {
     });
   }
 
-  downloadAttachment(attachmentUrl: string): void {
-    window.open(`${this.assetBaseUrl + attachmentUrl}`, '_blank');
+  async deleteAttachment(id: number | undefined, index: number): Promise<void> {
+    // Add the deletion request to the queue
+    this.deleteQueue.push(() => this.processDeleteAttachment(id, index));
+
+    // Process the queue if not already processing
+    if (!this.isProcessingQueue) {
+      this.processQueue();
+    }
   }
 
-  async deleteAttachment(id: number): Promise<void> {
+  private async processQueue(): Promise<void> {
+    this.isProcessingQueue = true;
+
+    while (this.deleteQueue.length > 0) {
+      const deleteRequest = this.deleteQueue.shift();
+      if (deleteRequest) {
+        await deleteRequest();
+      }
+    }
+
+    this.isProcessingQueue = false;
+  }
+
+  private async processDeleteAttachment(id: number | undefined, index: number): Promise<void> {
     // confirm action
     const confirmed = await this.notify.confirmDelete();
     if (!confirmed) return;
+
+    // get the attachment id
+    const attachment = this.attachments[index];
+
+    // just remove if the attachment is not yet uploaded
+    if (!id || id === 0) {
+      this.attachments.splice(index, 1);
+      return;
+    }
 
     this.notify.showLoader();
     this.taskService.deleteAttachment(this.task.id, id).subscribe((res: Result<string>) => {
       this.notify.hideLoader();
       if (res.success) {
-        // remove attachment from the task
-        this.attachments = this.attachments.filter(attachment => attachment.id !== id);
+        this.notify.timedSuccessMessage('Attachment Deleted', `${attachment.name} has been deleted successfully`);
+
+        this.attachments.splice(index, 1);
       } else {
-        this.notify.errorMessage('Unable to remove file', res.message);
+        this.notify.errorMessage(`Unable to delete ${attachment.name}`, res.message);
       }
     });
   }
@@ -182,38 +215,14 @@ export class TaskDetailsComponent implements OnInit {
   uploadAttachments(e: Event): void {
     const target = e.target as HTMLInputElement;
     const files = target.files as File[] | null;
+
     if (files == null) {
       return;
     }
 
-    // loop through the files
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // get file name with extension
-      const fileName = file.name;
-      const fileType = file.type;
+    this.attachments.push(...files);
 
-      const newDocument: DocumentModel = {
-        id: this.attachments.length + 1,
-        name: fileName,
-        type: fileType,
-        url: '',
-        thumbnailUrl: '',
-        createdAt: '',
-      };
-
-      // add the new document to the task attachments
-      this.attachments.push(newDocument);
-
-      this.taskService.uploadFile(this.task.id, file).subscribe((progress: number | undefined) => {
-        console.log('Progress: ', progress);
-      });
-    }
-  }
-
-  trimFileName(fileName: string): string {
-    // get the last substring of the file name as extension
-    const extension = fileName.split('.').pop();
-    return fileName.length > 17 ? `${fileName.slice(0, 20)}...${extension}` : fileName;
+    // Reset the file input value to allow re-selection of the same file
+    target.value = '';
   }
 }
