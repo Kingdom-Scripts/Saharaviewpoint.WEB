@@ -23,7 +23,7 @@
                         "polyfills": ["zone.js"],
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
-                        "assets": ["src/favicon.png", "src/assets"],
+                        "assets": ["src/favicon.png", "src/assets", "src/staticwebapp.config.json"],
                         "styles": ["node_modules/izitoast/dist/css/iziToast.min.css", "src/styles.scss"],
                         "scripts": ["node_modules/topbar/topbar.min.js", "node_modules/izitoast/dist/js/iziToast.min.js"]
                     },
