@@ -15,6 +15,7 @@ import {
 } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { UploadProgressModel } from '../models/api-response-models/upload-progress.model';
+import { VideoUploadTokenModel } from '../models/api-response-models/task/video-upload-token.model';
 
 @Injectable({
   providedIn: 'root',
@@ -141,6 +142,14 @@ export class TaskService {
         return { progress: 0 };
       }
     }
+  }
+
+  getVideoUploadToken(): Observable<Result<VideoUploadTokenModel>> {
+    return this.http.get<Result<VideoUploadTokenModel>>('tasks/attachments/video-upload-token');
+  }
+
+  saveVideoAttachment(taskId: number, param: any): Observable<Result<DocumentModel>> {
+    return this.http.post<Result<DocumentModel>>(`tasks/${taskId}/attachments/video`, param);
   }
 
   deleteAttachment(taskId: number, documentId: number): Observable<Result<string>> {

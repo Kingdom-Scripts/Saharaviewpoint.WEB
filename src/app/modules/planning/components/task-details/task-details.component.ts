@@ -8,7 +8,6 @@ import { NotificationService } from '@svp-services';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { UtcToLocalDatePipe, UtcToTimelinePipe } from '@svp-pipes';
 import { FormBuilder, FormsModule } from '@angular/forms';
-import { environment } from 'src/environments/environment';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 import { TaskAttachmentComponent } from '../task-attachment/task-attachment.component';
 
@@ -39,8 +38,6 @@ export class TaskDetailsComponent implements OnInit {
   notify = inject(NotificationService);
   fb = inject(FormBuilder);
   sidePanelRef = inject(SidePanelRef);
-
-  assetBaseUrl = environment.assetBaseUrl;
 
   taskTypeEnum = TaskTypeEnum;
   taskStatusEnum = TaskStatusEnum;

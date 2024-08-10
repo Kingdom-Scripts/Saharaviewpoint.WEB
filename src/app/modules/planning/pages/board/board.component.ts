@@ -8,7 +8,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ProjectService, TaskService } from '@svp-api-services';
 import { SessionStorageUtility } from '@svp-utilities';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@svp-services';
 import { Observable, Subject, catchError, concat, distinctUntilChanged, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { UtcToLocalDatePipe } from '@svp-pipes';
@@ -50,6 +50,7 @@ export class BoardComponent {
   modalService = inject(ModalService);
   projectService = inject(ProjectService);
   router = inject(Router);
+  activatedRouter = inject(ActivatedRoute);
 
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
@@ -69,14 +70,34 @@ export class BoardComponent {
   constructor() {
     this.loadProjects();
 
-    // get the globalProjectId from session storage
-    const project = this.sessionStorage.getProject();
-    if (project) {
+    this.activatedRouter.queryParams.subscribe(params => {
+      // check if a specific project was requested
+      const id = params['projectId'];
+      if (id) {
+        this.projectService.getProject(id).subscribe((res: Result<ProjectModel>) => {
+          if (res.success) {
+            this.selectedProject = res.content ?? ({} as ProjectModel);
+            this.projects$ = of([this.selectedProject]);
+            this.selectedProjectId = this.selectedProject.id;
+            this.loadTasks();
+          } else {
+            this.notify.timedErrorMessage('Project Not Found', res.message);
+
+            // navigate back
+            this.router.navigate(['../'], { relativeTo: this.activatedRouter });
+          }
+        });
+      } else {
+        // get the globalProjectId from session storage
+        const project = this.sessionStorage.getProject();
+        if (project) {
           this.selectedProject = project;
-          this.selectedProjectId = project.id;
-      this.projects$ = of([project]);
-      this.loadTasks();
-    }
+          this.selectedProjectId = this.selectedProject.id;
+          this.projects$ = of([project]);
+          this.loadTasks();
+        }
+      }
+    });
   }
 
   loadTasks() {
@@ -89,8 +110,8 @@ export class BoardComponent {
         this.inProgressTasks = this.allTasks.filter(task => task.status === TaskStatusEnum.IN_PROGRESS);
         this.completedTasks = this.allTasks.filter(task => task.status === TaskStatusEnum.COMPLETED);
 
-          // load task approval
-          this.loadTaskApproval();
+        // load task approval
+        this.loadTaskApproval();
       } else {
         this.notify.timedErrorMessage(res.title, res.message);
       }

@@ -99,7 +99,7 @@ export class TasksComponent implements OnDestroy {
   approval!: ProjectTaskApprovalModel | undefined;
 
   constructor() {
-    this.viewTaskDetails(29); // TODO: remove this line
+    // this.viewTaskDetails(29); // TODO: remove this line
     // set up task search
     this.loadProjects();
 
@@ -110,6 +110,7 @@ export class TasksComponent implements OnDestroy {
     this.activatedRouter.queryParams.subscribe(params => {
       // check if a specific project was requested
       const id = params['projectId'];
+      const taskId = params['taskId'];
       if (id) {
         this.projectService.getProject(id).subscribe((res: Result<ProjectModel>) => {
           if (res.success) {
@@ -117,6 +118,9 @@ export class TasksComponent implements OnDestroy {
             this.projects$ = of([this.selectedProject]);
             this.selectedProjectId = this.selectedProject.id;
             this.loadTasks();
+
+            if (taskId)
+              this.viewTaskDetails(taskId);
           } else {
             this.notify.timedErrorMessage('Project Not Found', res.message);
 

@@ -1,7 +1,7 @@
 <div class="relative h-full w-full bg-gray-100 dark:bg-night-700">
   <div class="bg-gray-100 dark:bg-night-700">
     @if (loadError === false) {
-    <div class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
+    <div class="sticky top-0 z-[99999] flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
       <div class="flex items-center gap-5">
         <h6>{{ task.summary }}</h6>
         <svp-task-status-card [status]="task.status" />
@@ -50,7 +50,7 @@
           </ng-container>
 
           @for (attachment of attachments; track $index) {
-            <app-task-attachment [taskId]="taskId" [file]="attachment" (requestDelete)="deleteAttachment($event, $index)" />
+          <app-task-attachment [taskId]="taskId" [file]="attachment" (requestDelete)="deleteAttachment($event, $index)" />
           }
         </div>
       </div>

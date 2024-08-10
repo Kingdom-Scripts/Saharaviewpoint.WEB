@@ -21,7 +21,6 @@ export const AuthGuard: CanActivateFn = (
     
     let userIsInRole = true;
     if(roles != null && roles != undefined) {
-      console.log('Auth Guard: ', roles, authService.userIsInRole(roles));
       userIsInRole = authService.userIsInRole(roles);
     }
     

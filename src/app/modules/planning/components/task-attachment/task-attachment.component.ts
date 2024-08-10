@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { VideoUploader } from '@api.video/video-uploader';
 import { TaskService } from '@svp-api-services';
 import { DocumentModel, Result } from '@svp-models';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { NotificationService } from '@svp-services';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { VideoUploadTokenModel } from 'src/app/shared/models/api-response-models/task/video-upload-token.model';
 import { UploadProgressModel } from 'src/app/shared/models/api-response-models/upload-progress.model';
 import { environment } from 'src/environments/environment';
 
@@ -22,27 +24,39 @@ export class TaskAttachmentComponent implements OnInit {
   some attachments may not have an ID yet
   So it is difficult to remove them from the parent component.
   */
-  @Output() requestDelete = new EventEmitter<number | undefined>();
+  @Output() requestDelete = new EventEmitter<number | undefined>(); 
 
   taskService = inject(TaskService);
   notify = inject(NotificationService);
 
-  assetBaseUrl = environment.assetBaseUrl;
   document: DocumentModel = new DocumentModel();
   uploadProgress = 0;
   uploadStatus: 'uploading' | 'uploaded' | 'failed' = 'uploaded';
-  // uploadFailed = false;
+  videoEncoding = false;
+  showVideoPlayer = false;
+  videoPlayingUrl: string | undefined = undefined;
 
   ngOnInit(): void {
     if (this.file instanceof File) {
       this.startFileUpload();
     } else {
       this.document = this.file;
-      this.document.thumbnailUrl = this.assetBaseUrl + this.document.thumbnailUrl;
+      this.playVideo(); // TODO: remove this line
     }
   }
 
   startFileUpload(): void {
+    const fileType = this.file.type;
+
+    // if file is a video
+    if (fileType?.startsWith('video/')) {
+      this.uploadAsVideo();
+    } else {
+      this.uploadAsOtherTypes();
+    }
+  }
+
+  uploadAsOtherTypes(): void {
     this.document.name = this.file.name;
     this.document.type = this.file.type;
     this.constructThumbnailFromFile();
@@ -57,14 +71,8 @@ export class TaskAttachmentComponent implements OnInit {
           this.uploadProgress = progress < 0 ? 4 : progress;
         } else {
           const data = (res as Result<DocumentModel>).content;
-          this.document.id = data?.id;
-          this.document.name = data?.name ?? this.document.name;
-          this.document.url = data?.url;
-          this.document.thumbnailUrl = this.assetBaseUrl + data?.thumbnailUrl;
-          this.document.createdAt = data?.createdAt;
-          this.uploadStatus = 'uploaded';
 
-          this.file = this.document;
+          this.setNewDocumentData(data as DocumentModel);
         }
       },
       error: (error: Result<null>) => {
@@ -74,8 +82,93 @@ export class TaskAttachmentComponent implements OnInit {
     });
   }
 
+  uploadAsVideo(): void {
+    this.document.name = this.file.name;
+    this.document.type = this.file.type;
+    this.constructThumbnailFromFile();
+
+    this.uploadStatus = 'uploading';
+    this.taskService.getVideoUploadToken().subscribe({
+      next: (res: Result<VideoUploadTokenModel>) => {
+        console.log('Got token', res.content?.token);
+        if (!res.success) {
+          this.uploadStatus = 'failed';
+          this.notify.errorMessage('Error', res.message);
+          return;
+        }
+
+        // create a video uploader instance
+        const videoUploader = new VideoUploader({
+          file: this.file as File,
+          uploadToken: res.content?.token ?? '',
+          chunkSize: 1024 * 1024 * 5, // 5MB
+          retries: 10,
+          apiHost: environment.apiVideoUrl,
+        });
+
+        // update progress
+        videoUploader.onProgress(event => {
+          const progress = Math.floor((event.uploadedBytes / event.totalBytes) * 100) - 6;
+          this.uploadProgress = progress < 0 ? 0 : progress;
+        });
+
+        // save video data to the server
+        videoUploader.onPlayable(video => {
+          this.taskService.saveVideoAttachment(this.taskId, video).subscribe({
+            next: (res: Result<DocumentModel>) => {
+              if (res.success) {
+                this.setNewDocumentData(res.content as DocumentModel);
+              } else {
+                this.uploadStatus = 'failed';
+                this.notify.errorMessage('Error', res.message);
+              }
+            },
+            error: (error: Result<null>) => {
+              this.uploadStatus = 'failed';
+              console.error(error);
+            },
+          });
+        });
+
+        // save video data
+        videoUploader.upload().then(() => {
+          this.videoEncoding = true;
+        });
+      },
+      error: (error: Result<null>) => {
+        this.uploadStatus = 'failed';
+        console.error(error);
+      },
+    });
+  }
+
+  setNewDocumentData(data: DocumentModel): void {
+    this.document.id = data?.id;
+    this.document.name = data?.name ?? this.document.name;
+    this.document.url = data?.url;
+    this.document.thumbnailUrl = data?.thumbnailUrl;
+    this.document.createdAt = data?.createdAt;
+    this.uploadStatus = 'uploaded';
+
+    this.file = this.document;
+  }
+
   downloadAttachment(): void {
-    window.open(`${this.assetBaseUrl + this.document.url}`, '_blank');
+    window.open(this.document.url, '_blank');
+  }
+
+  playVideo(): void {
+    console.log('Playing video');
+
+    if (this.document.type !== 'Video') return;
+
+    this.showVideoPlayer = true;
+    this.videoPlayingUrl = this.document.url;
+  }
+
+  closeVideoPlayer(): void {
+    this.showVideoPlayer = false;
+    this.videoPlayingUrl = undefined;
   }
 
   get trimmedFileName(): string {
@@ -97,6 +190,9 @@ export class TaskAttachmentComponent implements OnInit {
     } else {
       // Load default thumbnail based on file type
       switch (fileType) {
+        case 'video/mp4':
+          this.document.thumbnailUrl = 'assets/images/thumbnails/video.png';
+          break;
         case 'application/pdf':
           this.document.thumbnailUrl = 'assets/images/thumbnails/pdf.png';
           break;
@@ -104,8 +200,6 @@ export class TaskAttachmentComponent implements OnInit {
         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
           this.document.thumbnailUrl = 'assets/images/thumbnails/doc.png';
           break;
-
-        // excel or csv
         case 'application/vnd.ms-excel':
         case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         case 'text/csv':

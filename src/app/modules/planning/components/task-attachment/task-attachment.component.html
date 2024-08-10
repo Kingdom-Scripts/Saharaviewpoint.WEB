@@ -1,25 +1,36 @@
 <div class="group relative flex h-44 w-44 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg bg-white shadow-md">
-  <div class="absolute hidden h-full w-full bg-gray-200/50 group-hover:block" *ngIf="uploadStatus !== 'uploading'"></div>
+  <div class="absolute hidden h-full w-full bg-gray-200/50 group-hover:block" *ngIf="uploadStatus !== 'uploading'" (click)="playVideo()"></div>
 
   <!-- Progress bar -->
-  <div class="absolute flex h-full w-full bg-gray-200/30 items-end animate-pulse" *ngIf="uploadStatus === 'uploading'">
+  <div class="absolute flex h-full w-full animate-pulse items-end bg-gray-200/30" *ngIf="uploadStatus === 'uploading'">
     <div class="h-1 bg-blue-600" [style.width.%]="uploadProgress"></div>
   </div>
 
   <!-- Delete and Download button --->
   <div *ngIf="uploadStatus !== 'uploading'" class="absolute right-0 top-0 mr-1 mt-1 hidden space-x-1 text-center text-sm group-hover:flex">
-    <button class="flex items-center rounded-md bg-slate-900 p-2 text-center text-sm font-medium text-white hover:bg-gray-700" (click)="downloadAttachment()" *ngIf="uploadStatus === 'uploaded'">
+    <button
+      class="flex items-center rounded-md bg-slate-900 p-2 text-center text-sm font-medium text-white hover:bg-gray-700"
+      (click)="downloadAttachment()"
+      *ngIf="uploadStatus === 'uploaded'">
       <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-4 w-4'" />
     </button>
 
-    <button class="flex items-center rounded-md bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-900" (click)="requestDelete.emit(document.id)">
+    <button
+      class="flex items-center rounded-md bg-red-700 p-2 text-center text-sm font-medium text-white hover:bg-red-900"
+      (click)="requestDelete.emit(document.id)">
       <svg-icon src="assets/icons/trash.svg" [svgClass]="'h-4 w-4'" />
     </button>
   </div>
 
+  <!-- Play Button -->
+  <svg-icon
+    src="assets/icons/play-circle.svg"
+    [svgClass]="'absolute h-12 w-12 m-auto bottom-[50%] right-[38%] text-slate-900'"
+    *ngIf="document.type === 'Video'"
+    (click)="playVideo()" />
+
   <!-- Attachment thumbnail -->
-  <!-- set div's background as the thumbnail -->
-  <div id="thumbnail" class="h-[120px] w-full bg-cover bg-center bg-no-repeat" [style.background-image]="'url(' + document.thumbnailUrl + ')'"></div>
+  <div id="thumbnail" class="h-[130px] w-full bg-cover bg-center bg-no-repeat" [style.background-image]="'url(' + document.thumbnailUrl + ')'"></div>
 
   <div class="flex-grow"></div>
 
@@ -28,15 +39,38 @@
     <p class="text-sm tracking-tight text-slate-900">{{ trimmedFileName }}</p>
 
     <p class="text-sm text-slate-900" *ngIf="uploadStatus === 'uploaded'">
-      {{ document.createdAt !== undefined ? (document.createdAt | utcToLocalDate) : '' }}
+      {{ document.createdAt !== undefined ? (document.createdAt | utcToLocalDate : 'withTime') : '' }}
     </p>
 
     <p class="text-sm italic text-slate-900" *ngIf="uploadStatus === 'uploading'">
-      Uploading...
+      @if(videoEncoding) {
+      <span> Encoding Video... </span>
+      } @else {
+      <span> Uploading... </span>
+      }
     </p>
 
-    <p class="text-sm text-red-700" *ngIf="uploadStatus === 'failed'">
-      Upload Failed!
-    </p>
+    <p class="text-sm text-red-700" *ngIf="uploadStatus === 'failed'">Upload Failed!</p>
+  </div>
+</div>
+
+<!-- Video Player Modal -->
+<div
+  class="fixed inset-0 z-50 items-center justify-center overflow-hidden"
+  [ngClass]="{
+    hidden: !showVideoPlayer,
+    flex: showVideoPlayer
+  }">
+  <div class="absolute h-full w-full" (click)="closeVideoPlayer()"></div>
+
+  <div
+    class="mx-4 max-h-[90%] transform overflow-hidden overflow-y-auto rounded-lg text-left shadow shadow-primary-400 transition-all sm:w-full sm:max-w-2xl">
+    <div class="flex w-full justify-between bg-gray-100 p-3 px-4 dark:bg-night-700">
+      <p class="text-lg font-semibold text-slate-900">{{ document.name }}</p>
+      <button class="text-lg text-slate-900 hover:text-danger" (click)="closeVideoPlayer()">
+        <svg-icon src="assets/icons/x.svg" [svgClass]="'h-6 w-6'" />
+      </button>
+    </div>
+    <video controls class="w-full" [src]="videoPlayingUrl" *ngIf="videoPlayingUrl"></video>
   </div>
 </div>

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
-import { Component, ComponentFactoryResolver, EventEmitter, Injectable, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, EventEmitter, inject, Injectable, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ThemeService } from '@svp-services';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -28,6 +29,8 @@ export class ModalComponent {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
   @ViewChild('backdrop', { read: ViewContainerRef, static: true }) backdrop!: ViewContainerRef;
 
+  themeService = inject(ThemeService);
+  
   constructor(private cfr: ComponentFactoryResolver) {}
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
