@@ -21,7 +21,18 @@ import { ProjectTaskApprovalModel } from 'src/app/shared/models/api-response-mod
   selector: 'svp-project-task-approval',
   standalone: true,
   templateUrl: 'project-task-approval.html',
-  imports: [AngularSvgIconModule, FormsModule, CommonModule, PaginationComponent, UtcToLocalDatePipe, NxDropdownModule, RouterLink, ReactiveFormsModule, SvpValidationErrorsComponent, MaxInputLengthComponent],
+  imports: [
+    AngularSvgIconModule,
+    FormsModule,
+    CommonModule,
+    PaginationComponent,
+    UtcToLocalDatePipe,
+    NxDropdownModule,
+    RouterLink,
+    ReactiveFormsModule,
+    SvpValidationErrorsComponent,
+    MaxInputLengthComponent,
+  ],
 })
 export class ProjectTaskApprovalComponent implements OnInit, OnDestroy {
   approvalService = inject(ApprovalService);
@@ -45,7 +56,7 @@ export class ProjectTaskApprovalComponent implements OnInit, OnDestroy {
 
   selectedApproval: ProjectTaskApprovalModel | null = null;
   remarkModalVisible = false;
-  taskApprovalForm:FormGroup = this.fb.group({
+  taskApprovalForm: FormGroup = this.fb.group({
     status: [false],
     remark: [''],
   });
@@ -136,7 +147,7 @@ export class ProjectTaskApprovalComponent implements OnInit, OnDestroy {
 
   approveProjectTask(item: ProjectTaskApprovalModel): void {
     this.taskApprovalForm.patchValue({ status: true, remark: '' });
-    
+
     this.saveApproval(item);
   }
 
@@ -162,7 +173,7 @@ export class ProjectTaskApprovalComponent implements OnInit, OnDestroy {
 
   saveApproval(item: ProjectTaskApprovalModel): void {
     const param = this.taskApprovalForm.value;
-    
+
     this.notify.showLoader();
     this.approvalService.approveProjectTask(item.projectId, item.id, param).subscribe((res: Result<ProjectTaskApprovalModel>) => {
       this.notify.hideLoader();

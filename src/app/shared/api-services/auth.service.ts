@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthDataModel, AuthRoleData, LoginModel, Result } from '@svp-models';
@@ -11,15 +11,27 @@ import { NotificationService, StorageService } from '@svp-services';
 })
 export class AuthService {
   private authState = new BehaviorSubject(false);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private storageService = inject(StorageService);
+  private notify = inject(NotificationService);
 
-  constructor(private http: HttpClient, private router: Router, private storageService: StorageService, private notify: NotificationService) {
+  constructor() {
     this.checkUserData();
   }
 
+  /**
+   * The `getUser` function returns the user data retrieved from the storage service.
+   * @returns The `getUser()` function is being called to return the user object stored in the
+   * `storageService`.
+   */
   getUser() {
     return this.storageService.getUser();
   }
 
+  /**
+   * The function `checkUserData` updates the authentication state based on the presence of user data.
+   */
   checkUserData() {
     const user = this.getUser();
     if (user === undefined || user === null) {
@@ -29,6 +41,10 @@ export class AuthService {
     }
   }
 
+  /**
+   * The `IsAuthenticated` function returns the value of the `authState` property.
+   * @returns The IsAuthenticated() function is returning the value of this.authState.
+   */
   IsAuthenticated() {
     return this.authState.value;
   }
@@ -37,6 +53,13 @@ export class AuthService {
     return this.authState.asObservable();
   }
 
+  /**
+   * The `logUserOut` function logs the user out by masking them as logged out, navigating to the
+   * sign-in page, and displaying loader and error messages as needed.
+   * @returns The `logUserOut` function returns nothing explicitly. It performs a series of actions
+   * such as checking the user status, showing loaders, logging out the user, and navigating to the
+   * sign-in page based on certain conditions.
+   */
   async logUserOut() {
     const user = this.getUser();
     if (user === undefined || user === null) {
@@ -56,16 +79,34 @@ export class AuthService {
     });
   }
 
+  /**
+   * The function `maskUserAsAuthenticated` sets the user as authenticated by storing authentication
+   * data in storage and updating the authentication state.
+   * @param {AuthDataModel} authData - The `authData` parameter is of type `AuthDataModel`, which
+   * contains information such as the user's authentication token, user data, and refresh token.
+   * This data is used to authenticate the user and store relevant information for future sessions.
+   * @param {boolean} rememberMe - The `rememberMe` parameter is a boolean value that indicates whether
+   * the user wants to stay logged in even after closing the browser or app. If `rememberMe` is set to
+   * `true`, the authentication tokens will be stored securely for future use, allowing the user to
+   * remain logged in for an extended
+   */
   maskUserAsAuthenticated(authData: AuthDataModel, rememberMe: boolean) {
+    // Clear any existing authentication data
     this.maskUserAsLoggedOut();
 
+    // Store the new authentication data
     this.storageService.storeToken(authData.token, rememberMe);
     this.storageService.storeUser(authData.user, rememberMe);
     this.storageService.storeRefreshToken(authData.refreshToken, rememberMe);
 
+    // Update the authentication state
     this.authState.next(true);
   }
 
+  /**
+   * The function `maskUserAsLoggedOut` clears authentication and user data and updates the
+   * authentication state to false.
+   */
   maskUserAsLoggedOut() {
     this.storageService.clearAuthData();
     this.storageService.clearUserData();
@@ -73,6 +114,18 @@ export class AuthService {
     this.authState.next(false);
   }
 
+  /**
+   * The function `userIsInRole` checks if any of the roles in the provided array is present in the
+   * user's roles retrieved from storage.
+   * @param {string[]} roles - The `roles` parameter in the `userIsInRole` function is an array of
+   * strings that represents the roles that you want to check if the user has. The function retrieves
+   * the user's roles from the `storageService` and then checks if any of the roles in the provided
+   * `roles`
+   * @returns The `userIsInRole` function is returning a boolean value. It checks if any of the roles
+   * in the provided `roles` array is present in the `userRoles` object obtained from
+   * `storageService.getUserRoles()`. If at least one of the roles is found in the `userRoles` object,
+   * it returns `true`, otherwise it returns `false`.
+   */
   userIsInRole(roles: string[]): boolean {
     const userRoles = this.storageService.getUserRoles() as AuthRoleData;
 
@@ -80,6 +133,12 @@ export class AuthService {
     return roles.some(role => userRoles[role]);
   }
 
+  /**
+   * The function `calculatePasswordStrength` calculates the strength of a password based on a set of
+   * @param password  The password to be checked for strength based on a set of criteria
+   * @returns The strength of the password as a number between 0 and 100.
+   * A higher number indicates a stronger password.
+   */
   calculatePasswordStrength(password: string): number {
     let passwordStrength = 0;
 

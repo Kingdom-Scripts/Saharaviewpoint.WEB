@@ -3,7 +3,8 @@ import { DateTime, Interval } from 'luxon';
 
 @Pipe({
   name: 'utcToTimeline',
-  standalone: true
+  standalone: true,
+  pure: false,
 })
 export class UtcToTimelinePipe implements PipeTransform {
   transform(utcDateString: string | Date): string {
@@ -16,19 +17,18 @@ export class UtcToTimelinePipe implements PipeTransform {
       // Parse UTC date string into local date using Luxon
       localDate = DateTime.fromISO(utcDateString, { zone: 'utc' }).toLocal();
     }
-    
+
     // Convert to timeline
     const now = DateTime.now();
-    const diff = Interval.fromDateTimes(localDate, now)
-      .toDuration(['days', 'hours', 'minutes', 'seconds']);
+    const diff = Interval.fromDateTimes(localDate, now).toDuration(['days', 'hours', 'minutes', 'seconds']);
 
     const seconds = Math.floor(diff.as('seconds'));
     const minutes = Math.floor(diff.as('minutes'));
     const hours = Math.floor(diff.as('hours'));
     const days = Math.floor(diff.as('days'));
 
-    if (seconds < 60) return 'Just now';
-    if (minutes == 1) return 'A minute ago';
+    if (seconds < 60) return 'just now';
+    if (minutes == 1) return 'a minute ago';
     if (minutes > 1 && hours == 0) return `${minutes} minutes ago`;
     if (hours == 1) return 'An hour ago';
     if (hours > 1 && days == 0) return `${hours} hours ago`;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { VideoUploader } from '@api.video/video-uploader';
 import { TaskService } from '@svp-api-services';
 import { DocumentModel, Result } from '@svp-models';
@@ -9,6 +9,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { VideoUploadTokenModel } from 'src/app/shared/models/api-response-models/task/video-upload-token.model';
 import { UploadProgressModel } from 'src/app/shared/models/api-response-models/upload-progress.model';
 import { environment } from 'src/environments/environment';
+import { FileToUploadModel, TaskDetailService } from '../../services/task-detail.service';
 
 @Component({
   selector: 'app-task-attachment',
@@ -16,37 +17,32 @@ import { environment } from 'src/environments/environment';
   standalone: true,
   imports: [AngularSvgIconModule, UtcToLocalDatePipe, CommonModule],
 })
-export class TaskAttachmentComponent implements OnInit {
+export class TaskAttachmentComponent implements OnInit, OnDestroy {
   @Input({ required: true }) taskId: number = 0;
-  @Input() file!: File | DocumentModel;
-  /*
-  Allow parent component to delete the attachment because 
-  some attachments may not have an ID yet
-  So it is difficult to remove them from the parent component.
-  */
-  @Output() requestDelete = new EventEmitter<number | undefined>(); 
+  @Input() inputFile!: FileToUploadModel | DocumentModel;
 
   taskService = inject(TaskService);
   notify = inject(NotificationService);
+  detailService = inject(TaskDetailService);
 
   document: DocumentModel = new DocumentModel();
   uploadProgress = 0;
   uploadStatus: 'uploading' | 'uploaded' | 'failed' = 'uploaded';
+  videoUploader!: VideoUploader | undefined;
   videoEncoding = false;
   showVideoPlayer = false;
   videoPlayingUrl: string | undefined = undefined;
 
   ngOnInit(): void {
-    if (this.file instanceof File) {
+    if (this.inputFile instanceof File) {
       this.startFileUpload();
     } else {
-      this.document = this.file;
-      this.playVideo(); // TODO: remove this line
+      this.document = this.inputFile;
     }
   }
 
   startFileUpload(): void {
-    const fileType = this.file.type;
+    const fileType = this.inputFile.type;
 
     // if file is a video
     if (fileType?.startsWith('video/')) {
@@ -57,12 +53,12 @@ export class TaskAttachmentComponent implements OnInit {
   }
 
   uploadAsOtherTypes(): void {
-    this.document.name = this.file.name;
-    this.document.type = this.file.type;
+    this.document.name = this.inputFile.name;
+    this.document.type = this.inputFile.type;
     this.constructThumbnailFromFile();
 
     this.uploadStatus = 'uploading';
-    this.taskService.uploadFile(this.taskId, this.file as File).subscribe({
+    this.taskService.uploadFile(this.taskId, this.inputFile as File).subscribe({
       next: (res: UploadProgressModel | Result<DocumentModel>) => {
         // check if res is an instance of UploadProgressModel
         if ((res as UploadProgressModel).progress !== undefined) {
@@ -83,14 +79,12 @@ export class TaskAttachmentComponent implements OnInit {
   }
 
   uploadAsVideo(): void {
-    this.document.name = this.file.name;
-    this.document.type = this.file.type;
+    this.document.name = this.inputFile.name;
     this.constructThumbnailFromFile();
 
     this.uploadStatus = 'uploading';
     this.taskService.getVideoUploadToken().subscribe({
       next: (res: Result<VideoUploadTokenModel>) => {
-        console.log('Got token', res.content?.token);
         if (!res.success) {
           this.uploadStatus = 'failed';
           this.notify.errorMessage('Error', res.message);
@@ -98,8 +92,8 @@ export class TaskAttachmentComponent implements OnInit {
         }
 
         // create a video uploader instance
-        const videoUploader = new VideoUploader({
-          file: this.file as File,
+        this.videoUploader = new VideoUploader({
+          file: this.inputFile as File,
           uploadToken: res.content?.token ?? '',
           chunkSize: 1024 * 1024 * 5, // 5MB
           retries: 10,
@@ -107,13 +101,13 @@ export class TaskAttachmentComponent implements OnInit {
         });
 
         // update progress
-        videoUploader.onProgress(event => {
+        this.videoUploader.onProgress(event => {
           const progress = Math.floor((event.uploadedBytes / event.totalBytes) * 100) - 6;
           this.uploadProgress = progress < 0 ? 0 : progress;
         });
 
         // save video data to the server
-        videoUploader.onPlayable(video => {
+        this.videoUploader.onPlayable(video => {
           this.taskService.saveVideoAttachment(this.taskId, video).subscribe({
             next: (res: Result<DocumentModel>) => {
               if (res.success) {
@@ -131,7 +125,7 @@ export class TaskAttachmentComponent implements OnInit {
         });
 
         // save video data
-        videoUploader.upload().then(() => {
+        this.videoUploader.upload().then(() => {
           this.videoEncoding = true;
         });
       },
@@ -142,15 +136,29 @@ export class TaskAttachmentComponent implements OnInit {
     });
   }
 
-  setNewDocumentData(data: DocumentModel): void {
-    this.document.id = data?.id;
-    this.document.name = data?.name ?? this.document.name;
-    this.document.url = data?.url;
-    this.document.thumbnailUrl = data?.thumbnailUrl;
-    this.document.createdAt = data?.createdAt;
-    this.uploadStatus = 'uploaded';
+  cancelVideoUpload(): void {
+    if (this.videoUploader) {
+      this.videoUploader.cancel();
+      this.videoUploader = undefined;
+    }
 
-    this.file = this.document;
+    this.detailService.deleteAttachment(this.inputFile, true);
+  }
+
+  setNewDocumentData(data: DocumentModel): void {
+    const doc: DocumentModel = {
+      id: data.id,
+      name: data.name,
+      type: data.type,
+      url: data.url,
+      thumbnailUrl: data.thumbnailUrl,
+      createdAt: data.createdAt,
+      localUid: this.inputFile.localUid,
+    };
+
+    this.uploadStatus = 'uploaded';
+    this.detailService.updateAttachmentReference(doc);
+    this.inputFile = this.document = doc;
   }
 
   downloadAttachment(): void {
@@ -158,8 +166,6 @@ export class TaskAttachmentComponent implements OnInit {
   }
 
   playVideo(): void {
-    console.log('Playing video');
-
     if (this.document.type !== 'Video') return;
 
     this.showVideoPlayer = true;
@@ -179,14 +185,14 @@ export class TaskAttachmentComponent implements OnInit {
   }
 
   constructThumbnailFromFile() {
-    const fileType = this.file.type;
+    const fileType = this.inputFile.type;
 
     if (fileType?.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = event => {
         this.document.thumbnailUrl = event.target?.result as string;
       };
-      reader.readAsDataURL(this.file as File);
+      reader.readAsDataURL(this.inputFile as File);
     } else {
       // Load default thumbnail based on file type
       switch (fileType) {
@@ -209,6 +215,13 @@ export class TaskAttachmentComponent implements OnInit {
           this.document.thumbnailUrl = 'assets/images/thumbnails/default.png';
           break;
       }
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.videoUploader) {
+      this.videoUploader.cancel();
+      this.videoUploader = undefined;
     }
   }
 }

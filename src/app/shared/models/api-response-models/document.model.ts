@@ -5,4 +5,5 @@ export class DocumentModel {
   url?: string;
   thumbnailUrl?: string;
   createdAt?: string;
+  localUid?: string;
 }

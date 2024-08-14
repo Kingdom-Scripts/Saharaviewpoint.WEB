@@ -49,11 +49,11 @@
                             ],
                             "outputHashing": "all"
                         },
-                        "local": {
+                        "development": {
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.local.ts"
+                                    "with": "src/environments/environment.dev.ts"
                                 }
                             ],
                             "optimization": false,
@@ -81,7 +81,7 @@
                             ],
                             "outputHashing": "all"
                         },
-                        "development": {
+                        "integrated": {
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -97,7 +97,7 @@
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.dev.ts"
+                                    "with": "src/environments/environment.integrated.ts"
                                 }
                             ],
                             "outputHashing": "all"
@@ -111,17 +111,17 @@
                         "production": {
                             "buildTarget": "Saharaviewpoint.WEB:build:production"
                         },
-                        "local": {
-                            "buildTarget": "Saharaviewpoint.WEB:build:local"
+                        "development": {
+                            "buildTarget": "Saharaviewpoint.WEB:build:development"
                         },
                         "staging": {
                             "buildTarget": "Saharaviewpoint.WEB:build:staging"
                         },
-                        "development": {
-                            "buildTarget": "Saharaviewpoint.WEB:build:development"
+                        "integrated": {
+                            "buildTarget": "Saharaviewpoint.WEB:build:integrated"
                         }
                     },
-                    "defaultConfiguration": "local"
+                    "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",

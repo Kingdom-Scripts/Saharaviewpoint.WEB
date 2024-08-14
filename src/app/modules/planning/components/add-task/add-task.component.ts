@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, booleanAttribute, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProjectService, TaskService } from '@svp-api-services';
@@ -27,6 +27,9 @@ import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-re
   ],
 })
 export class AddTaskComponent implements OnInit {
+  @Input({ transform: booleanAttribute }) makeProjectReadonly = false;
+  @Output() addedTask = new EventEmitter<TaskModel>();
+
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
   projectService = inject(ProjectService);
@@ -34,8 +37,6 @@ export class AddTaskComponent implements OnInit {
   fb = inject(FormBuilder);
   taskTypeEnum = TaskTypeEnum;
   sidePanelRef = inject(SidePanelRef);
-
-  @Output() addedTask = new EventEmitter<TaskModel>();
 
   today = new Date();
   globalProjectId!: number | null;

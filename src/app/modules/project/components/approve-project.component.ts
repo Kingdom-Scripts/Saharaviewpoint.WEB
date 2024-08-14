@@ -21,6 +21,8 @@ import { FormsModule } from '@angular/forms';
 import { UtcToLocalDatePipe } from '@svp-pipes';
 import { ProjectManagerSearchModel } from 'src/app/shared/models/api-input-models/project-managers/project-manager-search.model';
 import { ProjectLogModel } from 'src/app/shared/models/api-response-models/project/project-log.model';
+import { TaskAttachmentComponent } from '../../planning/components/task-attachment/task-attachment.component';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 
 @Component({
   selector: 'svp-approve-project',
@@ -36,13 +38,13 @@ import { ProjectLogModel } from 'src/app/shared/models/api-response-models/proje
     NgSelectModule,
     FormsModule,
     UtcToLocalDatePipe,
+    TaskAttachmentComponent,
   ],
 })
 export class ApproveProjectComponent implements OnInit {
   @Input() id!: number;
 
-  close!: () => void;
-
+  sidePanelRef = inject(SidePanelRef);
   projectService = inject(ProjectService);
   projectManagerService = inject(ProjectManagerService);
   taskService = inject(TaskService);
@@ -60,8 +62,6 @@ export class ApproveProjectComponent implements OnInit {
   projectManagersLoading = false;
   projectManagerInput$ = new Subject<string>();
   projectManagers$: Observable<ProjectManagerModel[]> = new Observable<ProjectManagerModel[]>();
-
-  //
 
   ngOnInit(): void {
     this.getProject();
@@ -184,10 +184,14 @@ export class ApproveProjectComponent implements OnInit {
       this.notify.hideLoader();
       if (res.success) {
         this.notify.timedSuccessMessage('Project Approved', 'Project has been approved and assigned to the selected project manager');
-        this.close();
+        this.sidePanelRef.close();
       } else {
         this.notify.timedErrorMessage('Failed to approve project', res.message);
       }
     });
+  }
+
+  downloadAttachment(): void {
+    window.open(this.project.design?.url, '_blank');
   }
 }

@@ -3,13 +3,14 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TaskService } from '@svp-api-services';
 import { SvpButtonModule, SvpFormInputModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
-import { DocumentModel, PagingRequestModel, Result, StatusCodes, TaskCommentModel, TaskLogModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
+import { PagingRequestModel, Result, StatusCodes, TaskCommentModel, TaskLogModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { NotificationService } from '@svp-services';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { UtcToLocalDatePipe, UtcToTimelinePipe } from '@svp-pipes';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 import { TaskAttachmentComponent } from '../task-attachment/task-attachment.component';
+import { TaskDetailService } from '../../services/task-detail.service';
 
 @Component({
   selector: 'app-task-details',
@@ -35,6 +36,7 @@ export class TaskDetailsComponent implements OnInit {
   @Output() exit = new EventEmitter();
 
   taskService = inject(TaskService);
+  detailService = inject(TaskDetailService);
   notify = inject(NotificationService);
   fb = inject(FormBuilder);
   sidePanelRef = inject(SidePanelRef);
@@ -48,11 +50,6 @@ export class TaskDetailsComponent implements OnInit {
   errorMessage!: string;
   task!: TaskModel;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attachments!: any[];
-  private deleteQueue: (() => Promise<void>)[] = [];
-  private isProcessingQueue = false;
-
   displayLogs = true;
   logPaging: PagingRequestModel = new PagingRequestModel();
   taskLogs: TaskLogModel[] = [];
@@ -60,6 +57,7 @@ export class TaskDetailsComponent implements OnInit {
   taskComments: TaskCommentModel[] = [];
   commentPaging: PagingRequestModel = new PagingRequestModel();
   commentMessage = '';
+  addCommentLoading = false;
 
   ngOnInit(): void {
     this.getTask();
@@ -75,7 +73,7 @@ export class TaskDetailsComponent implements OnInit {
           this.loadError = false;
 
           // load attachments, logs and comments
-          this.loadAttachments();
+          this.detailService.loadAttachments(this.task.id);
           this.loadTaskLogs();
           this.loadComments();
         } else {
@@ -90,16 +88,6 @@ export class TaskDetailsComponent implements OnInit {
           err.status === StatusCodes.FORBIDDEN ? 'You do not have permission to view this task.' : 'An error occurred while trying to load the task.';
         this.loadError = true;
       },
-    });
-  }
-
-  loadAttachments(): void {
-    this.taskService.listAttachments(this.task.id).subscribe((res: Result<DocumentModel[]>) => {
-      if (res.success) {
-        this.attachments = res.content ?? [];
-      } else {
-        this.notify.timedErrorMessage(res.title, res.message);
-      }
     });
   }
 
@@ -133,7 +121,9 @@ export class TaskDetailsComponent implements OnInit {
       message: this.commentMessage,
     };
 
+    this.addCommentLoading = true;
     this.taskService.addComment(this.task.id, param).subscribe((res: Result<TaskCommentModel>) => {
+      this.addCommentLoading = false;
       if (res.success) {
         // add new comment to the first of taskComments
         this.commentMessage = '';
@@ -157,69 +147,5 @@ export class TaskDetailsComponent implements OnInit {
         this.notify.timedErrorMessage('Unable to delete comment', res.message);
       }
     });
-  }
-
-  async deleteAttachment(id: number | undefined, index: number): Promise<void> {
-    // Add the deletion request to the queue
-    this.deleteQueue.push(() => this.processDeleteAttachment(id, index));
-
-    // Process the queue if not already processing
-    if (!this.isProcessingQueue) {
-      this.processQueue();
-    }
-  }
-
-  private async processQueue(): Promise<void> {
-    this.isProcessingQueue = true;
-
-    while (this.deleteQueue.length > 0) {
-      const deleteRequest = this.deleteQueue.shift();
-      if (deleteRequest) {
-        await deleteRequest();
-      }
-    }
-
-    this.isProcessingQueue = false;
-  }
-
-  private async processDeleteAttachment(id: number | undefined, index: number): Promise<void> {
-    // confirm action
-    const confirmed = await this.notify.confirmDelete();
-    if (!confirmed) return;
-
-    // get the attachment id
-    const attachment = this.attachments[index];
-
-    // just remove if the attachment is not yet uploaded
-    if (!id || id === 0) {
-      this.attachments.splice(index, 1);
-      return;
-    }
-
-    this.notify.showLoader();
-    this.taskService.deleteAttachment(this.task.id, id).subscribe((res: Result<string>) => {
-      this.notify.hideLoader();
-      if (res.success) {
-        this.notify.timedSuccessMessage('Attachment Deleted', `${attachment.name} has been deleted successfully`);
-
-        this.attachments.splice(index, 1);
-      } else {
-        this.notify.errorMessage(`Unable to delete ${attachment.name}`, res.message);
-      }
-    });
-  }
-
-  uploadAttachments(e: Event): void {
-    const target = e.target as HTMLInputElement;
-    const files = target.files as File[] | null;
-
-    if (files == null) {
-      return;
-    }
-
-    this.attachments.push(...files);
-
-    // Reset the file input value to allow re-selection of the same file
-    target.value = '';
   }
 }

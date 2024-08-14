@@ -22,18 +22,9 @@
   <div class="mt-4 flex gap-4 items-center">
     <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
 
-    <ng-select
-      [items]="projects$ | async"
-      [addTag]="false"
-      [multiple]="false"
-      bindValue="id"
-      bindLabel="title"
-      [closeOnSelect]="true"
-      [clearable]="false"
-      placeholder="Select a project"
-      [(ngModel)]="selectedProjectId"
-      (change)="setProject($event)"
-      class="w-80">
+    <ng-select [items]="projects$ | async" [addTag]="false" [multiple]="false" bindValue="id" bindLabel="title"
+      [closeOnSelect]="true" [clearable]="false" placeholder="Select a project" [(ngModel)]="selectedProjectId"
+      (change)="setProject($event)" class="w-80">
       <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
         <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
           <span class="ng-value-label"><strong>Project:</strong> {{ items[0].title }}</span>
@@ -65,8 +56,11 @@
         <img src="assets/images/loading.gif" class="h-5 w-auto" alt="Loading" />
         <span>Loading task setup approval status</span>
       </div>
-      <button class="btn btn-info" *ngIf="!approvalLoading && (!approval || (approval.isFulfilled === true && approval.status === false))" (click)="sendTaskSetupsForApproval()">Send Task Setup For Approval</button>
-      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null">Send Reminder To Approve Task Setup</button>
+      <button class="btn btn-info"
+        *ngIf="!approvalLoading && (!approval || (approval.isFulfilled === true && approval.status === false))"
+        (click)="sendTaskSetupsForApproval()">Send Task Setup For Approval</button>
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null">Send
+        Reminder To Approve Task Setup</button>
     </div>
   </div>
 
@@ -75,18 +69,21 @@
       <div class="mt-6 grid grid-cols-3 gap-x-4">
         <!-- TO DO -->
         <div class="bg-gray-200 rounded-t-md">
-          <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
+          <div
+            class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
             <p class="font-medium">TO DO</p>
             <p>{{ todoTasks.length }} items</p>
           </div>
         </div>
 
-        <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
+        <div
+          class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
           <p class="font-medium">IN PROGRESS</p>
           <p>{{ inProgressTasks.length }} items</p>
         </div>
 
-        <div class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
+        <div
+          class="flex w-full justify-between rounded-t-md bg-primary-300 px-4 py-3 dark:bg-primary-500 dark:text-white">
           <p class="font-medium">COMPLETED</p>
           <p>{{ completedTasks.length }} items</p>
         </div>
@@ -96,24 +93,16 @@
         <div class="mb-3 grid grid-cols-3 gap-x-4">
           <!-- TO DO -->
           <div class="stage">
-            <div
-              id="todoList"
-              cdkDropList
-              cdkDropListSortingDisabled
-              [cdkDropListDisabled]="approval === undefined || approval.status === false"
-              [cdkDropListData]="todoTasks"
-              [cdkDropListConnectedTo]="['inProgressList']"
-              (cdkDropListDropped)="drop($event)">
+            <div id="todoList" cdkDropList cdkDropListSortingDisabled
+              [cdkDropListDisabled]="approval === undefined || approval.status === false" [cdkDropListData]="todoTasks"
+              [cdkDropListConnectedTo]="['inProgressList']" (cdkDropListDropped)="drop($event)">
               <!-- When No project is selected -->
               <ng-container *ngIf="!selectedProjectId">
                 <p class="my-10 text-center text-gray-500">Select a project to view tasks</p>
               </ng-container>
 
               @for (task of todoTasks; track task.id) {
-              <div
-                cdkDrag
-                [cdkDragData]="task"                
-                (click)="viewTaskDetails(task.id)">
+              <div cdkDrag [cdkDragData]="task" (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="summary">{{ task.summary }}</p>
                   <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
@@ -136,7 +125,8 @@
               }
 
               <!-- ADD NEW TASK BUTTON -->
-              <button type="button" class="btn btn-primary mt-4 w-full" (click)="addNewTask()" *ngIf="selectedProjectId">
+              <button type="button" class="btn btn-primary mt-4 w-full" (click)="addNewTask()"
+                *ngIf="selectedProjectId">
                 <svg-icon src="assets/icons/plus.svg" [svgClass]="'h-5 h-5'" />
                 <span>Add Task</span>
               </button>
@@ -145,13 +135,9 @@
 
           <!-- IN PROGRESS -->
           <div class="stage">
-            <div
-              id="inProgressList"
-              cdkDropList
-              cdkDropListSortingDisabled
+            <div id="inProgressList" cdkDropList cdkDropListSortingDisabled
               [cdkDropListDisabled]="approval === undefined || approval.status === false"
-              [cdkDropListData]="inProgressTasks"
-              [cdkDropListConnectedTo]="['todoList', 'completedList']"
+              [cdkDropListData]="inProgressTasks" [cdkDropListConnectedTo]="['todoList', 'completedList']"
               (cdkDropListDropped)="drop($event)">
               <!-- When No project is selected -->
               <ng-container *ngIf="!selectedProjectId">
@@ -161,15 +147,13 @@
               <!-- No tasks currently in progress -->
               <ng-container *ngIf="selectedProjectId && inProgressTasks.length === 0">
                 <p class="my-10 text-center text-gray-500">
-                  {{ approval?.status === true ? 'No task is currently in progress. Drag and drop tasks from the TO DO list to get started.' : 'Task setup is not approved yet, click the button above to send for approval.'}}
+                  {{ approval?.status === true ? 'No task is currently in progress. Drag and drop tasks from the TO DO
+                  list to get started.' : 'Task setup is not approved yet, click the button above to send for
+                  approval.'}}
                 </p>
               </ng-container>
               @for (task of inProgressTasks; track task.id) {
-                <div
-                cdkDrag
-                [cdkDragData]="task"
-                
-                (click)="viewTaskDetails(task.id)">
+              <div cdkDrag [cdkDragData]="task" (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="summary">{{ task.summary }}</p>
                   <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
@@ -195,13 +179,9 @@
 
           <!-- COMPLETED -->
           <div class="stage">
-            <div
-              id="completedList"
-              cdkDropList
-              cdkDropListSortingDisabled
+            <div id="completedList" cdkDropList cdkDropListSortingDisabled
               [cdkDropListDisabled]="approval === undefined || approval.status === false"
-              [cdkDropListData]="completedTasks"
-              [cdkDropListConnectedTo]="['inProgressList']"
+              [cdkDropListData]="completedTasks" [cdkDropListConnectedTo]="['inProgressList']"
               (cdkDropListDropped)="drop($event)">
               <!-- When No project is selected -->
               <ng-container *ngIf="!selectedProjectId">
@@ -211,15 +191,13 @@
               <!-- No tasks currently completed -->
               <ng-container *ngIf="selectedProjectId && completedTasks.length === 0">
                 <p class="my-10 text-center text-gray-500">
-                  {{ approval?.status === true ? 'No task is currently completed. Drag and drop tasks from the IN PROGRESS list to get started.' : 'Task setup is not approved yet, click the button above to send for approval.'}}
+                  {{ approval?.status === true ? 'No task is currently completed. Drag and drop tasks from the IN
+                  PROGRESS list to get started.' : 'Task setup is not approved yet, click the button above to send for
+                  approval.'}}
                 </p>
               </ng-container>
               @for (task of completedTasks; track task.id) {
-              <div
-                cdkDrag
-                [cdkDragData]="task"
-                
-                (click)="viewTaskDetails(task.id)">
+              <div cdkDrag [cdkDragData]="task" (click)="viewTaskDetails(task.id)">
                 <div>
                   <p class="summary">{{ task.summary }}</p>
                   <span class="epic" *ngIf="task.epic">{{ task.epic }}</span>
@@ -247,7 +225,3 @@
     </div>
   </div>
 </div>
-
-@if(sideViewService.isActive) {
-<svp-side-view></svp-side-view>
-}

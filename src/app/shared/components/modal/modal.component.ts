@@ -29,9 +29,8 @@ export class ModalComponent {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
   @ViewChild('backdrop', { read: ViewContainerRef, static: true }) backdrop!: ViewContainerRef;
 
-  themeService = inject(ThemeService);
-  
-  constructor(private cfr: ComponentFactoryResolver) {}
+  private cfr = inject(ComponentFactoryResolver);
+  public themeService = inject(ThemeService);
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
     // Clear the container before loading the component

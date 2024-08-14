@@ -1,10 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
-import { Component, ComponentFactoryResolver, EventEmitter, HostListener, Injectable, Injector, Input, ViewChild, ViewContainerRef, inject } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  HostListener,
+  Injectable,
+  Injector,
+  Input,
+  ViewChild,
+  ViewContainerRef,
+  inject,
+} from '@angular/core';
 import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { SidePanelRef } from './side-panel-ref';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ThemeService } from '@svp-services';
 
 @Injectable({ providedIn: 'root' })
 @Component({
@@ -31,6 +43,7 @@ export class SidePanelComponent {
   private injector = inject(Injector);
   private cfr = inject(ComponentFactoryResolver);
   private sidePanelRef!: SidePanelRef;
+  public themeService = inject(ThemeService);
 
   loadComponent(component: any, inputs?: any, outputs?: any) {
     // Clear the container before loading the component

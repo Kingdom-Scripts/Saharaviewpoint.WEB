@@ -1,52 +1,56 @@
-<div class="relative h-full w-full bg-gray-100 dark:bg-night-700">
-  <div class="bg-gray-100 dark:bg-night-700">
-    @if (loadError === false) {
-    <div class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
-      <div class="flex items-center gap-5">
-        <h6>{{ project.title }}</h6>
-        <svp-status-card [status]="project.status" />
-      </div>
-
-      <button>
-        <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="close()" />
-      </button>
+<div class="h-full w-full bg-gray-100 dark:bg-night-700">
+  <div
+    class="sticky top-0 flex items-center justify-between space-x-12 bg-secondary mb-4 px-4 py-4 text-white z-[999999]">
+    <div class="flex items-center gap-5" *ngIf="loadError === false">
+      <h6>{{ project.title }}</h6>
+      <svp-status-card [status]="project.status" />
     </div>
-    }
+
+    <button>
+      <svg-icon src="assets/icons/x.svg" [svgClass]="'h-5 xl:h-6  2xl:h-7 w-auto'" (click)="sidePanelRef.close()" />
+    </button>
+  </div>
+
+  <div class="bg-gray-100 dark:bg-night-700">
 
     <div *ngIf="loadError === undefined">
-      <div class="flex h-svh flex-col justify-center text-center">
+      <div class="flex h-svh flex-col justify-center text-center dark:text-night-100">
         <h5>Loading...</h5>
       </div>
     </div>
 
     <div *ngIf="loadError === true">
       <div class="flex h-svh flex-col items-center justify-center gap-4">
-        <h5 class="text-center text-red-600">{{ errorMessage }}</h5>
-        <button class="btn btn-outline-danger" (click)="close()">Close</button>
+        <h5 class="text-center text-red-600 dark:text-red-400">{{ errorMessage }}</h5>
+        <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Close</button>
       </div>
     </div>
 
     <div *ngIf="loadError === false" class="mt-4 space-y-2 px-4 lg:space-y-3">
       <div class="pb-4">
-        <p class="smaller font-semibold text-gray-500">Description</p>
-        <p>{{ project.description }}</p>
+        <p class="smaller font-semibold text-gray-500 dark:text-night-200">Description</p>
+        <p class="dark:text-night-50">{{ project.description }}</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-5 rounded-xl bg-white p-4 lg:grid-cols-3 2xl:p-8">
+      <div class="grid grid-cols-2 gap-5 rounded-xl bg-white dark:bg-night-500 p-4 lg:grid-cols-3 2xl:p-8">
         <div>
-          <p class="smaller text-nowrap font-semibold text-gray-500">Created On</p>
-          <p class="font-semibold">{{ project.startDate | utcToLocalDate }}</p>
+          <p class="smaller text-nowrap font-semibold text-gray-500 dark:text-night-200">Created On</p>
+          <p class="font-semibold dark:text-night-50">{{ project.startDate | utcToLocalDate }}</p>
         </div>
 
         <div>
-          <p class="smaller font-semibold text-gray-500">Project created</p>
+          <p class="smaller font-semibold text-gray-500 dark:text-night-200">Project created</p>
           <!-- TODO: Add created date to API response -->
-          <p class="font-semibold">{{ project.createdAt | utcToLocalDate }}</p>
+          <p class="font-semibold dark:text-night-50">{{ project.createdAt | utcToLocalDate }}</p>
         </div>
 
         <div class="col-span-2 lg:col-span-1">
-          <p class="smaller font-semibold text-gray-500">Project Manager</p>
-          <p class="font-semibold">{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</p>
+          <p class="smaller font-semibold text-gray-500 dark:text-night-200">Project Manager</p>
+          <p class="font-semibold dark:text-night-50">
+            {{ project.assignee ? project.assignee.firstName + ' ' +
+            project.assignee.lastName :
+            'N/A' }}
+          </p>
         </div>
       </div>
 
@@ -54,53 +58,56 @@
         <div class="grid grid-cols-2">
           <div class="space-y-4">
             <!-- TASKS -->
-            <div class="flex items-center space-x-2">
-              <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" />
+            <div class="flex items-center space-x-2 dark:text-gray-200">
+              <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5'" />
               <h6>Tasks</h6>
             </div>
 
-            <p italic *ngIf="allTasks.length === 0">No tasks created yet</p>
+            <p italic *ngIf="allTasks.length === 0" class="dark:text-night-50">No tasks created yet</p>
 
-            <!-- TODO: display the first three active tasks here -->
             @for(task of allTasks; track task.id) {
             <div class="flex items-center space-x-2">
               <input type="checkbox" disabled [checked]="task.status === taskStatuses.COMPLETED" />
-              <p>{{ task.summary }}</p>
+              <p class="dark:text-night-50">{{ task.summary }}</p>
             </div>
             }
 
             <!-- ATTACHMENTS -->
-            <div class="flex items-center space-x-2 pt-10">
-              <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" />
+            <div class="flex items-center space-x-2 pt-10 dark:text-gray-200">
+              <svg-icon src="assets/icons/appicons/bar-chart.svg" [svgClass]="'h-5 w-5'" />
               <h6>Attachments</h6>
             </div>
 
-            <div class="flex items-center space-x-2" *ngIf="project.design">
-              <svg-icon src="assets/icons/file-alt.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" />
-              <p>{{ project.design!.name }}</p>
+            <div class="flex items-center gap-4 dark:text-gray-200" *ngIf="project.design">
+              <svg-icon src="assets/icons/file-alt.svg" [svgClass]="'h-5 w-5'" />
+              <p class="dark:text-night-50">{{ project.design!.name }}</p>
 
-              <!-- TODO: implement download -->
-              <!-- <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-5 w-5 dark:text-gray-200'" /> -->
+              <span class="dark:text-gray-200 hover:text-success cursor-pointer" (click)="downloadAttachment()">
+                <svg-icon src="assets/icons/heroicons/outline/download.svg" [svgClass]="'h-5 w-5'" />
+              </span>
             </div>
           </div>
 
           <div class="space-y-4">
             <!-- RECENT ACTIVITIES -->
             <div class="ml-6">
-              <h6>Recent Activities</h6>
-              <p italic class="mt-2" *ngIf="activities.length === 0">No recent activities</p>
+              <h6 class="dark:text-gray-200">Recent Activities</h6>
+              <p italic class="mt-2" *ngIf="activities.length === 0" class="dark:text-night-50">No recent activities</p>
             </div>
 
-            <ol class="relative border-s border-gray-200 dark:border-gray-700">                  
+            <ol class="relative border-s border-gray-200 dark:border-gray-700">
               @for(item of activities; track $index){
-              <li class="ms-6">            
-                  <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                    <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'"/>
-                  </span>
-                  <p class="text-xs lg:text-sm">{{item.description}}</p>
-                  <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{item.createdAt | utcToLocalDate}}</time>
+              <li class="ms-6">
+                <span
+                  class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3 ring-8 ring-white dark:ring-night-800 dark:bg-blue-900">
+                  <svg-icon src="assets/icons/appicons/check-mark.svg" [svgClass]="'h-3 w-3 text-gray-900'" />
+                </span>
+                <p class="text-xs lg:text-sm dark:text-night-50">{{item.description}}</p>
+                <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-300">
+                  {{item.createdAt | utcToLocalDate}}
+                </time>
               </li>
-            } 
+              }
             </ol>
           </div>
         </div>
@@ -108,28 +115,20 @@
     </div>
 
     <div
-      class="sticky bottom-0 mt-6 flex flex-col justify-between gap-6 border-t-2 border-gray-200 bg-gray-100 p-4 dark:bg-night-700 xl:flex-row xl:items-end"
+      class="sticky bottom-0 mt-6 flex flex-col justify-between gap-6 border-t border-t-gray-200 dark:border-t-night-400 bg-gray-100 p-4 dark:bg-night-700 xl:flex-row xl:items-end"
       *ngIf="loadError === false && !project.assignee">
+
       <div class="grow space-y-2">
         <label svp-label>Assign to a Project Manager</label>
-        <ng-select
-          [items]="projectManagers$ | async"
-          [addTag]="false"
-          [multiple]="false"
-          [hideSelected]="false"
-          placeholder="-- select manager --"
-          bindLabel="name"
-          bindValue="uid"
-          [loading]="projectManagersLoading"
-          [(ngModel)]="selectedProjectManagerUid"
-          [typeahead]="projectManagerInput$"
-          typeToSearchText="Please enter 2 or more characters"
-          class="w-full sm:w-[75%] xl:w-full">
+        <ng-select [items]="projectManagers$ | async" [addTag]="false" [multiple]="false" [hideSelected]="false"
+          placeholder="-- select manager --" bindLabel="name" bindValue="uid" [loading]="projectManagersLoading"
+          [(ngModel)]="selectedProjectManagerUid" [typeahead]="projectManagerInput$"
+          typeToSearchText="Please enter 2 or more characters" class="w-full sm:w-[75%] xl:w-full">
         </ng-select>
       </div>
 
       <div class="flex justify-between space-x-2 sm:justify-end">
-        <button class="btn btn-outline-danger" (click)="close()">Cancel</button>
+        <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Cancel</button>
         <button class="btn btn-primary">Reject Project</button>
         <button class="btn btn-success" (click)="assignProjectManager()">Approve Project</button>
       </div>

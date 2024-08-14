@@ -99,7 +99,7 @@ export class TasksComponent implements OnDestroy {
   approval!: ProjectTaskApprovalModel | undefined;
 
   constructor() {
-    // this.viewTaskDetails(29); // TODO: remove this line
+    // this.viewTaskDetails(41); // TODO: remove this line
     // set up task search
     this.loadProjects();
 
@@ -119,8 +119,7 @@ export class TasksComponent implements OnDestroy {
             this.selectedProjectId = this.selectedProject.id;
             this.loadTasks();
 
-            if (taskId)
-              this.viewTaskDetails(taskId);
+            if (taskId) this.viewTaskDetails(taskId);
           } else {
             this.notify.timedErrorMessage('Project Not Found', res.message);
 
@@ -225,7 +224,7 @@ export class TasksComponent implements OnDestroy {
       this.notify.timedErrorMessage('Approval Not Found', 'Approval request has not been sent for the selected project.');
       return;
     }
-    
+
     this.notify.showLoader();
     this.approvalService.sendProjectTaskApprovalReminder(this.selectedProjectId, this.approval?.id).subscribe((res: Result<string>) => {
       this.notify.hideLoader();

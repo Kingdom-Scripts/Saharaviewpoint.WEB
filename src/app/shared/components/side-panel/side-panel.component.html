@@ -1,8 +1,6 @@
-<div
-  @slideInOut
-  #panel
-  class="base dark:bg-dark relative bg-white shadow-[rgba(0,0,15,0.5)_10px_5px_4px_0px]"
+<div @slideInOut #panel class="base dark:bg-dark relative bg-white shadow-[rgba(0,0,15,0.5)_10px_5px_4px_0px]"
   [ngClass]="{
+    dark: themeService.isDark,
     'w-[calc(100vw/5)]': size === 'small',
     'w-[calc(100vw/3)]': size === 'normal',
     'w-[calc(100vw/2)]': size === 'large'

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { SideViewComponent, SideViewService, SvpButtonModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
+import { SideViewComponent, SvpButtonModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
 import { ProjectModel, ProjectSearchModel, ProjectStatusEnum, Result, TaskBoardModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -20,6 +20,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { ApprovalService } from 'src/app/shared/api-services/approval.service';
 import { ProjectTaskApprovalModel } from 'src/app/shared/models/api-response-models/approvals/project-task-approval.model';
+import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
+import { SidePanelService } from 'src/app/shared/components/side-panel/side-panel.service';
 
 @Component({
   selector: 'app-board',
@@ -46,11 +48,11 @@ export class BoardComponent {
   approvalService = inject(ApprovalService);
   sessionStorage = inject(SessionStorageUtility);
   notify = inject(NotificationService);
-  sideViewService = inject(SideViewService);
   modalService = inject(ModalService);
   projectService = inject(ProjectService);
   router = inject(Router);
   activatedRouter = inject(ActivatedRoute);
+  sidePanel = inject(SidePanelService);
 
   projects$ = new Observable<ProjectModel[]>();
   projectInput$ = new Subject<string>();
@@ -66,6 +68,9 @@ export class BoardComponent {
 
   approvalLoading = true;
   approval!: ProjectTaskApprovalModel | undefined;
+
+  taskDetailRef!: SidePanelRef;
+  addTaskRef!: SidePanelRef;
 
   constructor() {
     this.loadProjects();
@@ -130,6 +135,47 @@ export class BoardComponent {
     });
   }
 
+  addNewTask(): void {
+    this.addTaskRef = this.sidePanel.open(AddTaskComponent, {
+      inputs: {
+        makeProjectReadonly: true,
+      },
+      outputs: {
+        addedTask: (task: TaskModel) => {
+          this.addNewTaskToAllTasks(task);
+        },
+      },
+    });
+  }
+
+  addNewTaskToAllTasks(task: TaskModel): void {
+    if (task.type === TaskTypeEnum.EPIC) {
+      this.notify.timedInfoMessage('Task Created', 'Epic tasks cannot be added to the board');
+      return;
+    }
+
+    const taskBoard: TaskBoardModel = {
+      id: task.id,
+      epic: task.epic,
+      type: task.type,
+      status: task.status,
+      summary: task.summary,
+      createdAt: task.createdAt,
+      dueDate: task.dueDate,
+      order: task.order,
+    };
+
+    this.allTasks.push(taskBoard);
+    this.todoTasks.push(taskBoard);
+  }
+
+  viewTaskDetails(taskId: number): void {
+    this.taskDetailRef = this.sidePanel.open(TaskDetailsComponent, {
+      inputs: { taskId: taskId },
+      size: 'large',
+    });
+  }
+
   sendTaskSetupsForApproval(): void {
     this.notify.showLoader();
     this.approvalService.sendProjectTasksForApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
@@ -179,24 +225,6 @@ export class BoardComponent {
     this.selectedProject = $event;
     this.selectedProjectId = this.selectedProject.id;
     this.loadTasks();
-  }
-
-  addNewTask(): void {
-    this.sideViewService.showComponent(AddTaskComponent);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.sideViewService.triggerOutputs$.subscribe((outputs: { [key: string]: any }) => {
-      if (outputs['addedTask']) {
-        this.allTasks.unshift(outputs['addedTask']);
-        this.todoTasks.unshift(outputs['addedTask']);
-      }
-    });
-  }
-
-  // TODO: review this function
-  viewTaskDetails(taskId: number): void {
-    const inputs = { taskId: taskId };
-    this.sideViewService.showComponent(TaskDetailsComponent, inputs);
   }
 
   async drop(event: CdkDragDrop<TaskBoardModel[]>) {
@@ -315,5 +343,10 @@ export class BoardComponent {
         this.notify.timedErrorMessage('Task Deletion Failed', res.message);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.taskDetailRef) this.taskDetailRef.close();
+    if (this.addTaskRef) this.addTaskRef.close();
   }
 }

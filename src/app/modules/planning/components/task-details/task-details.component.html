@@ -3,8 +3,15 @@
     @if (loadError === false) {
     <div class="sticky top-0 z-[99999] flex items-center justify-between space-x-12 bg-secondary px-4 py-4 text-white">
       <div class="flex items-center gap-5">
-        <h6>{{ task.summary }}</h6>
-        <svp-task-status-card [status]="task.status" />
+        <h6 class="">
+          <span>{{ task.summary }}</span>
+          &nbsp;
+          <span class="badge text-nowrap text-xs" [ngClass]="{
+                'bg-[#800080]': task.status === taskStatusEnum.TODO,
+                'bg-warning': task.status === taskStatusEnum.IN_PROGRESS,
+                'bg-success': task.status === taskStatusEnum.COMPLETED
+              }">{{ task.status }}</span>
+        </h6>
       </div>
 
       <button>
@@ -14,49 +21,50 @@
     }
 
     <div *ngIf="loadError === undefined">
-      <div class="flex h-svh flex-col justify-center text-center">
+      <div class="flex h-svh flex-col justify-center text-center dark:text-night-100">
         <h5>Loading...</h5>
       </div>
     </div>
 
     <div *ngIf="loadError === true">
       <div class="flex h-svh flex-col items-center justify-center gap-4">
-        <h5 class="text-center text-red-600">{{ errorMessage }}</h5>
+        <h5 class="text-center text-red-600 dark:text-red-400">{{ errorMessage }}</h5>
         <button class="btn btn-outline-danger" (click)="sidePanelRef.close()">Close</button>
       </div>
     </div>
 
-    <div *ngIf="loadError === false" class="mt-4 space-y-2 px-4 lg:space-y-3">
+    <div *ngIf="loadError === false" class="mt-4 space-y-2 px-4 lg:space-y-3 pb-10">
       <div class="pb-4">
-        <p class="smaller font-semibold text-gray-500">Description</p>
-        <p>{{ task.description }}</p>
+        <p class="smaller font-semibold text-gray-500 dark:text-night-200">Description</p>
+        <p class="dark:text-night-50">{{ task.description }}</p>
       </div>
 
       <div class="space-y-1.5">
         <div class="flex space-x-3 pb-2">
-          <p class="smaller font-semibold text-gray-500">Attachments</p>
+          <p class="smaller font-semibold text-gray-500 dark:text-night-200">Attachments</p>
 
           <label
             class="relative flex cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-2 py-1 text-sm font-medium text-white hover:bg-gray-800"
             for="attachmentFile">
             <svg-icon src="assets/icons/add-file.svg" [svgClass]="'h-4 w-4'" />
           </label>
-          <input type="file" id="attachmentFile" class="hidden" multiple (change)="uploadAttachments($event)" />
+          <input type="file" id="attachmentFile" class="hidden" multiple
+            (change)="detailService.uploadAttachments($event)" />
         </div>
 
         <div class="flex flex-wrap gap-3">
-          <ng-container *ngIf="attachments && attachments.length === 0">
+          <ng-container *ngIf="detailService.attachments && detailService.attachments.length === 0">
             <p svp-text>No attachments</p>
           </ng-container>
 
-          @for (attachment of attachments; track $index) {
-          <app-task-attachment [taskId]="taskId" [file]="attachment" (requestDelete)="deleteAttachment($event, $index)" />
+          @for (attachment of detailService.attachments; track attachment.localUid) {
+          <app-task-attachment [taskId]="taskId" [inputFile]="attachment" />
           }
         </div>
       </div>
 
-      <div class="w-[75%] space-y-2">
-        <p class="smaller font-semibold text-gray-500">Activities</p>
+      <div class="w-[75%] space-y-2 !mt-10">
+        <p class="smaller font-semibold text-gray-500 dark:text-night-200">Activities</p>
 
         <div class="flex space-x-2 pb-2">
           <p svp-text>Show:</p>
@@ -65,10 +73,11 @@
         </div>
 
         <ng-container *ngIf="displayLogs">
-          <div *ngFor="let item of taskLogs; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
+          <div *ngFor="let item of taskLogs; let i = index"
+            class="border-b border-b-gray-300 py-1 dark:border-b-night-300">
             <div class="flex space-x-2">
               <p svp-text>{{ item.description }}</p>
-              <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
+              <small class="text-gray-500 dark:text-night-200">{{ item.createdAt | utcToTimeline }}</small>
             </div>
 
             <div class="flex space-x-2" *ngIf="item.previousState || item.currentState">
@@ -81,23 +90,32 @@
 
         <ng-container *ngIf="!displayLogs">
           <div class="my-2">
-            <textarea class="h-24 w-full rounded-lg border border-gray-200 p-2" placeholder="Add a comment..." [(ngModel)]="commentMessage"></textarea>
+            <textarea
+              class="h-24 w-full rounded-lg border border-gray-200 p-2 dark:bg-night-700 dark:border-night-300 dark:text-night-50"
+              placeholder="Add a comment..." [(ngModel)]="commentMessage"></textarea>
             <div class="flex justify-end">
-              <button svp-primary [isDisabled]="commentMessage === ''" (click)="addComment()">Add Comment</button>
+              <button class="btn btn-primary" [disabled]="commentMessage === ''" (click)="addComment()">
+                <span>Add Comment</span>
+                <img *ngIf="addCommentLoading" src="assets/images/loading.gif" alt="loading" class="h-4 w-4 ml-2" />
+              </button>
             </div>
           </div>
 
-          <div *ngFor="let item of taskComments; let i = index" class="border-gray-300 py-1" [ngClass]="{ 'border-b-2': i !== taskComments.length - 1 }">
+          <div *ngFor="let item of taskComments; let i = index"
+            class="border-b border-b-gray-300 dark:border-b-night-300 py-1">
             <div class="flex space-x-2">
-              <small svp-text medium>{{ item.fullName }}</small>
-              <small>-</small>
-              <small color="text-gray-500">{{ item.createdAt | utcToTimeline }}</small>
+              <p svp-text medium>{{ item.fullName }}</p>
+              <span>-</span>
+              <span class="text-gray-500 dark:!text-night-200">
+                {{ item.createdAt | utcToTimeline }}
+              </span>
             </div>
 
             <p svp-text>{{ item.message }}</p>
 
             <div>
-              <a class="cursor-pointer text-sm font-medium text-red-600 hover:text-red-800" (click)="deleteComment(item.id)"><small>Delete Comment</small></a>
+              <a class="cursor-pointer text-sm font-medium text-red-600 hover:text-red-800"
+                (click)="deleteComment(item.id)"><small>Delete Comment</small></a>
             </div>
           </div>
         </ng-container>
@@ -105,19 +123,3 @@
     </div>
   </div>
 </div>
-
-<!-- <div class="h-full w-full bg-gray-100 dark:bg-night-700">
-  <div class="bg-gray-100 px-8 dark:bg-night-700">
-    <div class="sticky top-0 z-50 flex bg-gray-100 py-6 dark:bg-night-700">
-      <p svp-text class="small">{{ task.type }} Details</p>
-
-      <div class="-mr-4 flex grow cursor-pointer justify-end self-start text-gray-800 hover:text-gray-500 dark:text-night-200 dark:hover:text-night-400">
-        <svg-icon src="assets/icons/appicons/cancel.svg" [svgClass]="'h-4 w-4'" (click)="exit.emit()" />
-      </div>
-    </div>
-
-    <div class="space-y-8 pb-5">
-      
-    </div>
-  </div>
-</div> -->

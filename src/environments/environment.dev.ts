@@ -1,7 +1,8 @@
 export const environment = {
-  staging: true,
+  staging: false,
   production: false,
-  env_name: 'Staging',
+  env_name: 'Development',
   apiVideoUrl: 'sandbox.api.video',
-  apiUrl: 'https://svp-staging-api.azurewebsites.net/api/v1',
+  // apiUrl: 'https://localhost:7023/api/v1',
+  apiUrl: 'https://saharaviewpoint-api.azurewebsites.net/api/v1',
 };

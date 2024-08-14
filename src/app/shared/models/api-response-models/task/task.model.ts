@@ -1,9 +1,10 @@
-import { DocumentModel } from "../document.model";
-import { ProjectModel } from "../project/project.model";
-import { ReferenceUserModel } from "../reference-user.model";
+import { DocumentModel } from '../document.model';
+import { ProjectModel } from '../project/project.model';
+import { ReferenceUserModel } from '../reference-user.model';
 
 export interface TaskModel {
   id: number;
+  epic: string | null;
   type: string;
   summary: string;
   description: string;
@@ -12,10 +13,10 @@ export interface TaskModel {
   updatedAt: string;
   expectedStartDate: string;
   dueDate: string;
-  projectId: number,
+  projectId: number;
   project: ProjectModel;
-  createdById: number,
+  createdById: number;
   createdBy: ReferenceUserModel;
   attachments: DocumentModel[];
-  order: 0
+  order: 0;
 }

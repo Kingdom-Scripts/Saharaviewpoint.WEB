@@ -4,7 +4,7 @@ export interface TaskBoardModel {
   type: string;
   status: string;
   summary: string;
-  createdAt: string;
+  createdAt: Date;
   dueDate: string;
   order: number;
 }
