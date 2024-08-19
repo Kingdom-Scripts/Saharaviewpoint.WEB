@@ -1,12 +1,16 @@
 import { HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError, Observable, switchMap } from 'rxjs';
+import { catchError, throwError, Observable, switchMap, filter, take, BehaviorSubject } from 'rxjs';
 import { NotificationService } from '@svp-services';
 import { ErrorService } from '@svp-utilities';
 import { AuthService } from '@svp-api-services';
 import { AuthDataModel, Result } from '@svp-models';
 import { Router } from '@angular/router';
 import { StorageService } from '@svp-services';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+let isRefreshing = false;
 
 // always call this last in your HTTP Interceptors
 export function errorHandlerInterceptor(request: HttpRequest<unknown>, next: HttpHandlerFn) {
@@ -21,28 +25,50 @@ export function errorHandlerInterceptor(request: HttpRequest<unknown>, next: Htt
     catchError(error => {
       // attempt to refresh token if existing one has expired.
       if (error.status === 401) {
-        return authService.refreshToken().pipe(
-          switchMap((res: Result<AuthDataModel>) => {
-            if (res.success) {
-              authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshTokenSubject.next(null);
 
-              // reset authorization header
+          return authService.refreshToken().pipe(
+            switchMap((res: Result<AuthDataModel>) => {
+              isRefreshing = false;
+
+              if (res.success) {
+                authService.maskUserAsAuthenticated(res.content as AuthDataModel, true);
+                refreshTokenSubject.next(res.content);
+
+                // reset authorization header
+                request = request.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${storageService.getAccessToken()}`,
+                  },
+                });
+
+                return resendResult(request, next, errorService);
+              } else {
+                isRefreshing = false;
+                notify.errorMessage('Authentication Required', 'Unable to authenticate with the server! Please sign in again.');
+                router.navigate(['auth/sign-in'], {
+                  state: { clearToken: true },
+                });
+                return throwError(error);
+              }
+            }),
+          );
+        } else {
+          return refreshTokenSubject.pipe(
+            filter(result => result !== null),
+            take(1),
+            switchMap(() => {
               request = request.clone({
                 setHeaders: {
                   Authorization: `Bearer ${storageService.getAccessToken()}`,
                 },
               });
-
-              return resendResult(request, next, errorService);
-            } else {
-              notify.errorMessage('Authentication Required', 'Unable to authenticate with the server! Please sign in again.');
-              router.navigate(['auth/sign-in'], {
-                state: { clearToken: true },
-              });
-              return throwError(error);
-            }
-          }),
-        );
+              return next(request);
+            }),
+          );
+        }
       } else {
         if (!request.url.includes('refresh-token')) {
           return errorService.handleError()(error);
