@@ -25,13 +25,13 @@
         <img src="assets/images/loading.gif" class="h-5 w-auto" alt="Loading" />
         <span>Loading task setup approval status</span>
       </div>
-      <button
-        class="btn btn-info"
+      <button class="btn btn-info"
         *ngIf="!approvalLoading && (!approval || (approval.isFulfilled === true && approval.status === false))"
         (click)="sendTaskSetupsForApproval()">
         Send Task Setup For Approval
       </button>
-      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null" (click)="sendTaskApprovalReminder()">
+      <button class="btn btn-outline-info" *ngIf="!approvalLoading && approval && approval.status === null"
+        (click)="sendTaskApprovalReminder()">
         Send Reminder To Approve Task Setup
       </button>
     </div>
@@ -42,16 +42,8 @@
       <!-- TODO: implement search -->
       <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
 
-      <ng-select
-        [items]="projects$ | async"
-        [addTag]="false"
-        bindValue="id"
-        bindLabel="title"
-        [clearable]="false"
-        placeholder="Select a project"
-        [(ngModel)]="selectedProjectId"
-        (change)="setProject($event)"
-        class="w-80">
+      <ng-select [items]="projects$ | async" [addTag]="false" bindValue="id" bindLabel="title" [clearable]="false"
+        placeholder="Select a project" [(ngModel)]="selectedProjectId" (change)="setProject($event)" class="w-80">
         <ng-template ng-label-tmp let-item="item">
           {{ item.title }}
         </ng-template>
@@ -72,17 +64,9 @@
         </ng-template>
       </ng-select>
 
-      <ng-select
-        [items]="taskTypes"
-        [addTag]="true"
-        [multiple]="true"
-        [hideSelected]="false"
-        [closeOnSelect]="false"
-        placeholder="Filter by types"
-        [(ngModel)]="taskSearchParams.types"
-        (change)="loadTasks()"
-        typeToSearchText="Please enter 2 or more characters"
-        class="max-w-72">
+      <ng-select [items]="taskTypes" [addTag]="true" [multiple]="true" [hideSelected]="false" [closeOnSelect]="false"
+        placeholder="Filter by types" [(ngModel)]="taskSearchParams.types" (change)="loadTasks()"
+        typeToSearchText="Please enter 2 or more characters" class="max-w-72">
         <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
           <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
             <span class="ng-value-label"><strong>Type:</strong> {{ item }}</span>
@@ -94,17 +78,9 @@
         </ng-template>
       </ng-select>
 
-      <ng-select
-        [items]="statuses"
-        [addTag]="true"
-        [multiple]="true"
-        [hideSelected]="false"
-        [closeOnSelect]="false"
-        placeholder="Filter by status"
-        [(ngModel)]="taskSearchParams.statuses"
-        (change)="loadTasks()"
-        typeToSearchText="Please enter 2 or more characters"
-        class="max-w-80">
+      <ng-select [items]="statuses" [addTag]="true" [multiple]="true" [hideSelected]="false" [closeOnSelect]="false"
+        placeholder="Filter by status" [(ngModel)]="taskSearchParams.statuses" (change)="loadTasks()"
+        typeToSearchText="Please enter 2 or more characters" class="max-w-80">
         <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
           <div class="ng-value" *ngFor="let item of items | slice : 0 : 1">
             <span class="ng-value-label"><strong>Status:</strong> {{ item }}</span>
@@ -164,37 +140,33 @@
               </td>
               <td>
                 <div x-dropdown [active]="approval?.status === true">
-                  <svp-task-status-card
-                    [status]="task.status"
-                    [ngClass]="{
+                  <svp-task-status-card [status]="task.status" [ngClass]="{
                       'cursor-pointer': task.status !== taskStatusEnum.COMPLETED
                     }" />
 
                   <div x-dropdown-content class="rounded-sm border border-gray-400 bg-white">
                     <div class="flex flex-col">
-                      <div
-                        class="flex bg-gray-200 hover:bg-gray-100"
-                        *ngIf="task.status === taskStatusEnum.TODO"
+                      <div class="flex bg-gray-200 hover:bg-gray-100" *ngIf="task.status === taskStatusEnum.TODO"
                         (click)="changeTaskStatus(task, taskStatusEnum.IN_PROGRESS)">
                         <div class="w-1 bg-info"></div>
                         <div class="flex cursor-pointer items-center gap-5 px-2 py-1">
                           <span class="text-sm">start work</span>
                           <!-- arrow right svg -->
                           <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-4 h-4'" />
-                          <span class="-ml-4 rounded-sm bg-warning px-1 text-xs font-semibold text-white">IN PROGRESS</span>
+                          <span class="-ml-4 rounded-sm bg-warning px-1 text-xs font-semibold text-white">IN
+                            PROGRESS</span>
                         </div>
                       </div>
 
-                      <div
-                        class="flex bg-gray-200 hover:bg-gray-100"
-                        *ngIf="task.status === taskStatusEnum.IN_PROGRESS"
+                      <div class="flex bg-gray-200 hover:bg-gray-100" *ngIf="task.status === taskStatusEnum.IN_PROGRESS"
                         (click)="changeTaskStatus(task, taskStatusEnum.COMPLETED)">
                         <div class="w-1 bg-info"></div>
                         <div class="flex cursor-pointer items-center gap-5 px-2 py-1">
                           <span class="text-sm">complete work</span>
                           <!-- arrow right svg -->
                           <svg-icon src="assets/icons/heroicons/outline/arrow-sm-right.svg" [svgClass]="'h-4 h-4'" />
-                          <span class="-ml-4 rounded-sm bg-success px-1 text-xs font-semibold text-white">COMPLETED</span>
+                          <span
+                            class="-ml-4 rounded-sm bg-success px-1 text-xs font-semibold text-white">COMPLETED</span>
                         </div>
                       </div>
                     </div>
@@ -211,30 +183,27 @@
                 <span>{{ task.dueDate | utcToLocalDate }}</span>
               </td>
               <td>
-                <!-- TODO: Finish the dropdown capability to change the status -->
                 <div class="cursor-pointer" x-dropdown>
                   <a (click)="(false)">
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </a>
                   <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
-                    <div
-                      class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
                       *ngIf="approval?.status === true && task.status === taskStatusEnum.TODO"
                       (click)="changeTaskStatus(task, taskStatusEnum.IN_PROGRESS)">
                       Move To IN PROGRESS
                     </div>
-                    <div
-                      class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
                       *ngIf="approval?.status === true && task.status === taskStatusEnum.IN_PROGRESS"
                       (click)="changeTaskStatus(task, taskStatusEnum.COMPLETED)">
                       Move To COMPLETED
                     </div>
-                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewTaskDetails(task.id)">View Details</div>
-                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="deleteTask(task.id)">Delete</div>
-                    <div
-                      class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
-                      (click)="changeDueDate(task)"
-                      *ngIf="task.status !== taskStatusEnum.COMPLETED">
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      (click)="viewTaskDetails(task.id)">View Details</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      (click)="deleteTask(task.id)">Delete</div>
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      (click)="changeDueDate(task)" *ngIf="task.status !== taskStatusEnum.COMPLETED">
                       Change Due Date
                     </div>
                   </div>
@@ -253,7 +222,8 @@
     <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
   </div>
 
-  <div class="overflow-hidde w-[95%] transform rounded-lg bg-white text-left transition-all sm:w-[calc(100vw/4)]" style="max-height: 90%; overflow-y: auto">
+  <div class="overflow-hidde w-[95%] transform rounded-lg bg-white text-left transition-all sm:w-[calc(100vw/4)]"
+    style="max-height: 90%; overflow-y: auto">
     <!-- Content -->
     <div>
       <div class="bg-primary p-4">
@@ -269,21 +239,24 @@
 
           <div>
             <label>Why do you want to change this date?</label>
-            <textarea formControlName="reason" class="mb-1 min-h-36 w-full rounded border border-gray-300 p-2" placeholder="Reason or remark"></textarea>
+            <textarea formControlName="reason" class="mb-1 min-h-36 w-full rounded border border-gray-300 p-2"
+              placeholder="Reason or remark"></textarea>
 
             <div class="text-red-700">
               <svp-validation-errors [control]="dueDateForm.get('reason')" />
             </div>
 
             <div>
-              <svp-max-input-length [count]="dueDateForm.get('reason')?.value.length" [total]="5000" [minThreshold]="5" />
+              <svp-max-input-length [count]="dueDateForm.get('reason')?.value.length" [total]="5000"
+                [minThreshold]="5" />
             </div>
           </div>
         </form>
       </div>
 
       <div class="flex justify-end gap-2 bg-white p-4">
-        <button class="rounded border border-primary px-4 py-2 text-primary" (click)="dueDateFormIsOpen = false">Cancel</button>
+        <button class="rounded border border-primary px-4 py-2 text-primary"
+          (click)="dueDateFormIsOpen = false">Cancel</button>
         <button class="rounded bg-primary px-4 py-2 text-white" (click)="saveNewDueDate()">Change Date</button>
       </div>
     </div>
