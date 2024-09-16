@@ -96,6 +96,7 @@ export class TasksComponent implements OnDestroy {
   });
 
   approvalLoading = true;
+  approvalLoaded = false;
   approval!: ProjectTaskApprovalModel | undefined;
 
   constructor() {
@@ -186,19 +187,28 @@ export class TasksComponent implements OnDestroy {
     });
   }
 
+  searchTasks(searchTerm: string): void {
+    this.taskSearchParams.searchQuery = searchTerm;
+    this.loadTasks();
+  }
+
   setProject($event: ProjectModel) {
     this.sessionStorage.setProject($event);
     this.selectedProject = $event;
     this.selectedProjectId = this.selectedProject.id;
+    this.approvalLoaded = false;
     this.loadTasks();
   }
 
   loadTaskApproval(): void {
+    if (this.approvalLoaded) return;
+
     this.approvalLoading = true;
     this.approval = undefined;
 
     this.approvalService.getProjectTaskApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
       this.approvalLoading = false;
+      this.approvalLoaded = true;
       if (res.success && res.status === 200) {
         this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
       }

@@ -13,7 +13,7 @@ import { SidePanelService } from 'src/app/shared/components/side-panel/side-pane
 import { SidePanelRef } from 'src/app/shared/components/side-panel/side-panel-ref';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-@Component({ 
+@Component({
   selector: 'app-all-projects',
   templateUrl: './all-projects.component.html',
   standalone: true,
@@ -21,10 +21,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
     AngularSvgIconModule,
     SvpButtonModule,
     SvpTypographyModule,
-    SvpUtilityModule, CommonModule, NxDropdownModule,
+    SvpUtilityModule,
+    CommonModule,
+    NxDropdownModule,
     FormsModule,
     SideViewComponent,
-    UtcToLocalDatePipe, RouterLink
+    UtcToLocalDatePipe,
+    RouterLink,
   ],
 })
 export class AllProjectsComponent implements OnInit, OnDestroy {
@@ -37,7 +40,7 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
 
   allProjects: ProjectModel[] | null = [];
   approveProjectRef!: SidePanelRef;
-  
+
   constructor() {
     // set up project search
     this.projectService.allProjects.subscribe((projects: ProjectModel[]) => {
@@ -45,8 +48,7 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
     });
 
     // check if there is an approve query
-    this.activatedRoute.queryParams.subscribe(async (params) => {
-      console.log(params);
+    this.activatedRoute.queryParams.subscribe(async params => {
       if (params['approve']) {
         const projectId = Number(params['approve']);
         this.viewProjectDetails(projectId);
@@ -61,51 +63,45 @@ export class AllProjectsComponent implements OnInit, OnDestroy {
   loadProjects(): void {
     this.notify.showLoader();
 
-    this.projectService.listProjects().subscribe(
-      async (res: Result<ProjectModel[]>) => {
-        this.notify.hideLoader();
+    this.projectService.listProjects().subscribe(async (res: Result<ProjectModel[]>) => {
+      this.notify.hideLoader();
 
-        if (res.success) {
-          this.allProjects = res.content ?? [];
-        } 
-        else {
-          this.notify.timedErrorMessage(res.title, res.message);
-        }
+      if (res.success) {
+        this.allProjects = res.content ?? [];
+      } else {
+        this.notify.timedErrorMessage(res.title, res.message);
       }
-    );
+    });
   }
 
   viewProjectDetails(id: number): void {
-    const inputs = {id: id};
+    const inputs = { id: id };
     this.approveProjectRef = this.sidePanel.open(ApproveProjectComponent, {
       inputs: inputs,
-      size: 'large'
+      size: 'large',
     });
   }
 
   async completeProject(project: ProjectModel): Promise<void> {
     const confirmed = await this.notify.confirmAction('Are you sure you want to complete this project?');
     if (!confirmed) return;
-    
-    this.notify.showLoader();
-    this.projectService.completeProject(project.id).subscribe(
-      async (res: Result<ProjectModel>) => {
-        this.notify.hideLoader();
 
-        if (res.success) {
-          this.notify.timedSuccessMessage(res.message);
-          project.status = ProjectStatusEnum.COMPLETED;
-          project.completedOn = res.content?.completedOn ?? new Date();
-          project.updatedOn = res.content?.updatedOn ?? new Date();
-        } 
-        else {
-          this.notify.timedErrorMessage(res.title, res.message);
-        }
+    this.notify.showLoader();
+    this.projectService.completeProject(project.id).subscribe(async (res: Result<ProjectModel>) => {
+      this.notify.hideLoader();
+
+      if (res.success) {
+        this.notify.timedSuccessMessage(res.message);
+        project.status = ProjectStatusEnum.COMPLETED;
+        project.completedOn = res.content?.completedOn ?? new Date();
+        project.updatedOn = res.content?.updatedOn ?? new Date();
+      } else {
+        this.notify.timedErrorMessage(res.title, res.message);
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {
-    if(this.approveProjectRef) this.approveProjectRef.close();
+    if (this.approveProjectRef) this.approveProjectRef.close();
   }
 }

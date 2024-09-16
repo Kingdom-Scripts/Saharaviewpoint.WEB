@@ -29,7 +29,7 @@ import { UtcToLocalDatePipe } from '@svp-pipes';
     SideViewComponent,
     PaginationComponent,
     NgSelectModule,
-    UtcToLocalDatePipe
+    UtcToLocalDatePipe,
   ],
 })
 export class AllProjectManagersComponent implements OnInit {
@@ -93,6 +93,7 @@ export class AllProjectManagersComponent implements OnInit {
     this.loadProjectManagers(true);
   }
 
+  // TODO: Implement viewing user details
   viewUserDetails(uid: string) {
     console.log('Viewing user details', uid);
   }
@@ -107,25 +108,27 @@ export class AllProjectManagersComponent implements OnInit {
   }
 
   configureSearch(): void {
-    this.$searchTerms .pipe(
-      debounceTime(250),
-      switchMap((term: string) => {
-        this.param.pageIndex = 1;
-        this.param.searchQuery = term;
-        this.pageCache.clear();
-        this.isSearching = true;
-        return this.projectManagerService.listProjectManagers(this.param);
-      })
-    ).subscribe((res: Result<ProjectManagerModel[]>) => {
-      if (res.success) {
-        this.allUsers = res.content ?? [];
-        this.paging = res.paging ?? new PagingModel();
-        this.pageCache.set(this.param.pageIndex, { data: this.allUsers, paging: this.paging });
-        this.isSearching = false;
-      } else {
-        this.notify.timedErrorMessage(res.title, res.message);
-      }
-    });
+    this.$searchTerms
+      .pipe(
+        debounceTime(250),
+        switchMap((term: string) => {
+          this.param.pageIndex = 1;
+          this.param.searchQuery = term;
+          this.pageCache.clear();
+          this.isSearching = true;
+          return this.projectManagerService.listProjectManagers(this.param);
+        }),
+      )
+      .subscribe((res: Result<ProjectManagerModel[]>) => {
+        if (res.success) {
+          this.allUsers = res.content ?? [];
+          this.paging = res.paging ?? new PagingModel();
+          this.pageCache.set(this.param.pageIndex, { data: this.allUsers, paging: this.paging });
+          this.isSearching = false;
+        } else {
+          this.notify.timedErrorMessage(res.title, res.message);
+        }
+      });
   }
 
   filterByActiveState(): void {

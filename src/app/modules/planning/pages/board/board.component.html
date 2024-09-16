@@ -20,7 +20,8 @@
   </div>
 
   <div class="mt-4 flex gap-4 items-center">
-    <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
+    <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64"
+      (onSearch)="loadTasks($event)" />
 
     <ng-select [items]="projects$ | async" [addTag]="false" [multiple]="false" bindValue="id" bindLabel="title"
       [closeOnSelect]="true" [clearable]="false" placeholder="Select a project" [(ngModel)]="selectedProjectId"

@@ -4,5 +4,6 @@ export interface TaskCommentModel {
   fullName: string;
   message: string;
   createdAt: string;
+  createdByUid: string;
   children: TaskCommentModel[];
 }

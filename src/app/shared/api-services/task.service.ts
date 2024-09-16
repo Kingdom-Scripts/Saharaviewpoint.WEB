@@ -64,10 +64,9 @@ export class TaskService {
   }
 
   listTasks(param: TaskSearchModel): Observable<Result<TaskModel[]>> {
-    let query = `projectId=${param.projectId}
-      &pageIndex=${param.pageIndex}
-      &pageSize=${param.pageSize}
-      ${param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''}`;
+    let query = `projectId=${param.projectId}&pageIndex=${param.pageIndex}&pageSize=${param.pageSize}${
+      param.searchQuery ? `&searchQuery=${param.searchQuery}` : ''
+    }`;
 
     param.types?.forEach(type => {
       query += `&types=${type}`;
@@ -76,19 +75,15 @@ export class TaskService {
     param.statuses?.forEach(status => {
       query += `&statuses=${status}`;
     });
-
-    // remove any extra spaces
-    const cleanQuery = query.replace(/\s+/g, ' ').trim();
-
-    return this.http.get<Result<TaskModel[]>>(`tasks?${cleanQuery}`);
+    return this.http.get<Result<TaskModel[]>>(`tasks?${query}`);
   }
 
   deleteTask(taskId: number): Observable<Result<string>> {
     return this.http.delete<Result<string>>(`tasks/${taskId}`);
   }
 
-  listBoardTasks(projectId: number): Observable<Result<TaskBoardModel[]>> {
-    return this.http.get<Result<TaskBoardModel[]>>(`tasks/${projectId}/board`);
+  listBoardTasks(projectId: number, searchTerm: undefined | null | string = undefined): Observable<Result<TaskBoardModel[]>> {
+    return this.http.get<Result<TaskBoardModel[]>>(`tasks/${projectId}/board${searchTerm ? `?searchQuery=${searchTerm}` : ''}`);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -128,17 +123,14 @@ export class TaskService {
     switch (event.type) {
       case HttpEventType.UploadProgress: {
         const percentDone = Math.round((100 * event.loaded) / event.total);
-        console.log('Returning Progress')
         return { progress: percentDone };
       }
 
       case HttpEventType.Response: {
-        console.log('Returning Body')
         return event.body as Result<DocumentModel>;
       }
 
       default: {
-        console.log('Returning Default')
         return { progress: 0 };
       }
     }

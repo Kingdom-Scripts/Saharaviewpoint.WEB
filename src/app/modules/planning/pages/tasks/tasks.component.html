@@ -39,8 +39,8 @@
 
   <div class="mt-4 border-b border-t border-[#e0e6ed] py-3 dark:border-[#1b2e4b]">
     <div class="flex items-end gap-10">
-      <!-- TODO: implement search -->
-      <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64" />
+      <svp-search-button svpPlaceholder="Search tasks" displaySearchButton="true" widthClass="w-64"
+        (onSearch)="searchTasks($event)" />
 
       <ng-select [items]="projects$ | async" [addTag]="false" bindValue="id" bindLabel="title" [clearable]="false"
         placeholder="Select a project" [(ngModel)]="selectedProjectId" (change)="setProject($event)" class="w-80">

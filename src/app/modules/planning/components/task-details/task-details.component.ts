@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { TaskService } from '@svp-api-services';
+import { AuthService, TaskService } from '@svp-api-services';
 import { SvpButtonModule, SvpFormInputModule, SvpTaskStatusCardComponent, SvpTypographyModule, SvpUtilityModule } from '@svp-components';
 import { PagingRequestModel, Result, StatusCodes, TaskCommentModel, TaskLogModel, TaskModel, TaskStatusEnum, TaskTypeEnum } from '@svp-models';
 import { NotificationService } from '@svp-services';
@@ -37,10 +37,12 @@ export class TaskDetailsComponent implements OnInit {
 
   taskService = inject(TaskService);
   detailService = inject(TaskDetailService);
+  authService = inject(AuthService);
   notify = inject(NotificationService);
   fb = inject(FormBuilder);
   sidePanelRef = inject(SidePanelRef);
 
+  userUid!: string;
   taskTypeEnum = TaskTypeEnum;
   taskStatusEnum = TaskStatusEnum;
   taskTypes = this.taskTypeEnum.asArray;
@@ -60,6 +62,7 @@ export class TaskDetailsComponent implements OnInit {
   addCommentLoading = false;
 
   ngOnInit(): void {
+    this.userUid = this.authService.getUser()?.uid ?? '';
     this.getTask();
   }
 
