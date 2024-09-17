@@ -124,26 +124,6 @@ export class TaskService {
       .pipe(map(event => this.getEventMessage(event)));
   }
 
-  private getEventMessage(event: any): UploadProgressModel | Result<DocumentModel> {
-    switch (event.type) {
-      case HttpEventType.UploadProgress: {
-        const percentDone = Math.round((100 * event.loaded) / event.total);
-        console.log('Returning Progress')
-        return { progress: percentDone };
-      }
-
-      case HttpEventType.Response: {
-        console.log('Returning Body')
-        return event.body as Result<DocumentModel>;
-      }
-
-      default: {
-        console.log('Returning Default')
-        return { progress: 0 };
-      }
-    }
-  }
-
   getVideoUploadToken(): Observable<Result<VideoUploadTokenModel>> {
     return this.http.get<Result<VideoUploadTokenModel>>('tasks/attachments/video-upload-token');
   }
@@ -175,5 +155,22 @@ export class TaskService {
     if (param.searchQuery && param.searchQuery != '') query += `&searchQuery=${param.searchQuery}`;
 
     return this.http.get<Result<TaskCommentModel[]>>(`tasks/${taskId}/comments?${query}`);
+  }
+
+  private getEventMessage(event: any): UploadProgressModel | Result<DocumentModel> {
+    switch (event.type) {
+      case HttpEventType.UploadProgress: {
+        const percentDone = Math.round((100 * event.loaded) / event.total);
+        return { progress: percentDone };
+      }
+
+      case HttpEventType.Response: {
+        return event.body as Result<DocumentModel>;
+      }
+
+      default: {
+        return { progress: 0 };
+      }
+    }
   }
 }
