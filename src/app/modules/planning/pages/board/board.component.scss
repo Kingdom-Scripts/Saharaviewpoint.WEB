@@ -19,7 +19,7 @@
 }
 
 .cdk-drag .epic {
-  @apply badge bg-info text-sm;
+  @apply my-1 rounded border border-transparent bg-info px-2 py-1 text-sm font-semibold text-white;
 }
 
 .cdk-drag .footer {

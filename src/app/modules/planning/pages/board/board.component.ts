@@ -67,6 +67,7 @@ export class BoardComponent {
   completedTasks: TaskBoardModel[] = [];
 
   approvalLoading = true;
+  approvalLoaded = false;
   approval!: ProjectTaskApprovalModel | undefined;
 
   taskDetailRef!: SidePanelRef;
@@ -105,9 +106,9 @@ export class BoardComponent {
     });
   }
 
-  loadTasks() {
+  loadTasks(searchTerm: undefined | null | string = undefined): void {
     this.notify.showLoader();
-    this.taskService.listBoardTasks(this.selectedProjectId).subscribe((res: Result<TaskBoardModel[]>) => {
+    this.taskService.listBoardTasks(this.selectedProjectId, searchTerm).subscribe((res: Result<TaskBoardModel[]>) => {
       this.notify.hideLoader();
       if (res.success) {
         this.allTasks = res.content ?? [];
@@ -124,11 +125,14 @@ export class BoardComponent {
   }
 
   loadTaskApproval(): void {
+    if (this.approvalLoaded) return;
+
     this.approvalLoading = true;
     this.approval = undefined;
 
     this.approvalService.getProjectTaskApproval(this.selectedProjectId).subscribe((res: Result<ProjectTaskApprovalModel>) => {
       this.approvalLoading = false;
+      this.approvalLoaded = true;
       if (res.success && res.status === 200) {
         this.approval = res.content ?? ({} as ProjectTaskApprovalModel);
       }
@@ -224,6 +228,7 @@ export class BoardComponent {
     this.sessionStorage.setProject($event);
     this.selectedProject = $event;
     this.selectedProjectId = this.selectedProject.id;
+    this.approvalLoaded = false;
     this.loadTasks();
   }
 
