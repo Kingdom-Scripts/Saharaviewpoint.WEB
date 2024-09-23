@@ -23,36 +23,28 @@
       </div> -->
 
       <div>
-        <svp-search-button
-          svpPlaceholder="Search projects"
-          displaySearchButton="true"
-          widthClass="w-80"
+        <svp-search-button svpPlaceholder="Search projects" displaySearchButton="true" widthClass="w-80"
           (onChange)="projectService.searchParam.searchQuery = $event"
           (onSearch)="projectService.searchProjects($event)" />
       </div>
 
       <div class="my-4 mt-4 flex space-x-3">
-        <div svp-card-selector [isActive]="projectService.searchParam.status === null" (click)="projectService.filterByStatus(null)">
+        <div svp-card-selector [isActive]="projectService.searchParam.status === null"
+          (click)="projectService.filterByStatus(null)">
           <span>All Projects</span>
         </div>
 
-        <div
-          svp-card-selector
-          (click)="projectService.filterByStatus(projectStatusEnum.REQUESTED)"
+        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.REQUESTED)"
           [isActive]="projectService.searchParam.status === projectStatusEnum.REQUESTED">
           <span>Awaiting Approval</span>
         </div>
 
-        <div
-          svp-card-selector
-          (click)="projectService.filterByStatus(projectStatusEnum.IN_PROGRESS)"
+        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.IN_PROGRESS)"
           [isActive]="projectService.searchParam.status === projectStatusEnum.IN_PROGRESS">
           <span>In Progress</span>
         </div>
 
-        <div
-          svp-card-selector
-          (click)="projectService.filterByStatus(projectStatusEnum.COMPLETED)"
+        <div svp-card-selector (click)="projectService.filterByStatus(projectStatusEnum.COMPLETED)"
           [isActive]="projectService.searchParam.status === projectStatusEnum.COMPLETED">
           <span>Completed</span>
         </div>
@@ -70,13 +62,15 @@
         <div class="flex flex-col space-y-2">
           <p svp-text>Start Date</p>
 
-          <input type="date" [(ngModel)]="projectService.searchParam.startDueDate" (change)="projectService.triggerFilterChange()" />
+          <input type="date" [(ngModel)]="projectService.searchParam.startDueDate"
+            (change)="projectService.triggerFilterChange()" />
         </div>
 
         <div class="flex flex-col space-y-2">
           <p svp-text>End Date</p>
 
-          <input type="date" [(ngModel)]="projectService.searchParam.endDueDate" (change)="projectService.triggerFilterChange()" />
+          <input type="date" [(ngModel)]="projectService.searchParam.endDueDate"
+            (change)="projectService.triggerFilterChange()" />
         </div>
       </div>
     </div>
@@ -126,7 +120,8 @@
                 </span>
               </td>
               <td>
-                <span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A' }}</span>
+                <span>{{ project.assignee ? project.assignee.firstName + ' ' + project.assignee.lastName : 'N/A'
+                  }}</span>
               </td>
               <td class="text-nowrap">
                 <svp-status-card [status]="project.status" />
@@ -146,17 +141,17 @@
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </a>
                   <div x-dropdown-content class="flex flex-col border border-gray-300 bg-white">
-                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300" (click)="viewProjectDetails(project.id)">
+                    <div class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
+                      (click)="viewProjectDetails(project.id)">
                       View Details
                     </div>
-                    <div
-                      *ngIf="project.status !== projectStatusEnum.REQUESTED"
+                    <div *ngIf="project.status !== projectStatusEnum.REQUESTED"
                       class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
                       routerLink="/tasks/all">
                       View Tasks
                     </div>
                     <div
-                      *ngIf="project.status !== projectStatusEnum.COMPLETED"
+                      *ngIf="project.status !== projectStatusEnum.COMPLETED && project.status !== projectStatusEnum.REQUESTED"
                       class="cursor-pointer border-b border-gray-200 px-4 py-2 hover:bg-primary-300"
                       (click)="completeProject(project)">
                       Complete Project
